@@ -1,0 +1,97 @@
+﻿<Window x:Class="OptimizationTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OptimizationTester"
+        mc:Ignorable="d"
+        Title="Optimization" Height="370" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="20">
+            <MenuItem Header="Algorithm">
+                <MenuItem x:Name="miFirework" Header="Firework" Click="miFirework_Click" IsChecked="True"/>
+                <MenuItem x:Name="miPSO" Header="Particle Swarm" Click="miPSO_Click"/>
+                <MenuItem x:Name="miCGO" Header="Clonal Generation" Click="miCGO_Click"/>
+                <MenuItem x:Name="miCGOL" Header="Clonal Generation Local" Click="miCGOL_Click"/>
+                <MenuItem x:Name="miGa" Header="Genetic Algorithm" Click="miGa_Click"/>
+            </MenuItem>
+            <MenuItem Header="Stopping condition">
+                <MenuItem x:Name="miGeneration" Header="Number of generations" Click="miGeneration_Click" IsChecked="True"/>
+                <MenuItem x:Name="miEvaluation" Header="Number of fitness evaluations" Click="miEvaluation_Click"/>
+                <MenuItem x:Name="miTreshold" Header="Fitness below threshold value" Click="miTreshold_Click"/>
+            </MenuItem>
+            <MenuItem Header="Function">
+                <MenuItem x:Name="miPreview" Header="Show preview" IsCheckable="True" IsChecked="False" Checked="miPreview_Checked" Unchecked="miPreview_Unchecked"/>
+                <Separator/>
+                <MenuItem x:Name="miXXplusYY" Header="Parabola" Click="miXXplusYY_Click" IsChecked="True"/>
+                <MenuItem x:Name="miTripod" Header="Tripod" Click="miTripod_Click"/>
+                <MenuItem x:Name="miAlpine" Header="Alpine" Click="miAlpine_Click"/>
+                <MenuItem x:Name="miGriewank" Header="Griewank" Click="miGriewank_Click"/>
+                <MenuItem x:Name="miRosenbrock" Header="Rosenbrock" Click="miRosenbrock_Click"/>
+            </MenuItem>
+            <MenuItem Header="Parameters">
+                <MenuItem x:Name="miGyors" Header="Quick" IsCheckable="True" Checked="miGyors_Checked" Unchecked="miGyors_Unchecked" IsChecked="True"/>
+                <Separator/>
+                <MenuItem x:Name="miParamStopping" Header="Stopping parameters" Click="miParamStopping_Click"/>
+                <MenuItem x:Name="miParamGen" Header="General parameters" Click="miParamGen_Click"/>
+                <MenuItem x:Name="miParamAlg" Header="Algorithm parameters" Click="miParamAlg_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="miSugo" Header="Help" Click="miSugo_Click"/>
+        </Menu>
+        <StackPanel DockPanel.Dock="Left" Grid.Row="1" Grid.Column="0">
+            <Border Margin="0,35,0,35" BorderBrush="Black" BorderThickness="2" Width="205" Height="205">
+                <Canvas x:Name="cvPage" Width="201" Height="201" Margin="0">
+                </Canvas>
+            </Border>
+            <Grid>
+                <Button Content="Start" x:Name="btStart" Click="btStart_Clicked" Width="80" Height="30" Grid.Column="0"/>
+                <Button Content="Stop" x:Name="btStop" Width="80" Height="30" Grid.Column="1" Click="btStop_Click" Visibility="Collapsed"/>
+            </Grid>
+        </StackPanel>
+        <TextBox x:Name="tbResults" DockPanel.Dock="Right"  AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" Width="auto" Margin="10" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Visibility="Visible"/>
+        <Grid Grid.Column="1" Grid.Row="1" Visibility="Collapsed" x:Name="grParams">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Margin="5,0,5,0">
+                <Label x:Name="lbParam0" Content="Label0"/>
+                <TextBox x:Name="tbParam0" Margin="0,0,45,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Margin="5,0,5,0">
+                <Label x:Name="lbParam1" Content="Label1"/>
+                <TextBox x:Name="tbParam1" Margin="0,0,45,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Margin="5,0,5,0">
+                <Label x:Name="lbParam2" Content="Label2"/>
+                <TextBox x:Name="tbParam2" Margin="0,0,45,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="3" Margin="5,0,5,0">
+                <Label x:Name="lbParam3" Content="Label3"/>
+                <TextBox x:Name="tbParam3" Margin="0,0,45,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="4" Margin="5,0,5,0">
+                <Label x:Name="lbParam4" Content="Label4"/>
+                <TextBox x:Name="tbParam4" Margin="0,0,45,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="5" Margin="5,0,5,0">
+                <Label x:Name="lbParam5" Content="Label4"/>
+                <TextBox x:Name="tbParam5" Margin="0,0,45,0"/>
+            </StackPanel>
+            <Button x:Name="btSave" Grid.Row="6" Content="Save"  Width="80" Height="30" Click="btSave_Click"/>
+        </Grid>
+    </Grid>
+</Window>

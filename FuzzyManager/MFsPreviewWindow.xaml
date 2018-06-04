@@ -1,0 +1,34 @@
+﻿<Window x:Class="FuzzyManager.MFsPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FuzzyManager"
+        mc:Ignorable="d"
+        Title="MFsPreviewWindow" Height="350" Width="400" SizeChanged="Window_SizeChanged" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="PreviewImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Horizontal resolution"/>
+            <TextBox Text="1024" Grid.Row="1" x:Name="HorizontalResBox"/>
+            <TextBlock Text="Vertical resolution" Grid.Column="2"/>
+            <TextBox Text="512" Grid.Row="1" Grid.Column="2" x:Name="VerticalResBox"/>
+            <Button x:Name="SaveButton" Content="Save" Grid.Column="4" Grid.RowSpan="2" Click="SaveButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>

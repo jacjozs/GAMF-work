@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Optimization.ClonalGeneration">
+    <Position X="8" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAEAAAAAQAAgAAAAAAABAAAAA=</HashCode>
+      <FileName>ClonalGen\ClonalGeneration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.ClonalGenerationLocal">
+    <Position X="8" Y="6.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAABAAAQAAAAAAAAAAAAAAAAAAAAACAAABAA=</HashCode>
+      <FileName>ClonalGenL\ClonalGenerationLocal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.BaseElement">
+    <Position X="3.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAAAAAAAAASgCAAAAAABAEAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>Common\BaseElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.151" />
+  </Class>
+  <Class Name="Optimization.BaseOptimizationMethod">
+    <Position X="3.5" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAAAABBA=</HashCode>
+      <FileName>Common\BaseOptimizationMethod.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="3.679" />
+  </Class>
+  <Class Name="Optimization.Result">
+    <Position X="8" Y="11.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Common\Result.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.Firework">
+    <Position X="6.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAQCAAAAAgAwAAAAAAEBA=</HashCode>
+      <FileName>Firework\Firework.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.GeneticAlgorithm">
+    <Position X="8" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACEAAAAAAQAAAAAAACAAAAAAAAAAAAAACAAABAAAAAA=</HashCode>
+      <FileName>GenAlg\GeneticAlgorithm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.Particle">
+    <Position X="5.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAACAEAAA=</HashCode>
+      <FileName>ParticleSwarm\Particle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.ParticleSwarm">
+    <Position X="6.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAgAAAAAAAAAhEAAAAAAACAAAgAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ParticleSwarm\ParticleSwarm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Optimization.IElement">
+    <Position X="1" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAgCAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\IElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Optimization.IOptimizationMethod">
+    <Position X="1.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAEBAEIAAAAAAAAAAAAAgBBIAAAgAAIAAAAAAAAAA=</HashCode>
+      <FileName>Common\IOptimizationMethod.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Optimization.StoppingType">
+    <Position X="8" Y="13.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Common\StoppingTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="Optimization.EventHandlerDelegate">
+    <Position X="10.25" Y="11.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAQAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\EventHandlerDelegate.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Optimization.FitnessFunctionDelegate">
+    <Position X="10.25" Y="13.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\FitnessFunctionDelegate.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
