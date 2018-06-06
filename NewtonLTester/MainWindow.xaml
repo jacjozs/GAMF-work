@@ -1,0 +1,68 @@
+﻿<Window x:Class="NewtonLTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:NewtonLTester"
+        Title="NewtonL Tesztelő" Name="wndMain" SizeToContent="WidthAndHeight" Height="328" Width="595">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="curveNames" MethodName="GetValues" ObjectType="{x:Type sys:Enum}" >
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:CurveNames"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--
+            <Label Target="{Binding ElementName=cbxCurve}">Függvény</Label>
+            <ComboBox Name="cbxCurve" Grid.Column="1" HorizontalAlignment="Left"
+					  ItemsSource="{Binding Source={StaticResource curveNames}}"
+					  SelectedItem="{Binding ElementName=wndMain, Path=Curve}"
+			/>
+            -->
+            <Label Grid.Row="1" Target="{Binding ElementName=sldrPointCount}">Pontok mennyisége</Label>
+            <Slider Name="sldrPointCount" Grid.Row="1" Grid.Column="1"  
+					TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+					AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="2"
+					Minimum="2" Maximum="100" 
+					Value="{Binding ElementName=wndMain, Path=PointCount}"/>
+
+            <Label Grid.Row="2" Target="{Binding ElementName=txtXScale}">X tartomány</Label>
+            <TextBox Name="txtXScale" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
+                <TextBox.Text>
+                    <Binding ElementName="wndMain" Path="ScaleX" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ScaleRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Label Grid.Row="3" Target="{Binding ElementName=txtYScale}">Y tartomány</Label>
+            <TextBox Name="txtYScale" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
+                <TextBox.Text>
+                    <Binding ElementName="wndMain" Path="ScaleY" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ScaleRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </Grid>
+        <Border BorderBrush="LightBlue" BorderThickness="5" Margin="0,5,0,0">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <local:CustomCanvas x:Name="canvas" Background="Transparent"/>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
+</Window>
