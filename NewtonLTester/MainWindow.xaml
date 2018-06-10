@@ -37,7 +37,7 @@
 					Minimum="2" Maximum="100" 
 					Value="{Binding ElementName=wndMain, Path=PointCount}"/>
 
-            <Label Grid.Row="2" Target="{Binding ElementName=txtXScale}">X tartomány</Label>
+            <Label Name="XSizeLb" Grid.Row="2" Target="{Binding ElementName=txtXScale}">X tartomány</Label>
             <TextBox Name="txtXScale" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
                 <TextBox.Text>
                     <Binding ElementName="wndMain" Path="ScaleX" UpdateSourceTrigger="PropertyChanged">
@@ -48,7 +48,7 @@
                 </TextBox.Text>
             </TextBox>
 
-            <Label Grid.Row="3" Target="{Binding ElementName=txtYScale}">Y tartomány</Label>
+            <Label Name="YSizeLb" Grid.Row="3" Target="{Binding ElementName=txtYScale}">Y tartomány</Label>
             <TextBox Name="txtYScale" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
                 <TextBox.Text>
                     <Binding ElementName="wndMain" Path="ScaleY" UpdateSourceTrigger="PropertyChanged">
@@ -58,6 +58,10 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+            <Button Name="SwitchBt" Content="2D" Grid.Column="1" Uid="2" HorizontalAlignment="Left" Margin="69,3,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <Button Content="Keresés" Grid.Column="1" HorizontalAlignment="Left" Margin="169,3,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+            <Label Name="lastKoorlb" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="249,0,0,0" Grid.Row="3" VerticalAlignment="Top" Width="214"/>
+
         </Grid>
         <Border BorderBrush="LightBlue" BorderThickness="5" Margin="0,5,0,0">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">

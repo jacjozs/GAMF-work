@@ -16,15 +16,17 @@ namespace NewtonLTester
     /// </summary>
     public enum CurveNames
     {
-        Sinus,
         Default,
+        Default3D,
     }
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// Az algoritmusnak átadandó pontok listája
+        /// False = 2D, True = 3D
         /// </summary>
-        private ArrayList SortItems;
+        private bool Dimension;
+        private int PointCount2;
+        private const double markerSize = 5;
         #region PointCount
         /// <summary>
         /// Identifies the PointCount dependency property.
@@ -61,7 +63,7 @@ namespace NewtonLTester
         /// </summary>
         public static readonly DependencyProperty ScaleXProperty
             = DependencyProperty.Register("ScaleX", typeof(double), typeof(MainWindow)
-                , new FrameworkPropertyMetadata(500.0
+                , new FrameworkPropertyMetadata(10.0
                     , FrameworkPropertyMetadataOptions.AffectsMeasure
                         | FrameworkPropertyMetadataOptions.AffectsRender)
                 , validateScaleX);
@@ -91,7 +93,7 @@ namespace NewtonLTester
         /// </summary>
         public static readonly DependencyProperty ScaleYProperty
             = DependencyProperty.Register("ScaleY", typeof(double), typeof(MainWindow)
-                , new FrameworkPropertyMetadata(500.0
+                , new FrameworkPropertyMetadata(10.0
                     , FrameworkPropertyMetadataOptions.AffectsMeasure
                         | FrameworkPropertyMetadataOptions.AffectsRender)
                 , validateScaleY);
@@ -154,6 +156,7 @@ namespace NewtonLTester
         /// A pontok listája
         /// (eböl készül el a SortItems valamint a vizuális megjelenítés)
         /// </summary>
+        public ArrayList Newtonpoints;
         public Point[] points;
         public MainWindow()
         {
@@ -165,21 +168,20 @@ namespace NewtonLTester
 		/// <param name="drawingContext">The drawing instructions for a specific element. This context is provided to the layout system.</param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            switch (Curve)
+            if (Dimension && PointCount != 0)
             {
-                case CurveNames.Sinus:
-                    DrawCurve(Sinus);
-                    break;
-                case CurveNames.Default:
-                    DrawCurve(Default);
-                    break;
+                DrawCurve(Default3D);
+            }
+            else
+            {
+                DrawCurve(Default);
             }
             base.OnRender(drawingContext);
         }
         /// <summary>
 		/// Function points provider
 		/// </summary>
-        delegate Point[] Function();
+        delegate ArrayList Function();
         /// <summary>
 		/// Draw the Curve.
 		/// </summary>
@@ -187,88 +189,178 @@ namespace NewtonLTester
         void DrawCurve(Function curve)
         {
             canvas.Children.Clear();
-            points = curve();
-            SortItems = new ArrayList();
-            if (points.Length < 2)
+            lastKoorlb.Content = "";
+            Newtonpoints = curve();
+            if (Newtonpoints.Count < 2)
                 return;
-            foreach (var item in points)
+            if (!Dimension)
             {
-                //azért kell a minus ScaleY hogy a kimutatásnál helyes pozicióba kerüljön
-                SortItems.Add(new NewtonPoint(new double[] { item.X, ScaleY - item.Y }));
-            }
-            const double markerSize = 5;
-            for (int i = 0; i < points.Length; ++i)
-            {
-                Rectangle rect = new Rectangle()
+                foreach (NewtonPoint item in Newtonpoints)
                 {
-                    Stroke = Brushes.Black,
-                    Fill = Brushes.Black,
-                    Height = markerSize,
-                    Width = markerSize
-                };
-                Canvas.SetLeft(rect, points[i].X - markerSize / 2);
-                Canvas.SetTop(rect, points[i].Y - markerSize / 2);
-                canvas.Children.Add(rect);
+                    Rectangle rect = new Rectangle()
+                    {
+                        Stroke = Brushes.Black,
+                        Fill = Brushes.Black,
+                        Height = markerSize,
+                        Width = markerSize
+                    };
+                    Canvas.SetLeft(rect, item.Points[0] - markerSize / 2);
+                    Canvas.SetTop(rect, ScaleY - item.Points[1] - markerSize / 2);
+                    canvas.Children.Add(rect);
+                }
+                Point[] cp1, cp2;
+                points = new Point[Newtonpoints.Count];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    points[i] = new Point(((NewtonPoint)Newtonpoints[i]).Points[0], ScaleY - ((NewtonPoint)Newtonpoints[i]).Points[1]);
+                }
+                BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
+                PathSegmentCollection lines = new PathSegmentCollection();
+                for (int i = 0; i < cp1.Length; ++i)
+                {
+                    lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
+                }
+                PathFigure f = new PathFigure(points[0], lines, false);
+                PathGeometry g = new PathGeometry(new PathFigure[] { f });
+                Path path = new Path() { Stroke = Brushes.Red, StrokeThickness = 1, Data = g };
+                canvas.Children.Add(path);
             }
-            Point[] cp1, cp2;
-            BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
-            PathSegmentCollection lines = new PathSegmentCollection();
-            for (int i = 0; i < cp1.Length; ++i)
+            else
             {
-                lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
+                foreach (NewtonPoint item in Newtonpoints)
+                {
+                    byte red = (byte)Math.Round((item.Points[2] - 0) / PointCount2 * 255);
+                    Rectangle rect = new Rectangle()
+                    {
+                        Stroke = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
+                        Fill = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
+                        Height = markerSize,
+                        Width = markerSize
+                    };
+                    Canvas.SetLeft(rect, item.Points[0] - markerSize / 2);
+                    Canvas.SetTop(rect, item.Points[1] - markerSize / 2);
+                    canvas.Children.Add(rect);
+                }
             }
-            PathFigure f = new PathFigure(points[0], lines, false);
-            PathGeometry g = new PathGeometry(new PathFigure[] { f });
-            Path path = new Path() { Stroke = Brushes.Red, StrokeThickness = 1, Data = g };
-            canvas.Children.Add(path);
-
-            NewtonL newt = new NewtonL(SortItems, new double[] { ((NewtonPoint)SortItems[0]).Points[0], ((NewtonPoint)SortItems[0]).Points[1] }, 2);
-            NewtonPoint pointFinal = newt.MinSearch();
-            Ellipse marker = new Ellipse()
-            {
-                Stroke = Brushes.Green,
-                Fill = Brushes.Green,
-                Height = markerSize * 2,
-                Width = markerSize * 2
-            };
-            Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
-            Canvas.SetTop(marker, ScaleY - pointFinal.Points[1] - markerSize);
-            canvas.Children.Add(marker);
         }
         #region Curves
-
-        /// <summary>
-        /// Runge function points in [-1,1].
-        /// </summary>
-        /// <returns></returns>
-        Point[] Default()
+        ArrayList Default()
         {
-            // Fill point array with scaled in X,Y Runge (1 / (1 + 25 * x * x)) values in [-1, 1].
-            Point[] points = new Point[PointCount];
+            ArrayList points = new ArrayList();
             double step = 2.0 / (PointCount - 1);
             for (int i = 0; i < PointCount; ++i)
             {
                 double x = -1 + i * step;
-                points[i] = new Point(ScaleX * (x + 1), ScaleY - (ScaleY * (1 - 1 / (1 + 25 * x * x))));
+                points.Add(new NewtonPoint(new double[] { ScaleX * (x + 1), ScaleY * (1 - 1 / (1 + 25 * x * x)) }));
             }
             return points;
         }
-        /// <summary>
-		/// Sinus points in [0,2PI].
-		/// </summary>
-		/// <returns></returns>
-        Point[] Sinus()
+        ArrayList Default3D()
         {
-            // Fill point array with scaled in X,Y Sin values in [0, PI].
-            Point[] points = new Point[PointCount];
-            double step = 2 * Math.PI / (PointCount - 1);
-            for (int i = 0; i < PointCount; ++i)
+            ArrayList points = new ArrayList();
+            PointCount2 = int.Parse(Math.Sqrt(PointCount).ToString());
+            double step = ScaleX / (Math.Sqrt(PointCount));
+            for (int i = 0; i < PointCount2; ++i)
             {
-                points[i] = new Point(ScaleX * i * step, (ScaleY * (1 - Math.Sin(i * step))));
+                double x = -1 + i * step;
+                for (int j = 0; j < PointCount2; j++)
+                {
+                    double y = -1 + j * step;
+                    points.Add(new NewtonPoint(new double[] { ScaleX * (x + 1), ScaleX * (y + 1), Math.Sqrt(j * 10) }));
+                }
             }
             return points;
         }
         #endregion Curves
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Button)sender).Uid == "2")
+            {
+                Dimension = true;
+                SwitchBt.Uid = "3";
+                SwitchBt.Content = "3D";
+                sldrPointCount.IsSnapToTickEnabled = true;
+                if (sldrPointCount.Value < 9)
+                    sldrPointCount.Value = 9;
+                else
+                    if (sldrPointCount.Value < 16)
+                    sldrPointCount.Value = 16;
+                else
+                    if (sldrPointCount.Value < 25)
+                    sldrPointCount.Value = 25;
+                else
+                    if (sldrPointCount.Value < 36)
+                    sldrPointCount.Value = 36;
+                else
+                    if (sldrPointCount.Value < 49)
+                    sldrPointCount.Value = 49;
+                else
+                    if (sldrPointCount.Value < 64)
+                    sldrPointCount.Value = 64;
+                else
+                    if (sldrPointCount.Value < 81)
+                    sldrPointCount.Value = 81;
+                else
+                    if (sldrPointCount.Value < 100)
+                    sldrPointCount.Value = 100;
+                sldrPointCount.Minimum = 9;
+                sldrPointCount.Maximum = 400;
+                sldrPointCount.Ticks = new DoubleCollection() { 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81.0, 100.0, 121.0, 144.0, 169.0, 196.0, 225.0, 256.0, 289.0, 324.0, 361.0, 400.0 };
+                txtYScale.Visibility = Visibility.Hidden;
+                YSizeLb.Visibility = Visibility.Hidden;
+                XSizeLb.Content = "X, Y tartomány";
+            }
+            else
+            {
+                Dimension = false;
+                SwitchBt.Uid = "2";
+                SwitchBt.Content = "2D";
+                sldrPointCount.Minimum = 2;
+                sldrPointCount.Maximum = 100;
+                sldrPointCount.IsSnapToTickEnabled = false;
+                txtYScale.Visibility = Visibility.Visible;
+                YSizeLb.Visibility = Visibility.Visible;
+                XSizeLb.Content = "X tartomány";
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            NewtonL newt;
+            if (Dimension)
+            {
+                newt = new NewtonL(Newtonpoints, new double[] { ((NewtonPoint)Newtonpoints[PointCount2]).Points[0], ((NewtonPoint)Newtonpoints[PointCount2]).Points[1], ((NewtonPoint)Newtonpoints[PointCount2]).Points[2] }, 3);
+                NewtonPoint pointFinal = newt.MinSearch();
+                Ellipse marker = new Ellipse()
+                {
+                    Stroke = Brushes.Green,
+                    Fill = Brushes.Green,
+                    Height = markerSize * 2,
+                    Width = markerSize * 2
+                };
+                Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
+                Canvas.SetTop(marker, pointFinal.Points[1] - markerSize);
+                canvas.Children.Add(marker);
+                lastKoorlb.Content = pointFinal.Points[0] + " - " + pointFinal.Points[1] + " - " + pointFinal.Points[2];
+            }
+            else
+            {
+                newt = new NewtonL(Newtonpoints, new double[] { ((NewtonPoint)Newtonpoints[0]).Points[0], ((NewtonPoint)Newtonpoints[0]).Points[1] }, 2);
+                NewtonPoint pointFinal = newt.MinSearch();
+                Ellipse marker = new Ellipse()
+                {
+                    Stroke = Brushes.Green,
+                    Fill = Brushes.Green,
+                    Height = markerSize * 2,
+                    Width = markerSize * 2
+                };
+                Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
+                Canvas.SetTop(marker, ScaleY - pointFinal.Points[1] - markerSize);
+                canvas.Children.Add(marker);
+                lastKoorlb.Content = pointFinal.Points[0] + " - " + pointFinal.Points[1];
+            }
+        }
     }
     /// <summary>
 	/// ValidationRule class to validate that a value is a number >= 1.
