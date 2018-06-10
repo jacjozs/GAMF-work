@@ -179,7 +179,7 @@ namespace NewtonLTester
             base.OnRender(drawingContext);
         }
         /// <summary>
-		/// Function points provider
+		/// Function ArrayList provider
 		/// </summary>
         delegate ArrayList Function();
         /// <summary>
@@ -330,7 +330,7 @@ namespace NewtonLTester
             NewtonL newt;
             if (Dimension)
             {
-                newt = new NewtonL(Newtonpoints, new double[] { ((NewtonPoint)Newtonpoints[PointCount2]).Points[0], ((NewtonPoint)Newtonpoints[PointCount2]).Points[1], ((NewtonPoint)Newtonpoints[PointCount2]).Points[2] }, 3);
+                newt = new NewtonL(Newtonpoints, new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[0], ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[1], ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[2] }), 3);
                 NewtonPoint pointFinal = newt.MinSearch();
                 Ellipse marker = new Ellipse()
                 {
@@ -342,11 +342,11 @@ namespace NewtonLTester
                 Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
                 Canvas.SetTop(marker, pointFinal.Points[1] - markerSize);
                 canvas.Children.Add(marker);
-                lastKoorlb.Content = pointFinal.Points[0] + " - " + pointFinal.Points[1] + " - " + pointFinal.Points[2];
+                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal.Points[1], 4) + " - " + Math.Round(pointFinal.Points[2], 4);
             }
             else
             {
-                newt = new NewtonL(Newtonpoints, new double[] { ((NewtonPoint)Newtonpoints[0]).Points[0], ((NewtonPoint)Newtonpoints[0]).Points[1] }, 2);
+                newt = new NewtonL(Newtonpoints, new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0]).Points[0], ((NewtonPoint)Newtonpoints[0]).Points[1] }), 2);
                 NewtonPoint pointFinal = newt.MinSearch();
                 Ellipse marker = new Ellipse()
                 {
@@ -358,7 +358,7 @@ namespace NewtonLTester
                 Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
                 Canvas.SetTop(marker, ScaleY - pointFinal.Points[1] - markerSize);
                 canvas.Children.Add(marker);
-                lastKoorlb.Content = pointFinal.Points[0] + " - " + pointFinal.Points[1];
+                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal.Points[1], 4);
             }
         }
     }

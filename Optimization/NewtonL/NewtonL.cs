@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Windows;
 
 namespace Optimization
 {
     /// <summary>
     /// Az algoritmus csak 2 és 3 dimenziós környezetben volt tesztelve és ott is még csak lineáris emelkedőn!
-    /// Feladatok (fejlesztés)
+    /// Feladatok: (fejlesztés)
     /// Egyértelműbb megszakitás!
     /// Kivétel kezelések!
     /// Olcsóbb logikai menet! (Optimalizálás)
@@ -25,19 +26,15 @@ namespace Optimization
         /// <summary>
         /// Az épp aktuális pozició (koordinátája)
         /// </summary>
-        public NewtonPoint StartPosition { get; set; }
+        private NewtonPoint ActualPosition { get; set; }
         /// <summary>
-        /// Az előző koordináta
+        /// Az utovonal pontjai
         /// </summary>
-        public NewtonPoint HistoryPosition { get; set; }
+        public ArrayList HistoryPositions { get; set; }
         /// <summary>
         /// A lépés egység mérete
         /// </summary>
         public double Unit { get; set; }
-        /// <summary>
-        /// Az értékekhez tartozó egység ugrás
-        /// </summary>
-        public double ValueUnit { get; set; }
         /// <summary>
         /// A maximális méret amin nem mehet túl a keresés
         /// (A "map" szélei)
@@ -51,30 +48,25 @@ namespace Optimization
         /// Az indulási irány eldöntéséhez szükséges
         /// Itt tárolodnak a jobb és bal oldali pont adatai
         /// </summary>
-        public ArrayList Valid { get; set; }
+        private ArrayList Valid { get; set; }
         /// <summary>
         /// Keresés konstruktora ami betölti az datokat
         /// !!!Azt feltételazi a kód hogy a megadott pontok listálya azonos egység távolságra vannak egymástól!!!
         /// </summary>
         /// <param name="parameters">Azon pontok listája amiböl a "map" (térkép) áll</param>
         /// <param name="startP">Indulási pont kordinátáji (x,y,z,...)</param>
-        /// <param name="d">Dimenziók száma</param>
-        public NewtonL(ArrayList parameters, double[] startP, int d)
+        /// <param name="D">Dimenziók száma</param>
+        public NewtonL(ArrayList parameters, NewtonPoint startP, int D)
         {
             breaking = true;
-            Dimension = d;
+            Dimension = D;
             Positions = parameters;
-            if (d > 2)
-                MaxSize = Math.Pow(Positions.Count, 1.0 / d);
-            else
-                MaxSize = ((NewtonPoint)Positions[Positions.Count - 1]).Points[0];
-            StartPosition = new NewtonPoint(startP);
+            ActualPosition = new NewtonPoint(startP);
+            MaxSize = ((NewtonPoint)Positions[Positions.Count - 1]).Points[0];
             ///Az első (az 1 indexű) elem X kordinátájának a 0-tól vett távolsága az egység ugrás
             ///Ha az X 0 akkor az Y értékét veszi fel
             ///Feltételezük hogy a map pontjai egyforma távolságra vannak egymástól
             Unit = ((NewtonPoint)Positions[1]).Points[0] == 0 ? ((NewtonPoint)Positions[1]).Points[1] : ((NewtonPoint)Positions[1]).Points[0];
-            ValueUnit = ((NewtonPoint)Positions[1]).Points[d -1 ] == 0 ? ((NewtonPoint)Positions[1]).Points[1] : ((NewtonPoint)Positions[1]).Points[0];
-
         }
         /// <summary>
         /// Maga a keresési folyamat
@@ -84,17 +76,19 @@ namespace Optimization
         {
             double FullUnit = Unit;
             Valid = new ArrayList();
+            HistoryPositions = new ArrayList();
             //egyforma koordináták száma
             int EqGen = 0;
             while (breaking)
             {
                 for (int i = 0; i < Dimension - 1; i++)
                 {
+                    HistoryPositions.Add(ActualPosition);
                     Valid.Clear();
                     //FullUnit = (((MaxSize / Unit) - (StartPosition.Points[i] / Unit)) / 5) * Unit;
                     //Mintavételi pontok létrehozása és az aktuális pont értékének a felvétele
-                    NewtonPoint M1 = new NewtonPoint(StartPosition);
-                    NewtonPoint M2 = new NewtonPoint(StartPosition);
+                    NewtonPoint M1 = new NewtonPoint(ActualPosition);
+                    NewtonPoint M2 = new NewtonPoint(ActualPosition);
                     //Mintavételi pontok elmozditása az adott síkban
                     M1.Points[i] = M1.Points[i] - FullUnit;
                     M2.Points[i] = M2.Points[i] + FullUnit;
@@ -102,20 +96,12 @@ namespace Optimization
                     //bal oldali pont keresése
                     if (M1.Points[i] >= 0 && !(M1.Points[i] > MaxSize || M1.Points[i] < 0))
                     {
-                        var Search = from NewtonPoint points in Positions where points.Equals(M1, Dimension - 1) select points;
-                        foreach (var item in Search)
-                            Valid.Add(item);
-                        //NewtonPoint M1Val = PointSearch(M1);
-                        //if (M1Val != null) Valid.Add(M1Val);
+                        Valid.Add((from NewtonPoint points in Positions where points.Equals(M1, Dimension - 1) select points).First());
                     }
                     //jobb oldali pont keresése
                     if (M2.Points[i] >= 0 && !(M2.Points[i] > MaxSize || M2.Points[i] < 0))
                     {
-                        var Search = from NewtonPoint points in Positions where points.Equals(M2, Dimension - 1) select points;
-                        foreach (var item in Search)
-                            Valid.Add(item);
-                        //NewtonPoint M2Val = PointSearch(M2);
-                        //if (M2Val != null) Valid.Add(M2Val);
+                        Valid.Add((from NewtonPoint points in Positions where points.Equals(M2, Dimension - 1) select points).First());
                     }
 
                     //jobb és bal oldali értékek összehasonlítása
@@ -123,28 +109,32 @@ namespace Optimization
                     {
                         //A Dimension - 1 az az index hely amin az érték található
                         //2D = 2-1=1 Points[1]=Y,  3D = 3-1=2 Points[2]=Z
-                        if (((NewtonPoint)Valid[0]).Points[Dimension - 1] < ((NewtonPoint)Valid[1]).Points[Dimension - 1] && ((NewtonPoint)Valid[0]).Points[Dimension - 1] < StartPosition.Points[Dimension - 1])
-                            StartPosition = (NewtonPoint)Valid[0];
+                        if (((NewtonPoint)Valid[0]).Points[Dimension - 1] < ((NewtonPoint)Valid[1]).Points[Dimension - 1] 
+                            && ((NewtonPoint)Valid[0]).Points[Dimension - 1] < ActualPosition.Points[Dimension - 1])
+                            ActualPosition = (NewtonPoint)Valid[0];
                         else
-                            if (((NewtonPoint)Valid[1]).Points[Dimension - 1] < StartPosition.Points[Dimension - 1])
-                            StartPosition = (NewtonPoint)Valid[1];
+                            if (((NewtonPoint)Valid[1]).Points[Dimension - 1] < ActualPosition.Points[Dimension - 1])
+                            ActualPosition = (NewtonPoint)Valid[1];
                     }
                     else
                     {
-                        if (Valid.Count != 0 && ((NewtonPoint)Valid[0]).Points[Dimension - 1] < StartPosition.Points[Dimension - 1])
-                            StartPosition = (NewtonPoint)Valid[0];
+                        if (Valid.Count != 0 && ((NewtonPoint)Valid[0]).Points[Dimension - 1] < ActualPosition.Points[Dimension - 1])
+                            ActualPosition = (NewtonPoint)Valid[0];
                     }
                 }
-                //ha az előző 3 eredmény ugyan az akkor az eredmény véglegesnek tekintet
-                if (HistoryPosition != null && HistoryPosition.Equals(StartPosition)) EqGen++;
-                HistoryPosition = new NewtonPoint(StartPosition);
-                if (EqGen > 3) break;
+                //ha az utolsó 3 eredmény ugyan az akkor az eredmény véglegesnek tekintett
+                for (int i = 0; i < 3 && HistoryPositions.Count >= 3; i++)
+                {
+                    if (HistoryPositions[HistoryPositions.Count - 1] != null && HistoryPositions[HistoryPositions.Count - (i + 1)].Equals(ActualPosition)) EqGen++;
+                    if (EqGen == 3) { breaking = false; break; }
+                }
+                EqGen = 0;
             }
-            return StartPosition;
+            return ActualPosition;
         }
     }
     /// <summary>
-    /// point osztály a kordináták használatára
+    /// NewtonPoint osztály a koordináták és az összehasonlitás használatára
     /// </summary>
     public class NewtonPoint : IEquatable<NewtonPoint>
     {
@@ -166,7 +156,7 @@ namespace Optimization
         }
         /// <summary>
         /// Egyenlőség ellenörzése
-        /// 4 tizedesjegy pontosítás
+        /// 4 tizedesjegy pontosság
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
@@ -180,7 +170,8 @@ namespace Optimization
         }
         /// <summary>
         /// Egyenlőség elenörzése szelektálva
-        /// Általábban a dimenzió számát kell megadni
+        /// Általábban a dimenziók számát kell megadni
+        /// 4 tizedesjegy pontosság
         /// </summary>
         /// <param name="point"></param>
         /// <param name="Count">elsőtöl számitot hány elemet akarunk összehasonlítani</param>
