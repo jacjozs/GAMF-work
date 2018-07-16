@@ -229,7 +229,7 @@ namespace NewtonLTester
             {
                 foreach (NewtonPoint item in Newtonpoints)
                 {
-                    byte red = (byte)Math.Round((item.Points[2] - 0) / PointCount2 * 255);
+                    byte red = (byte)Math.Round(item.Points[2] / PointCount2 * 255);
                     Rectangle rect = new Rectangle()
                     {
                         Stroke = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
@@ -258,7 +258,7 @@ namespace NewtonLTester
         ArrayList Default3D()
         {
             ArrayList points = new ArrayList();
-            PointCount2 = int.Parse(Math.Sqrt(PointCount).ToString());
+            PointCount2 = int.Parse((Math.Sqrt(PointCount)).ToString());
             double step = ScaleX / (Math.Sqrt(PointCount));
             for (int i = 0; i < PointCount2; ++i)
             {
@@ -266,7 +266,7 @@ namespace NewtonLTester
                 for (int j = 0; j < PointCount2; j++)
                 {
                     double y = -1 + j * step;
-                    points.Add(new NewtonPoint(new double[] { ScaleX * (x + 1), ScaleX * (y + 1), Math.Sqrt(j * 10) }));
+                    points.Add(new NewtonPoint(new double[] { ScaleX * x, ScaleX * y, x + y }));
                 }
             }
             return points;
@@ -330,35 +330,57 @@ namespace NewtonLTester
             NewtonL newt;
             if (Dimension)
             {
-                newt = new NewtonL(Newtonpoints, new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[0], ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[1], ((NewtonPoint)Newtonpoints[PointCount - 1]).Points[2] }), 3);
-                NewtonPoint pointFinal = newt.MinSearch();
+                NewtonPoint startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[2] });
                 Ellipse marker = new Ellipse()
+                {
+                    Stroke = Brushes.DarkBlue,
+                    Fill = Brushes.DarkBlue,
+                    Height = markerSize * 2,
+                    Width = markerSize * 2
+                };
+                Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
+                Canvas.SetTop(marker, startPoint.Points[1] - markerSize);
+                canvas.Children.Add(marker);
+                newt = new NewtonL(Newtonpoints, startPoint, 3);
+                NewtonPoint pointFinal = newt.MinSearch();
+                Ellipse marker1 = new Ellipse()
                 {
                     Stroke = Brushes.Green,
                     Fill = Brushes.Green,
                     Height = markerSize * 2,
                     Width = markerSize * 2
                 };
-                Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
-                Canvas.SetTop(marker, pointFinal.Points[1] - markerSize);
-                canvas.Children.Add(marker);
-                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal.Points[1], 4) + " - " + Math.Round(pointFinal.Points[2], 4);
+                Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
+                Canvas.SetTop(marker1, pointFinal[1] - markerSize);
+                canvas.Children.Add(marker1);
+                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal[1], 4) + " - " + Math.Round(pointFinal[2], 4);
             }
             else
             {
-                newt = new NewtonL(Newtonpoints, new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0]).Points[0], ((NewtonPoint)Newtonpoints[0]).Points[1] }), 2);
-                NewtonPoint pointFinal = newt.MinSearch();
+                NewtonPoint startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0])[0], ((NewtonPoint)Newtonpoints[0])[1] });
                 Ellipse marker = new Ellipse()
+                {
+                    Stroke = Brushes.DarkBlue,
+                    Fill = Brushes.DarkBlue,
+                    Height = markerSize * 2,
+                    Width = markerSize * 2
+                };
+                Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
+                Canvas.SetTop(marker, ScaleY - startPoint.Points[1] - markerSize);
+                canvas.Children.Add(marker);
+                newt = new NewtonL(Newtonpoints, startPoint, 2);
+                NewtonPoint pointFinal = newt.MinSearch();
+                Ellipse marker1 = new Ellipse()
                 {
                     Stroke = Brushes.Green,
                     Fill = Brushes.Green,
                     Height = markerSize * 2,
                     Width = markerSize * 2
                 };
-                Canvas.SetLeft(marker, pointFinal.Points[0] - markerSize);
-                Canvas.SetTop(marker, ScaleY - pointFinal.Points[1] - markerSize);
-                canvas.Children.Add(marker);
-                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal.Points[1], 4);
+                Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
+                Canvas.SetTop(marker1, ScaleY - pointFinal[1] - markerSize);
+                canvas.Children.Add(marker1);
+                lastKoorlb.Content = Math.Round(pointFinal[0], 4) + " - " + Math.Round(pointFinal[1], 4);
             }
         }
     }
