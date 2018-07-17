@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using Optimization;
 
@@ -16,16 +17,23 @@ namespace NewtonLTester
     /// </summary>
     public enum CurveNames
     {
-        Default,
+        Default2D,
         Default3D,
+        Default4D,
+        Default5D
+    }
+    public enum Dimensions
+    {
+        Dimension_1,
+        Dimension_2,
+        Dimension_3,
+        Dimension_4,
+        Dimension_5
     }
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// False = 2D, True = 3D
-        /// </summary>
-        private bool Dimension;
         private int PointCount2;
+        private NewtonL newt;
         private const double markerSize = 5;
         #region PointCount
         /// <summary>
@@ -57,6 +65,30 @@ namespace NewtonLTester
             return (cnt > 1 ? true : false);
         }
         #endregion PointCount
+        #region Dimension
+        public static readonly DependencyProperty DimensionProperty
+            = DependencyProperty.Register("Dimension", typeof(Dimensions), typeof(MainWindow)
+                , new FrameworkPropertyMetadata(Dimensions.Dimension_2
+                    , FrameworkPropertyMetadataOptions.AffectsMeasure
+                      | FrameworkPropertyMetadataOptions.AffectsRender)
+                , validateDimension);
+        public Dimensions Dimension
+        {
+            get { return (Dimensions)GetValue(DimensionProperty); }
+            set { SetValue(DimensionProperty, value); }
+        }
+        private static bool validateDimension(object value)
+        {
+            Dimensions dimension = (Dimensions)value;
+            foreach (Dimensions item in Enum.GetValues(typeof(Dimensions)))
+            {
+                if (item == dimension)
+                    return true;
+            }
+            return false;
+        }
+
+        #endregion
         #region ScaleX
         /// <summary>
         /// Identifies the ScaleX dependency property.
@@ -123,7 +155,7 @@ namespace NewtonLTester
         /// </summary>
         public static readonly DependencyProperty CurveProperty
             = DependencyProperty.Register("Curve", typeof(CurveNames), typeof(MainWindow)
-                , new FrameworkPropertyMetadata(CurveNames.Default
+                , new FrameworkPropertyMetadata(CurveNames.Default2D
                     , FrameworkPropertyMetadataOptions.AffectsMeasure
                         | FrameworkPropertyMetadataOptions.AffectsRender)
                 , validateCurve);
@@ -168,13 +200,43 @@ namespace NewtonLTester
 		/// <param name="drawingContext">The drawing instructions for a specific element. This context is provided to the layout system.</param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (Dimension && PointCount != 0)
+            Modify(Dimension);
+            switch (Dimension)
             {
-                DrawCurve(Default3D);
-            }
-            else
-            {
-                DrawCurve(Default);
+                case Dimensions.Dimension_1:
+                    break;
+                case Dimensions.Dimension_2:
+                    switch (Curve)
+                    {
+                        case CurveNames.Default2D:
+                            DrawCurve(Default2D);
+                            break;
+                    }
+                    break;
+                case Dimensions.Dimension_3:
+                    switch (Curve)
+                    {
+                        case CurveNames.Default3D:
+                            DrawCurve(Default3D);
+                            break;
+                    }
+                    break;
+                case Dimensions.Dimension_4:
+                    switch (Curve)
+                    {
+                        case CurveNames.Default4D:
+                            DrawCurve(Default4D);
+                            break;
+                    }
+                    break;
+                case Dimensions.Dimension_5:
+                    switch (Curve)
+                    {
+                        case CurveNames.Default5D:
+                            DrawCurve(Default5D);
+                            break;
+                    }
+                    break;
             }
             base.OnRender(drawingContext);
         }
@@ -193,58 +255,66 @@ namespace NewtonLTester
             Newtonpoints = curve();
             if (Newtonpoints.Count < 2)
                 return;
-            if (!Dimension)
+            switch (Dimension)
             {
-                foreach (NewtonPoint item in Newtonpoints)
-                {
-                    Rectangle rect = new Rectangle()
+                case Dimensions.Dimension_1:
+                    break;
+                case Dimensions.Dimension_2:
+                    foreach (NewtonPoint item in Newtonpoints)
                     {
-                        Stroke = Brushes.Black,
-                        Fill = Brushes.Black,
-                        Height = markerSize,
-                        Width = markerSize
-                    };
-                    Canvas.SetLeft(rect, item.Points[0] - markerSize / 2);
-                    Canvas.SetTop(rect, ScaleY - item.Points[1] - markerSize / 2);
-                    canvas.Children.Add(rect);
-                }
-                Point[] cp1, cp2;
-                points = new Point[Newtonpoints.Count];
-                for (int i = 0; i < points.Length; i++)
-                {
-                    points[i] = new Point(((NewtonPoint)Newtonpoints[i]).Points[0], ScaleY - ((NewtonPoint)Newtonpoints[i]).Points[1]);
-                }
-                BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
-                PathSegmentCollection lines = new PathSegmentCollection();
-                for (int i = 0; i < cp1.Length; ++i)
-                {
-                    lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
-                }
-                PathFigure f = new PathFigure(points[0], lines, false);
-                PathGeometry g = new PathGeometry(new PathFigure[] { f });
-                Path path = new Path() { Stroke = Brushes.Red, StrokeThickness = 1, Data = g };
-                canvas.Children.Add(path);
-            }
-            else
-            {
-                foreach (NewtonPoint item in Newtonpoints)
-                {
-                    byte red = (byte)Math.Round(item.Points[2] / PointCount2 * 255);
-                    Rectangle rect = new Rectangle()
+                        Rectangle rect = new Rectangle()
+                        {
+                            Stroke = Brushes.Black,
+                            Fill = Brushes.Black,
+                            Height = markerSize,
+                            Width = markerSize
+                        };
+                        Canvas.SetLeft(rect, item.Points[0] - markerSize / 2);
+                        Canvas.SetTop(rect, ScaleY - item.Points[1] - markerSize / 2);
+                        canvas.Children.Add(rect);
+                    }
+                    Point[] cp1, cp2;
+                    points = new Point[Newtonpoints.Count];
+                    for (int i = 0; i < points.Length; i++)
                     {
-                        Stroke = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
-                        Fill = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
-                        Height = markerSize,
-                        Width = markerSize
-                    };
-                    Canvas.SetLeft(rect, item.Points[0] - markerSize / 2);
-                    Canvas.SetTop(rect, item.Points[1] - markerSize / 2);
-                    canvas.Children.Add(rect);
-                }
+                        points[i] = new Point(((NewtonPoint)Newtonpoints[i]).Points[0], ScaleY - ((NewtonPoint)Newtonpoints[i]).Points[1]);
+                    }
+                    BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
+                    PathSegmentCollection lines = new PathSegmentCollection();
+                    for (int i = 0; i < cp1.Length; ++i)
+                    {
+                        lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
+                    }
+                    PathFigure f = new PathFigure(points[0], lines, false);
+                    PathGeometry g = new PathGeometry(new PathFigure[] { f });
+                    Path path = new Path() { Stroke = Brushes.Red, StrokeThickness = 1, Data = g };
+                    canvas.Children.Add(path);
+                    break;
+                case Dimensions.Dimension_3:
+                    double min = Math.Abs(((NewtonPoint)Newtonpoints[0])[0]);
+                    foreach (NewtonPoint item in Newtonpoints)
+                    {
+                        byte red = (byte)Math.Round(item.Points[2] / PointCount2 * 255);
+                        Rectangle rect = new Rectangle()
+                        {
+                            Stroke = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
+                            Fill = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
+                            Height = markerSize,
+                            Width = markerSize
+                        };
+                        Canvas.SetLeft(rect, (item.Points[0] - markerSize / 2) + min);
+                        Canvas.SetTop(rect, (item.Points[1] - markerSize / 2) + min);
+                        canvas.Children.Add(rect);
+                    }
+                    break;
+                case Dimensions.Dimension_4:
+                    break;
+                case Dimensions.Dimension_5:
+                    break;
             }
         }
         #region Curves
-        ArrayList Default()
+        ArrayList Default2D()
         {
             ArrayList points = new ArrayList();
             double step = 2.0 / (PointCount - 1);
@@ -266,6 +336,38 @@ namespace NewtonLTester
                 for (int j = 0; j < PointCount2; j++)
                 {
                     double y = -1 + j * step;
+                    points.Add(new NewtonPoint(new double[] { ScaleX * x, ScaleX * y, ScaleY * (1 + 25 * x * y * x * y) }));
+                }
+            }
+            return points;
+        }
+        ArrayList Default4D()
+        {
+            ArrayList points = new ArrayList();
+            PointCount2 = int.Parse((Math.Sqrt(PointCount)).ToString());
+            double step = ScaleX / (Math.Sqrt(PointCount));
+            for (int i = 0; i < PointCount2; ++i)
+            {
+                double x = -1 + i * step;
+                for (int j = 0; j < PointCount2; j++)
+                {
+                    double y = -1 + j * step;
+                    points.Add(new NewtonPoint(new double[] { ScaleX * x, ScaleX * y, x + y }));
+                }
+            }
+            return points;
+        }
+        ArrayList Default5D()
+        {
+            ArrayList points = new ArrayList();
+            PointCount2 = int.Parse((Math.Sqrt(PointCount)).ToString());
+            double step = ScaleX / (Math.Sqrt(PointCount));
+            for (int i = 0; i < PointCount2; ++i)
+            {
+                double x = -1 + i * step;
+                for (int j = 0; j < PointCount2; j++)
+                {
+                    double y = -1 + j * step;
                     points.Add(new NewtonPoint(new double[] { ScaleX * x, ScaleX * y, x + y }));
                 }
             }
@@ -273,114 +375,132 @@ namespace NewtonLTester
         }
         #endregion Curves
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Modify(Dimensions Enum)
         {
-            if (((Button)sender).Uid == "2")
+            switch (Enum)
             {
-                Dimension = true;
-                SwitchBt.Uid = "3";
-                SwitchBt.Content = "3D";
-                sldrPointCount.IsSnapToTickEnabled = true;
-                if (sldrPointCount.Value < 9)
-                    sldrPointCount.Value = 9;
-                else
+                case Dimensions.Dimension_1:
+                    break;
+                case Dimensions.Dimension_2:
+                    sldrPointCount.Minimum = 2;
+                    sldrPointCount.Maximum = 100;
+                    sldrPointCount.IsSnapToTickEnabled = false;
+                    txtYScale.Visibility = Visibility.Visible;
+                    YSizeLb.Visibility = Visibility.Visible;
+                    XSizeLb.Content = "X tartomány";
+                    firstKoorlb.Content = "";
+                    lastKoorlb.Content = "";
+                    break;
+                case Dimensions.Dimension_3:
+                    sldrPointCount.IsSnapToTickEnabled = true;
+                    if (sldrPointCount.Value < 9)
+                        sldrPointCount.Value = 9;
+                    else
                     if (sldrPointCount.Value < 16)
-                    sldrPointCount.Value = 16;
-                else
+                        sldrPointCount.Value = 16;
+                    else
                     if (sldrPointCount.Value < 25)
-                    sldrPointCount.Value = 25;
-                else
+                        sldrPointCount.Value = 25;
+                    else
                     if (sldrPointCount.Value < 36)
-                    sldrPointCount.Value = 36;
-                else
+                        sldrPointCount.Value = 36;
+                    else
                     if (sldrPointCount.Value < 49)
-                    sldrPointCount.Value = 49;
-                else
+                        sldrPointCount.Value = 49;
+                    else
                     if (sldrPointCount.Value < 64)
-                    sldrPointCount.Value = 64;
-                else
+                        sldrPointCount.Value = 64;
+                    else
                     if (sldrPointCount.Value < 81)
-                    sldrPointCount.Value = 81;
-                else
+                        sldrPointCount.Value = 81;
+                    else
                     if (sldrPointCount.Value < 100)
-                    sldrPointCount.Value = 100;
-                sldrPointCount.Minimum = 9;
-                sldrPointCount.Maximum = 400;
-                sldrPointCount.Ticks = new DoubleCollection() { 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81.0, 100.0, 121.0, 144.0, 169.0, 196.0, 225.0, 256.0, 289.0, 324.0, 361.0, 400.0 };
-                txtYScale.Visibility = Visibility.Hidden;
-                YSizeLb.Visibility = Visibility.Hidden;
-                XSizeLb.Content = "X, Y tartomány";
-            }
-            else
-            {
-                Dimension = false;
-                SwitchBt.Uid = "2";
-                SwitchBt.Content = "2D";
-                sldrPointCount.Minimum = 2;
-                sldrPointCount.Maximum = 100;
-                sldrPointCount.IsSnapToTickEnabled = false;
-                txtYScale.Visibility = Visibility.Visible;
-                YSizeLb.Visibility = Visibility.Visible;
-                XSizeLb.Content = "X tartomány";
+                        sldrPointCount.Value = 100;
+                    sldrPointCount.Minimum = 9;
+                    sldrPointCount.Maximum = 900;
+                    sldrPointCount.Ticks = new DoubleCollection() { 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81.0, 100.0, 121.0, 144.0, 169.0, 196.0, 225.0, 256.0, 289.0, 324.0, 361.0, 400.0, 441.0, 484.0, 529.0, 576, 625.0, 676.0, 729.0, 784.0, 841.0, 900.0  };
+                    txtYScale.Visibility = Visibility.Hidden;
+                    YSizeLb.Visibility = Visibility.Hidden;
+                    XSizeLb.Content = "X, Y tartomány";
+                    firstKoorlb.Content = "";
+                    lastKoorlb.Content = "";
+                    break;
+                case Dimensions.Dimension_4:
+                    break;
+                case Dimensions.Dimension_5:
+                    break;
             }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            NewtonL newt;
-            if (Dimension)
+            NewtonPoint startPoint;
+            NewtonPoint pointFinal;
+            Ellipse marker;
+            Ellipse marker1;
+            switch (Dimension)
             {
-                NewtonPoint startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[2] });
-                Ellipse marker = new Ellipse()
-                {
-                    Stroke = Brushes.DarkBlue,
-                    Fill = Brushes.DarkBlue,
-                    Height = markerSize * 2,
-                    Width = markerSize * 2
-                };
-                Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
-                Canvas.SetTop(marker, startPoint.Points[1] - markerSize);
-                canvas.Children.Add(marker);
-                newt = new NewtonL(Newtonpoints, startPoint, 3);
-                NewtonPoint pointFinal = newt.MinSearch();
-                Ellipse marker1 = new Ellipse()
-                {
-                    Stroke = Brushes.Green,
-                    Fill = Brushes.Green,
-                    Height = markerSize * 2,
-                    Width = markerSize * 2
-                };
-                Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
-                Canvas.SetTop(marker1, pointFinal[1] - markerSize);
-                canvas.Children.Add(marker1);
-                lastKoorlb.Content = Math.Round(pointFinal.Points[0], 4) + " - " + Math.Round(pointFinal[1], 4) + " - " + Math.Round(pointFinal[2], 4);
-            }
-            else
-            {
-                NewtonPoint startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0])[0], ((NewtonPoint)Newtonpoints[0])[1] });
-                Ellipse marker = new Ellipse()
-                {
-                    Stroke = Brushes.DarkBlue,
-                    Fill = Brushes.DarkBlue,
-                    Height = markerSize * 2,
-                    Width = markerSize * 2
-                };
-                Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
-                Canvas.SetTop(marker, ScaleY - startPoint.Points[1] - markerSize);
-                canvas.Children.Add(marker);
-                newt = new NewtonL(Newtonpoints, startPoint, 2);
-                NewtonPoint pointFinal = newt.MinSearch();
-                Ellipse marker1 = new Ellipse()
-                {
-                    Stroke = Brushes.Green,
-                    Fill = Brushes.Green,
-                    Height = markerSize * 2,
-                    Width = markerSize * 2
-                };
-                Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
-                Canvas.SetTop(marker1, ScaleY - pointFinal[1] - markerSize);
-                canvas.Children.Add(marker1);
-                lastKoorlb.Content = Math.Round(pointFinal[0], 4) + " - " + Math.Round(pointFinal[1], 4);
+                case Dimensions.Dimension_1:
+                    break;
+                case Dimensions.Dimension_2:
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0])[0], ((NewtonPoint)Newtonpoints[0])[1] });
+                    marker = new Ellipse()
+                    {
+                        Stroke = Brushes.DarkBlue,
+                        Fill = Brushes.DarkBlue,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
+                    Canvas.SetTop(marker, ScaleY - startPoint.Points[1] - markerSize);
+                    canvas.Children.Add(marker);
+                    newt = new NewtonL(Newtonpoints, startPoint, 2);
+                    pointFinal = newt.MinSearch();
+                    marker1 = new Ellipse()
+                    {
+                        Stroke = Brushes.Green,
+                        Fill = Brushes.Green,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
+                    Canvas.SetTop(marker1, ScaleY - pointFinal[1] - markerSize);
+                    canvas.Children.Add(marker1);
+                    firstKoorlb.Content = "Kezdet: |" + Math.Round(startPoint[0], 4) + " | " + Math.Round(startPoint[1], 4) + " |";
+                    lastKoorlb.Content = "Vége: |" + Math.Round(pointFinal[0], 4) + " | " + Math.Round(pointFinal[1], 4) + " |";
+                    break;
+                case Dimensions.Dimension_3:
+                    double min = Math.Abs(((NewtonPoint)Newtonpoints[0])[0]);
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * PointCount2) - 1])[2] });
+                    marker = new Ellipse()
+                    {
+                        Stroke = Brushes.DarkBlue,
+                        Fill = Brushes.DarkBlue,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker, (startPoint.Points[0] - markerSize) + min);
+                    Canvas.SetTop(marker, (startPoint.Points[1] - markerSize) + min);
+                    canvas.Children.Add(marker);
+                    newt = new NewtonL(Newtonpoints, startPoint, 3);
+                    pointFinal = newt.MinSearch();
+                    marker1 = new Ellipse()
+                    {
+                        Stroke = Brushes.Green,
+                        Fill = Brushes.Green,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker1, (pointFinal[0] - markerSize) + min);
+                    Canvas.SetTop(marker1, (pointFinal[1] - markerSize) + min);
+                    canvas.Children.Add(marker1);
+                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " + Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " |";
+                    lastKoorlb.Content = "Vége: | " + Math.Round(pointFinal.Points[0], 4) + " | " + Math.Round(pointFinal[1], 4) + " | " + Math.Round(pointFinal[2], 4) + " |";
+                    break;
+                case Dimensions.Dimension_4:
+                    break;
+                case Dimensions.Dimension_5:
+                    break;
             }
         }
     }
