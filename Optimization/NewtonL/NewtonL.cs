@@ -61,6 +61,11 @@ namespace Optimization
         /// </summary>
         private List<double> Valid { get; set; }
         /// <summary>
+        /// 10 tizedes pontosági konstans
+        /// Az egyenlöség ellenörzéséhez szükséges
+        /// </summary>
+        private const double _10 = 0.0000000001;
+        /// <summary>
         /// Keresés konstruktora ami betölti az datokat
         /// !!!Azt feltételazi a kód hogy a megadott pontok listálya azonos egység távolságra vannak egymástól!!!
         /// </summary>
@@ -109,15 +114,23 @@ namespace Optimization
         public NewtonPoint MinSearch()
         {
             double FullUnit = Unit;
+            //Oldalankénti lépések száma
+            double M1FullStep = 1.0;
+            double M2FullStep = 1.0;
             //jobb vagy ball oldali keresés volt e
             //ez általábban csak akkor szükséges ha csak az egyik oldalon volt keresés
             bool left, right;
             Valid = new List<double>();
             //ugrás méretének a redukálásának a mérete
-            int Down = 0;
+            int M1Reduct = 0, M2Reduct = 0;
+            //Redukció mértékének a szorzata
+            int Down = 1;
             HistoryPositions = new ArrayList();
             //egyforma koordináták száma
             int EqGen = 0;
+
+            NewtonPoint M1;
+            NewtonPoint M2;
             while (breaking)
             {
                 for (int i = 0; i < ((Dimension == 1) ? 1 : Dimension - 1); i++)
@@ -126,20 +139,20 @@ namespace Optimization
                     Valid.Clear();
                     left = false; right = false;
                     //Mintavételi pontok létrehozása és az aktuális pont értékének a felvétele
-                    NewtonPoint M1 = new NewtonPoint(ActualPosition);
-                    NewtonPoint M2 = new NewtonPoint(ActualPosition);
+                    M1 = new NewtonPoint(ActualPosition);
+                    M2 = new NewtonPoint(ActualPosition);
                     //Bal oldali maximális lépés száma
-                    FullUnit = M1[i] / Unit - (Down / 2);
-                    if (FullUnit > 5)
-                        FullUnit = (int)(FullUnit / 5) * Unit;
+                    M1FullStep = M1[i] / Unit - M1Reduct;
+                    if (M1FullStep >= 10)
+                        FullUnit = (int)(M1FullStep / 5) * Unit; 
                     else
                         FullUnit = Unit;
                     //Mintavételi pontok elmozditása az adott síkban
                     M1[i] = M1[i] - FullUnit;
                     //Jobb oldali maximális lépés száma
-                    FullUnit = (MaxStep - (M2[i] / Unit) - 1) - (Down / 2);
-                    if (FullUnit > 5)
-                        FullUnit = (int)(FullUnit / 5) * Unit;
+                    M2FullStep = (MaxStep - (M2[i] / Unit) - 1) - M2Reduct;
+                    if (M2FullStep >= 10)
+                        FullUnit = (int)(M2FullStep / 5) * Unit;
                     else
                         FullUnit = Unit;
                     //Mintavételi pontok elmozditása az adott síkban
@@ -164,19 +177,33 @@ namespace Optimization
                         {
                             ActualFitness = Valid[0];
                             ActualPosition = M1;
-                            Down++;
+                            //túlugrás ellenörzése
+                            if (M1FullStep < M2FullStep)
+                            {
+                                M2FullStep = M2FullStep / M1FullStep;
+                            }
                         }
                         else if(Valid[0] > Valid[1] && Valid[1] < ActualFitness)
                         {
                             ActualFitness = Valid[1];
                             ActualPosition = M2;
-                            Down++;
+                            //túlugrás ellenörzése
+                            if (M1FullStep > M2FullStep)
+                            {
+                                M1FullStep = M1FullStep / M2FullStep;
+                            }
                         }
                     }
-                    else if(Valid.Count == 1 && Valid[0] < ActualFitness)
+                    else if (Valid.Count == 1 && Valid[0] < ActualFitness)
                     {
                         ActualFitness = Valid[0];
                         ActualPosition = left ? M1 : (right ? M2 : null);
+                    }
+                    //Ha "gödörben" van és két megegyező pont közt ugrál akkor lép ez életbe
+                    if (Valid.Count > 1 && (Valid[0] - Valid[1]) > _10 && M1FullStep > 1 && M2FullStep > 1)
+                    {
+                        M1Reduct += (int) M1FullStep * Down;
+                        M2Reduct += (int)M2FullStep * Down;
                         Down++;
                     }
                 }
@@ -186,7 +213,7 @@ namespace Optimization
                 //ha az utolsó 3 eredmény ugyan az akkor az eredmény véglegesnek tekintett
                 for (int i = 0; i < 5 && HistoryPositions.Count >= 5; i++)
                 {
-                    if (HistoryPositions[HistoryPositions.Count - 1] != null && HistoryPositions[HistoryPositions.Count - (i + 1)].Equals(ActualPosition)) EqGen++;
+                    if (HistoryPositions[HistoryPositions.Count - (i + 1)].Equals(ActualPosition)) EqGen++;
                     if (EqGen == 5) { breaking = false; break; }
                 }
                 EqGen = 0;
@@ -246,8 +273,7 @@ namespace Optimization
             if(other == null) return false;
             for (int i = 0; i < other.Points.Count; i++)
             {
-                double size = Math.Abs(this.Points[i] - other.Points[i]);
-                if (size > _10) return false;
+                if (Math.Abs(this.Points[i] - other.Points[i]) > _10) return false;
             }
             return true;
         }
