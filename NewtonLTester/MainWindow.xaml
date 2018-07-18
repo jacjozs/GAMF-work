@@ -26,14 +26,14 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="300*"/>
-                <ColumnDefinition Width="317*"/>
+                <ColumnDefinition Width="369"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <Label Target="{Binding ElementName=cbxCurve}" Grid.Row="3" VerticalContentAlignment="Center">Függvény</Label>
             <ComboBox Name="cbxCurve" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5"
 					  ItemsSource="{Binding Source={StaticResource curveNames}}"
-					  SelectedItem="{Binding ElementName=wndMain, Path=Curve}" Width="28"
+					  SelectedItem="{Binding ElementName=wndMain, Path=Curve}" Width="100"
 			/>
 
             <Label Grid.Row="0" Target="{Binding ElementName=sldrPointCount}" VerticalContentAlignment="Center">Pontok mennyisége</Label>
@@ -64,14 +64,48 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
-            <Label Target="{Binding ElementName=cbxDimens}" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Center" Grid.Column="1" Width="63">Dimenzió:</Label>
-            <ComboBox Name="cbxDimens" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5"
+
+            <Label Name="ZSizeLb" Grid.Row="1" Grid.Column="1" Margin="30 0 0 0" Target="{Binding ElementName=txtZScale}" VerticalContentAlignment="Center">Z tartomány</Label>
+            <TextBox Name="txtZScale" Grid.Row="1" Grid.Column="1" Margin="130 0 0 0" HorizontalAlignment="Left" VerticalContentAlignment="Center" Width="30">
+                <TextBox.Text>
+                    <Binding ElementName="wndMain" Path="ScaleZ" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ScaleRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Label Name="WSizeLb" Grid.Row="2" Grid.Column="1" Margin="30 0 0 0" Target="{Binding ElementName=txtWsScale}" VerticalContentAlignment="Center">W tartomány</Label>
+            <TextBox Name="txtWScale" Grid.Row="2" Grid.Column="1" Margin="130 0 0 0" HorizontalAlignment="Left" VerticalContentAlignment="Center" Width="30">
+                <TextBox.Text>
+                    <Binding ElementName="wndMain" Path="ScaleW" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ScaleRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Label Name="NSizeLb" Grid.Row="2" Grid.Column="1" Margin="185,0,30,0" Target="{Binding ElementName=txtNsScale}" VerticalContentAlignment="Center">N tartomány</Label>
+            <TextBox Name="txtNScale" Grid.Row="2" Grid.Column="1" Margin="0 0 0 0" HorizontalAlignment="Right" VerticalContentAlignment="Center" Width="30">
+                <TextBox.Text>
+                    <Binding ElementName="wndMain" Path="ScaleN" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ScaleRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Label Target="{Binding ElementName=cbxDimens}" Grid.Row="3" HorizontalAlignment="Left" Margin="110 0 0 0" VerticalContentAlignment="Center" Grid.Column="1" Width="63">Dimenzió:</Label>
+            <ComboBox Name="cbxDimens" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="175,5,0,5"
                       ItemsSource="{Binding Source={StaticResource Dimensions}}"
-                      SelectedItem="{Binding ElementName=wndMain, Path=Dimension}" Width="28"
+                      SelectedItem="{Binding ElementName=wndMain, Path=Dimension}" Width="100"
             />
-            <Button Content="Keresés" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="2" Margin="0,0,50,0" VerticalAlignment="Center" Width="75" Click="Button_Click_1" Height="20"/>
-            <Label Name="firstKoorlb" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="59,7,0,0" Grid.Row="1" VerticalAlignment="Top" Width="214" Height="26"/>
-            <Label Name="lastKoorlb" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="59,7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="214" Height="26"/>
+            <Button Content="Keresés" Grid.Column="1" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Width="75" Click="Button_Click_1" Height="20"/>
+            <Label Name="firstKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="10"/>
+            <Label Name="lastKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="2" VerticalAlignment="Center" Height="25" Width="10"/>
 
         </Grid>
         <Border Name="Border" BorderBrush="LightBlue" BorderThickness="5" Margin="0,0,0,0">
