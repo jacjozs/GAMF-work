@@ -106,7 +106,8 @@ namespace Optimization
             for (int i = 0; i < ((D == 1) ? 1 : D - 1); i++)
             {
                 double StartElem = Positions[0].Item1[i];
-                Unit[i] = Math.Abs(Positions.Find(x => x.Item1[i] > StartElem).Item1[i] - StartElem);
+                var EndElem = Positions.FirstOrDefault(x => x.Item1[i] > StartElem);
+                Unit[i] = Math.Abs((EndElem == null)? 0 : EndElem.Item1[i] - StartElem);
             }
         }
         /// <summary>
@@ -120,6 +121,10 @@ namespace Optimization
             double[] M1FullStep = new double[Dimension - 1];
             double[] M2FullStep = new double[Dimension - 1];
             double[] HistoryFitness = new double[Dimension - 1];
+            for (int i = 0; i < ((Dimension == 1) ? 1 : Dimension - 1); i++)
+            {
+                HistoryFitness[i] = double.MaxValue;
+            }
             NewtonPoint M1;
             NewtonPoint M2;
             int Hole = 0;
@@ -187,42 +192,37 @@ namespace Optimization
                     //jobb és bal oldali értékek összehasonlítása
                     if (Valid.Count > 1)
                     {
-                        //Ha az aktuális síkban egy minimum pontban vanna akkor megnöveli a Hole értéket
-                        if (Valid[0] > ActualFitness && Valid[1] > ActualFitness)
-                        {
-                            Hole++;
-                            continue;
-                        }
                         if (Valid[0] < Valid[1] && Valid[0] < ActualFitness)
                         {
                             ActualFitness = Valid[0];
                             ActualPosition = M1;
-                            //túlugrás ellenörzése
-                            if (HistoryFitness[i] < ActualFitness)
-                            {
-                                M2FullStep[i] = M2FullStep[i] / M1FullStep[i];
-                            }
                         }
                         else if(Valid[0] > Valid[1] && Valid[1] < ActualFitness)
                         {
                             ActualFitness = Valid[1];
                             ActualPosition = M2;
-                            //túlugrás ellenörzése
-                            if (M1FullStep[i] > M2FullStep[i])
-                            {
-                                M1FullStep[i] = M1FullStep[i] / M2FullStep[i];
-                            }
                         }
                         //Ha "gödörben" van és két megegyező pont közt ugrál akkor lép ez életbe
                         else if (Math.Abs(Valid[0] - Valid[1]) < _7)
                         {
                             Down++;
                         }
+                        //Ha az aktuális síkban egy minimum pontban vanna akkor megnöveli a Hole értéket
+                        if (Valid[0] > ActualFitness && Valid[1] > ActualFitness && M1FullStep[i] < (MaxStep / 10) && M2FullStep[i] < (MaxStep / 10))
+                        {
+                            Hole++;
+                            continue;
+                        }
                     }
                     else if (Valid.Count == 1 && Valid[0] < ActualFitness)
                     {
                         ActualFitness = Valid[0];
                         ActualPosition = left ? M1 : (right ? M2 : null);
+                    }
+                    //Ha az elözö pozició kisebb volts
+                    if (HistoryFitness[i] < ActualFitness)
+                    {
+                        Down++;
                     }
                     HistoryFitness[i] = ActualFitness;
                     M1Reduct[i] = M1Reduct[i] * Down;
@@ -233,9 +233,11 @@ namespace Optimization
                     ActualPosition.Points.Add(ActualFitness);
                     return ActualPosition;
                 }
-                //felesleges elemek eltávolítása a listából
-                if (HistoryPositions.Count > 5)
-                    HistoryPositions.RemoveRange(0, HistoryPositions.Count - 5);
+
+                if (HistoryPositions.Find(x => x.Equals(ActualPosition)) != null)
+                {
+                    Down++;
+                }
                 //ha az utolsó 5 eredmény ugyan az akkor az eredmény véglegesnek tekintett
                 for (int i = 0; i < 5 && HistoryPositions.Count >= 5; i++)
                 {
