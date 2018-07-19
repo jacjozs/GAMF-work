@@ -76,11 +76,13 @@ namespace Optimization
             breaking = true;
             Dimension = D;
             Positions = new List<Tuple<NewtonPoint, double>>();
+            NewtonPoint Point;
             foreach (NewtonPoint item in parameters)
             {
                 Fitness = item[D - 1];
-                item.Points.RemoveAt(D - 1);
-                Positions.Add(Tuple.Create(item, Fitness));
+                Point = new NewtonPoint(item);
+                Point.Points.RemoveAt(D - 1);
+                Positions.Add(Tuple.Create(Point, Fitness));
             }
             switch (D)
             {
@@ -150,7 +152,8 @@ namespace Optimization
             {
                 for (int i = 0; i < ((Dimension == 1) ? 1 : Dimension - 1); i++)
                 {
-                    HistoryPositions.Add(ActualPosition);
+                    HistoryPositions.Add(new NewtonPoint(ActualPosition));
+                    HistoryPositions.Last().Points.Add(ActualFitness);
                     Valid.Clear();
                     left = false; right = false;
                     //Mintavételi pontok létrehozása és az aktuális pont értékének a felvétele
@@ -234,14 +237,14 @@ namespace Optimization
                     return ActualPosition;
                 }
 
-                if (HistoryPositions.Find(x => x.Equals(ActualPosition)) != null)
+                if (HistoryPositions.Find(x => x.Equals(ActualPosition, Dimension - 1, false)) != null)
                 {
                     Down++;
                 }
                 //ha az utolsó 5 eredmény ugyan az akkor az eredmény véglegesnek tekintett
                 for (int i = 0; i < 5 && HistoryPositions.Count >= 5; i++)
                 {
-                    if (HistoryPositions[HistoryPositions.Count - (i + 1)].Equals(ActualPosition)) EqGen++;
+                    if (HistoryPositions[HistoryPositions.Count - (i + 1)].Equals(ActualPosition, Dimension - 1, false)) EqGen++;
                     switch (EqGen)
                     {
                         case 3:

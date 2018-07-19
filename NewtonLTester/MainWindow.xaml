@@ -98,22 +98,25 @@
                 </TextBox.Text>
             </TextBox>
 
+            <CheckBox x:Name="checkBox" Content="Lépések" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Click="checkBox_Click"/>
+
             <Label Target="{Binding ElementName=cbxDimens}" Grid.Row="3" HorizontalAlignment="Left" Margin="110 0 0 0" VerticalContentAlignment="Center" Grid.Column="1" Width="63">Dimenzió:</Label>
             <ComboBox Name="cbxDimens" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="175,5,0,5"
                       ItemsSource="{Binding Source={StaticResource Dimensions}}"
                       SelectedItem="{Binding ElementName=wndMain, Path=Dimension}" Width="100"
             />
             <Button Content="Keresés" Grid.Column="1" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Width="75" Click="Button_Click_1" Height="20"/>
-            <Label Name="firstKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="10"/>
-            <Label Name="lastKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="2" VerticalAlignment="Center" Height="25" Width="10"/>
+            <Label Name="firstKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="1" VerticalAlignment="Center" Height="25" />
+            <Label Name="lastKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="2" VerticalAlignment="Center" Height="25" />
 
         </Grid>
-        <Border Name="Border" BorderBrush="LightBlue" BorderThickness="5" Margin="0,0,0,0">
+        <ScrollViewer Name="Scrollwiewr" DockPanel.Dock="Right" Width="350" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
+            <StackPanel Name="spList" Background="Transparent"/>
+        </ScrollViewer>
+        <Border Name="Border" Margin="0,0,0,0" DockPanel.Dock="Left">
             <ScrollViewer Name="ScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <local:CustomCanvas x:Name="canvas" Background="Transparent"/>
             </ScrollViewer>
         </Border>
-
-
     </DockPanel>
 </Window>

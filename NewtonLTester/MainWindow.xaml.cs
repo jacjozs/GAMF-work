@@ -33,6 +33,8 @@ namespace NewtonLTester
     {
         private int PointCount2;
         private NewtonL newt;
+        private bool History = false;
+        private NewtonPoint startPoint;
         private const double markerSize = 5;
         #region PointCount
         /// <summary>
@@ -293,6 +295,7 @@ namespace NewtonLTester
             switch (Dimension)
             {
                 case Dimensions.Dimension_2:
+                    Curve = CurveNames.Default2D;
                     switch (Curve)
                     {
                         case CurveNames.Default2D:
@@ -301,6 +304,7 @@ namespace NewtonLTester
                     }
                     break;
                 case Dimensions.Dimension_3:
+                    Curve = CurveNames.Default3D;
                     switch (Curve)
                     {
                         case CurveNames.Default3D:
@@ -309,6 +313,7 @@ namespace NewtonLTester
                     }
                     break;
                 case Dimensions.Dimension_4:
+                    Curve = CurveNames.Default4D;
                     switch (Curve)
                     {
                         case CurveNames.Default4D:
@@ -317,6 +322,7 @@ namespace NewtonLTester
                     }
                     break;
                 case Dimensions.Dimension_5:
+                    Curve = CurveNames.Default5D;
                     switch (Curve)
                     {
                         case CurveNames.Default5D:
@@ -342,9 +348,22 @@ namespace NewtonLTester
             Newtonpoints = curve();
             if (Newtonpoints.Count < 2)
                 return;
+            Ellipse marker;
+            ListUpdate();
             switch (Dimension)
             {
                 case Dimensions.Dimension_2:
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0])[0], ((NewtonPoint)Newtonpoints[0])[1] });
+                    marker = new Ellipse()
+                    {
+                        Stroke = Brushes.DarkBlue,
+                        Fill = Brushes.DarkBlue,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
+                    Canvas.SetTop(marker, ScaleY - startPoint.Points[1] - markerSize);
+                    canvas.Children.Add(marker);
                     foreach (NewtonPoint item in Newtonpoints)
                     {
                         Rectangle rect = new Rectangle()
@@ -374,9 +393,21 @@ namespace NewtonLTester
                     PathGeometry g = new PathGeometry(new PathFigure[] { f });
                     Path path = new Path() { Stroke = Brushes.Red, StrokeThickness = 1, Data = g };
                     canvas.Children.Add(path);
+                    firstKoorlb.Content = "Kezdet: |" + Math.Round(startPoint[0], 4) + " | " + Math.Round(startPoint[1], 4) + " |";
                     break;
                 case Dimensions.Dimension_3:
                     double min = Math.Abs(((NewtonPoint)Newtonpoints[0])[0]);
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[2] });
+                    marker = new Ellipse()
+                    {
+                        Stroke = Brushes.DarkBlue,
+                        Fill = Brushes.DarkBlue,
+                        Height = markerSize * 2,
+                        Width = markerSize * 2
+                    };
+                    Canvas.SetLeft(marker, (startPoint.Points[0] - markerSize) + min);
+                    Canvas.SetTop(marker, (startPoint.Points[1] - markerSize) + min);
+                    canvas.Children.Add(marker);
                     foreach (NewtonPoint item in Newtonpoints)
                     {
                         byte red = (byte)Math.Round(item[2] / PointCount2 * 255);
@@ -387,14 +418,23 @@ namespace NewtonLTester
                             Height = markerSize,
                             Width = markerSize
                         };
-                        Canvas.SetLeft(rect, (item.Points[0] - markerSize / 2) + min + 1);
-                        Canvas.SetTop(rect, (item.Points[1] - markerSize / 2) + min + 1);
+                        Canvas.SetLeft(rect, (item[0] - markerSize / 2) + min + 1);
+                        Canvas.SetTop(rect, (item[1] - markerSize / 2) + min + 1);
                         canvas.Children.Add(rect);
                     }
+                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " + Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " |";
                     break;
                 case Dimensions.Dimension_4:
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[2], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[3] });
+                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " +
+                      Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " | " +
+                      Math.Round(startPoint[3], 4) + " |";
                     break;
                 case Dimensions.Dimension_5:
+                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[2], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[3], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[4] });
+                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " +
+                      Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " | " +
+                      Math.Round(startPoint[3], 4) + " | " + Math.Round(startPoint[4], 4) + " |";
                     break;
             }
         }
@@ -552,24 +592,11 @@ namespace NewtonLTester
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            NewtonPoint startPoint;
             NewtonPoint pointFinal;
-            Ellipse marker;
             Ellipse marker1;
             switch (Dimension)
             {
                 case Dimensions.Dimension_2:
-                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[0])[0], ((NewtonPoint)Newtonpoints[0])[1] });
-                    marker = new Ellipse()
-                    {
-                        Stroke = Brushes.DarkBlue,
-                        Fill = Brushes.DarkBlue,
-                        Height = markerSize * 2,
-                        Width = markerSize * 2
-                    };
-                    Canvas.SetLeft(marker, startPoint.Points[0] - markerSize);
-                    Canvas.SetTop(marker, ScaleY - startPoint.Points[1] - markerSize);
-                    canvas.Children.Add(marker);
                     newt = new NewtonL(Newtonpoints, startPoint, 2);
                     pointFinal = newt.MinSearch();
                     marker1 = new Ellipse()
@@ -582,22 +609,10 @@ namespace NewtonLTester
                     Canvas.SetLeft(marker1, pointFinal[0] - markerSize);
                     Canvas.SetTop(marker1, ScaleY - pointFinal[1] - markerSize);
                     canvas.Children.Add(marker1);
-                    firstKoorlb.Content = "Kezdet: |" + Math.Round(startPoint[0], 4) + " | " + Math.Round(startPoint[1], 4) + " |";
                     lastKoorlb.Content = "Vége: |" + Math.Round(pointFinal[0], 4) + " | " + Math.Round(pointFinal[1], 4) + " |";
                     break;
                 case Dimensions.Dimension_3:
                     double min = Math.Abs(((NewtonPoint)Newtonpoints[0])[0]);
-                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 2) - 1])[2] });
-                    marker = new Ellipse()
-                    {
-                        Stroke = Brushes.DarkBlue,
-                        Fill = Brushes.DarkBlue,
-                        Height = markerSize * 2,
-                        Width = markerSize * 2
-                    };
-                    Canvas.SetLeft(marker, (startPoint.Points[0] - markerSize) + min);
-                    Canvas.SetTop(marker, (startPoint.Points[1] - markerSize) + min);
-                    canvas.Children.Add(marker);
                     newt = new NewtonL(Newtonpoints, startPoint, 3);
                     pointFinal = newt.MinSearch();
                     marker1 = new Ellipse()
@@ -610,32 +625,64 @@ namespace NewtonLTester
                     Canvas.SetLeft(marker1, (pointFinal[0] - markerSize) + min);
                     Canvas.SetTop(marker1, (pointFinal[1] - markerSize) + min);
                     canvas.Children.Add(marker1);
-                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " + Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " |";
                     lastKoorlb.Content = "Vége: | " + Math.Round(pointFinal.Points[0], 4) + " | " + Math.Round(pointFinal[1], 4) + " | " + Math.Round(pointFinal[2], 4) + " |";
                     break;
                 case Dimensions.Dimension_4:
-                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[2], ((NewtonPoint)Newtonpoints[(PointCount2 * 3) - 1])[3] });
                     newt = new NewtonL(Newtonpoints, startPoint, 4);
                     pointFinal = newt.MinSearch();
-                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " +
-                                          Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " | " +
-                                          Math.Round(startPoint[3], 4) + " |";
                     lastKoorlb.Content = "Vége: | " + Math.Round(startPoint.Points[0], 4) + " | " +
                                          Math.Round(pointFinal[1], 4) + " | " + Math.Round(pointFinal[2], 4) + " | " +
                                          Math.Round(pointFinal[3], 4) + " |";
                     break;
                 case Dimensions.Dimension_5:
-                    startPoint = new NewtonPoint(new double[] { ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[0], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[1], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[2], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[3], ((NewtonPoint)Newtonpoints[(PointCount2 * 4) - 1])[4] });
                     newt = new NewtonL(Newtonpoints, startPoint, 5);
                     pointFinal = newt.MinSearch();
-                    firstKoorlb.Content = "Kezdete: | " + Math.Round(startPoint.Points[0], 4) + " | " +
-                                          Math.Round(startPoint[1], 4) + " | " + Math.Round(startPoint[2], 4) + " | " +
-                                          Math.Round(startPoint[3], 4) + " | " + Math.Round(startPoint[2], 4) + " |";
                     lastKoorlb.Content = "Vége: | " + Math.Round(pointFinal.Points[0], 4) + " | " +
                                          Math.Round(pointFinal[1], 4) + " | " + Math.Round(pointFinal[2], 4) + " | " +
-                                         Math.Round(pointFinal[3], 4) + " | " + Math.Round(pointFinal[2], 4) + " |";
+                                         Math.Round(pointFinal[3], 4) + " | " + Math.Round(pointFinal[4], 4) + " |";
                     break;
             }
+            ListUpdate();
+        }
+        private void ListUpdate()
+        {
+            if (newt != null && newt.HistoryPositions != null)
+            {
+                spList.Children.Clear();
+                if (!History)
+                {
+                    foreach (NewtonPoint item in Newtonpoints)
+                    {
+                        Label lb = new Label();
+                        for (int i = 0; i < item.Points.Count; i++)
+                        {
+                            lb.Content += "| " + Math.Round(item[i], 4);
+                        }
+                        lb.Content += " |";
+                        spList.Children.Add(lb);
+                    }
+                }
+                else
+                {
+                    foreach (NewtonPoint item in newt.HistoryPositions)
+                    {
+                        Label lb = new Label();
+                        for (int i = 0; i < item.Points.Count; i++)
+                        {
+                            lb.Content += "| " + Math.Round(item[i], 4);
+                        }
+                        lb.Content += " |";
+                        spList.Children.Add(lb);
+                    }
+                }
+            }
+        }
+
+        private void checkBox_Click(object sender, RoutedEventArgs e)
+        {
+            var ertek = (CheckBox)sender;
+            History = ertek.IsChecked.Value;
+            ListUpdate();
         }
     }
     /// <summary>

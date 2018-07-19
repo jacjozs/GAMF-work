@@ -43,7 +43,6 @@ namespace NewtonLTester
                         height = Math.Max(height, x);
                 }
             }
-
             return new Size(height, width);
         }
     }
