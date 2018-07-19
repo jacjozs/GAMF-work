@@ -94,7 +94,7 @@ namespace NewtonLTester
         /// </summary>
         public static readonly DependencyProperty ScaleXProperty
             = DependencyProperty.Register("ScaleX", typeof(double), typeof(MainWindow)
-                , new FrameworkPropertyMetadata(10.0
+                , new FrameworkPropertyMetadata(400.0
                     , FrameworkPropertyMetadataOptions.AffectsMeasure
                         | FrameworkPropertyMetadataOptions.AffectsRender)
                 , validateScaleX);
@@ -124,7 +124,7 @@ namespace NewtonLTester
         /// </summary>
         public static readonly DependencyProperty ScaleYProperty
             = DependencyProperty.Register("ScaleY", typeof(double), typeof(MainWindow)
-                , new FrameworkPropertyMetadata(10.0
+                , new FrameworkPropertyMetadata(400.0
                     , FrameworkPropertyMetadataOptions.AffectsMeasure
                         | FrameworkPropertyMetadataOptions.AffectsRender)
                 , validateScaleY);
@@ -379,7 +379,7 @@ namespace NewtonLTester
                     double min = Math.Abs(((NewtonPoint)Newtonpoints[0])[0]);
                     foreach (NewtonPoint item in Newtonpoints)
                     {
-                        byte red = (byte)Math.Round(item.Points[2] / PointCount2 * 255);
+                        byte red = (byte)Math.Round(item[2] / PointCount2 * 255);
                         Rectangle rect = new Rectangle()
                         {
                             Stroke = new SolidColorBrush(Color.FromArgb(255, red, (byte)(255 - red), 0)),
@@ -387,8 +387,8 @@ namespace NewtonLTester
                             Height = markerSize,
                             Width = markerSize
                         };
-                        Canvas.SetLeft(rect, (item.Points[0] - markerSize / 2) + min);
-                        Canvas.SetTop(rect, (item.Points[1] - markerSize / 2) + min);
+                        Canvas.SetLeft(rect, (item.Points[0] - markerSize / 2) + min + 1);
+                        Canvas.SetTop(rect, (item.Points[1] - markerSize / 2) + min + 1);
                         canvas.Children.Add(rect);
                     }
                     break;
