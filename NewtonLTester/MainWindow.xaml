@@ -87,8 +87,8 @@
                 </TextBox.Text>
             </TextBox>
 
-            <Label Name="NSizeLb" Grid.Row="2" Grid.Column="1" Margin="185,0,30,0" Target="{Binding ElementName=txtNsScale}" VerticalContentAlignment="Center">N tartomány</Label>
-            <TextBox Name="txtNScale" Grid.Row="2" Grid.Column="1" Margin="0 0 0 0" HorizontalAlignment="Right" VerticalContentAlignment="Center" Width="30">
+            <Label Name="NSizeLb" Grid.Row="2" Grid.Column="1" Margin="160,0,0,0" Target="{Binding ElementName=txtNsScale}" VerticalContentAlignment="Center">N tartomány</Label>
+            <TextBox Name="txtNScale" Grid.Row="2" Grid.Column="1" Margin="0 0 80 0" HorizontalAlignment="Right" VerticalContentAlignment="Center" Width="30">
                 <TextBox.Text>
                     <Binding ElementName="wndMain" Path="ScaleN" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
@@ -98,7 +98,7 @@
                 </TextBox.Text>
             </TextBox>
 
-            <CheckBox x:Name="checkBox" Content="Lépések" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Click="checkBox_Click"/>
+            <CheckBox x:Name="checkBox" Content="Lépések" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Top" Click="checkBox_Click"/>
 
             <Label Target="{Binding ElementName=cbxDimens}" Grid.Row="3" HorizontalAlignment="Left" Margin="110 0 0 0" VerticalContentAlignment="Center" Grid.Column="1" Width="63">Dimenzió:</Label>
             <ComboBox Name="cbxDimens" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="175,5,0,5"
@@ -110,10 +110,10 @@
             <Label Name="lastKoorlb" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="2" VerticalAlignment="Center" Height="25" />
 
         </Grid>
-        <ScrollViewer Name="Scrollwiewr" DockPanel.Dock="Right" Width="350" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
-            <StackPanel Name="spList" Background="Transparent"/>
+        <ScrollViewer Name="Scrollwiewr" DockPanel.Dock="Right" Width="350" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" VerticalScrollBarVisibility="Auto" Margin="5,0,0,0">
+            <ListBox Name="lbList" Background="Transparent" BorderThickness="1" MouseDoubleClick="lbList_MouseDoubleClick"/>
         </ScrollViewer>
-        <Border Name="Border" Margin="0,0,0,0" DockPanel.Dock="Left">
+        <Border Name="Border" Margin="0,0,0,0" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Gray">
             <ScrollViewer Name="ScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <local:CustomCanvas x:Name="canvas" Background="Transparent"/>
             </ScrollViewer>

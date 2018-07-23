@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -60,15 +61,15 @@ namespace Optimization
         /// 7 tizedes pontosági konstans
         /// Az egyenlöség ellenörzéséhez szükséges
         /// </summary>
-        private const double _7 = 0.0000001;
+        private const double _7 = 0.0000005;
         /// <summary>
-        /// Keresés konstruktora ami betölti az datokat
+        /// Paraméterek betöltése
         /// !!!Azt feltételazi a kód hogy a megadott pontok listálya azonos egység távolságra vannak egymástól!!!
         /// </summary>
         /// <param name="parameters">Azon pontok listája amiböl a "map" (térkép) áll</param>
         /// <param name="startP">Indulási pont kordinátáji (x,y,z,...)</param>
         /// <param name="D">Dimenziók száma</param>
-        public NewtonL(ArrayList parameters, NewtonPoint startP, int D)
+        public void InitialParameters(ArrayList parameters, NewtonPoint startP, int D)
         {
             double Fitness = 0.0;
             int Count = parameters.Count;
@@ -122,6 +123,7 @@ namespace Optimization
             //Oldalankénti lépések száma
             double[] M1FullStep = new double[Dimension - 1];
             double[] M2FullStep = new double[Dimension - 1];
+            //A síkonkénti elözetes Fitness érték
             double[] HistoryFitness = new double[Dimension - 1];
             for (int i = 0; i < ((Dimension == 1) ? 1 : Dimension - 1); i++)
             {
@@ -134,7 +136,7 @@ namespace Optimization
             //ez általábban csak akkor szükséges ha csak az egyik oldalon volt keresés
             bool left, right;
             Valid = new List<double>();
-            //ugrás méretének a redukálásának a mérete
+            //ugrás méretének a redukálási mérete
             int[] M1Reduct = new int[Dimension - 1];
             int[] M2Reduct = new int[Dimension - 1];
             for (int i = 0; i < Dimension - 1; i++)
@@ -181,7 +183,7 @@ namespace Optimization
                     double min = Positions.Where(x => x.Item1.Equals(M1, i, true)).Min(x => x.Item1[i]);
                     if (M1[i] <= max && M1[i] >= min) 
                     {
-                        Valid.Add(Positions.Find(x => x.Item1.Equals(M1)).Item2);
+                        Valid.Add(Positions.Find(x => x.Item1 == M1).Item2);
                         left = true;
                     }
                     //jobb oldali pont keresése
@@ -189,7 +191,7 @@ namespace Optimization
                     min = Positions.Where(x => x.Item1.Equals(M2, i, true)).Min(x => x.Item1[i]);
                     if (M2[i] <= max && M2[i] >= min) 
                     {
-                        Valid.Add(Positions.Find(x => x.Item1.Equals(M2)).Item2);
+                        Valid.Add(Positions.Find(x => x.Item1 == M2).Item2);
                         right = true;
                     }
                     //jobb és bal oldali értékek összehasonlítása
@@ -207,9 +209,7 @@ namespace Optimization
                         }
                         //Ha "gödörben" van és két megegyező pont közt ugrál akkor lép ez életbe
                         else if (Math.Abs(Valid[0] - Valid[1]) < _7)
-                        {
                             Down++;
-                        }
                         //Ha az aktuális síkban egy minimum pontban vanna akkor megnöveli a Hole értéket
                         if (Valid[0] > ActualFitness && Valid[1] > ActualFitness && M1FullStep[i] < (MaxStep / 10) && M2FullStep[i] < (MaxStep / 10))
                         {
@@ -238,9 +238,7 @@ namespace Optimization
                 }
 
                 if (HistoryPositions.Find(x => x.Equals(ActualPosition, Dimension - 1, false)) != null)
-                {
                     Down++;
-                }
                 //ha az utolsó 5 eredmény ugyan az akkor az eredmény véglegesnek tekintett
                 for (int i = 0; i < 5 && HistoryPositions.Count >= 5; i++)
                 {
@@ -261,6 +259,306 @@ namespace Optimization
             ActualPosition.Points.Add(ActualFitness);
             return ActualPosition;
         }
+        /// <summary>
+        /// A megadott paraméterek alapján a pontok listájának az elkészítése
+        /// </summary>
+        /// <param name="Expr">függvény pl. 2*x+3*sqrt(y)/√(y*x)</param>
+        /// <param name="PointCount">Pontok mennyisége</param>
+        /// <param name="Provinces">Síkonkénti méretek (Provinces[0] = X síkhoz tartózó maximum 0tól indulva)</param>
+        /// <param name="Step">pontok közti ugrások mérete</param>
+        /// <returns></returns>
+        public ArrayList PointCreate(string Expr, int PointCount, double[] Provinces, double Step)
+        {
+            ArrayList Map = new ArrayList();
+            double[] Coordinates = new double[Provinces.Length];
+            int Count = 0;
+            int PointCount2 = (int)Math.Sqrt(PointCount);
+            switch (Provinces.Length)
+            {
+                case 1:
+                    for (int i = 0; i < PointCount; i++)
+                    {
+                        Coordinates[0] = Math.Round(Step * i * Provinces[0], 7);
+                        Map.Add(new NewtonPoint(Coordinates));
+                        ((NewtonPoint)Map[Map.Count - 1]).Points.Add(FitnessCalc(Expr, Coordinates));
+                    }
+                    break;
+                case 2:
+                    for (int i = 0; i < PointCount; ++i)
+                    {
+                        Coordinates[0] = i * Provinces[0];
+                        for (int j = 0; j < 2; j++)
+                        {
+                            Coordinates[1] = j * Provinces[1];
+							Map.Add(new NewtonPoint(Coordinates));
+                            ((NewtonPoint)Map[Map.Count - 1]).Points.Add(FitnessCalc(Expr, Coordinates));
+                            Count++;
+                            if (Count == PointCount)
+                                return Map;
+                        }
+                    }
+                    break;
+				case 3:
+                    for (int i = 0; i < PointCount; ++i)
+                    {
+                        Coordinates[0] = i * Provinces[0];
+                        for (int j = 0; j < 3; j++)
+                        {
+							Coordinates[1] = j * Provinces[1];
+							for (int k = 0; k < 3; k++)
+							{
+								Coordinates[2] = k * Provinces[2];
+								Map.Add(new NewtonPoint(Coordinates));
+								((NewtonPoint)Map[Map.Count - 1]).Points.Add(FitnessCalc(Expr, Coordinates));
+                                Count++;
+                                if (Count == PointCount)
+                                    return Map;
+                            }
+                        }
+                    }
+					break;
+                case 4:
+                    for (int i = 0; i < PointCount; ++i)
+                    {
+                        Coordinates[0] = i * Provinces[0];
+                        for (int j = 0; j < 4; j++)
+                        {
+                            Coordinates[1] = j * Provinces[1];
+                            for (int k = 0; k < 4; k++)
+                            {
+                                Coordinates[2] = k * Provinces[2];
+                                for (int l = 0; l < 4; l++)
+                                {
+                                    Coordinates[3] = l * Provinces[3];
+                                    Map.Add(new NewtonPoint(Coordinates));
+                                    ((NewtonPoint)Map[Map.Count - 1]).Points.Add(FitnessCalc(Expr, Coordinates));
+                                    Count++;
+                                    if (Count == PointCount)
+                                        return Map;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return Map;
+        }
+        /// <summary>
+        /// Fitness érték számoló
+        /// Maximum 5D-ig
+        /// X,Y,Z,W,N
+        /// </summary>
+        /// <param name="Expr">Egyenlet pl. 2x+4y</param>
+        /// <param name="Coordinates">A behejetesitendó értékek (x,y... helyére)</param>
+        /// <returns>Az aktuális pont Fitness értéke</returns>
+        public double FitnessCalc(string Expr, double[] Coordinates)
+        {
+            Expr = Expr.ToLower();
+            string[] Dimensions = new string[] { "x", "y", "z", "w", "n" };
+            for (int i = 0; i < Coordinates.Length; i++)
+            {
+                Expr = Expr.Replace(Dimensions[i], Coordinates[i].ToString());
+            }
+            return double.Parse(execute(Expr));
+        }
+        /// <summary>
+        /// Jobb és ball oldali értékek megkeresése és azok kiszámolása
+        /// </summary>
+        /// <param name="function">Az értékeken végrehajtandó müvelet jele</param>
+        /// <param name="expr">Az aktuális polinom</param>
+        /// <returns>A végrehajtot eredményel helyetesített polinom</returns>
+        private string leftRightSearch(string function, string expr)
+        {
+            int Start, End;
+            string right, left;
+            double result;
+            if (!expr.Contains("*") && !expr.Contains("/") && !expr.Contains("+") && !expr.Contains("-") && !expr.Contains("√(") && !expr.Contains("sqrt(") && !expr.Contains("^"))
+                return expr;
+            //A müveleti jel ball oldali számnak a határ indexe
+            int End2 = 0;
+            string StartElem = "", EndElem = "";
+            //Az aktuális müveleti jel helye
+            Start = expr.IndexOf(function);
+            //Ha a jobb oldali érték egy gyök lenne elöször kiszámolja a gyököt
+            int index = expr.IndexOf("sqrt(", Start);
+            if (index > -1 && (index - 1) == Start)
+            {
+                Start = expr.IndexOf("sqrt(");
+                End = expr.IndexOf(")", Start);
+                result = double.Parse(execute(expr.Substring(Start, (End - Start) + 1)));
+                StartElem = expr.Substring(0, Start);
+                EndElem = expr.Substring(End + 1);
+                expr = StartElem + result + EndElem;
+                return leftRightSearch(function, expr);
+            }
+            //Ha a jobb oldali érték egy gyök lenne elöször kiszámolja a gyököt
+            index = expr.IndexOf("√(", Start);
+            if (index > -1 && (index - 1) == Start)
+            {
+                Start = expr.IndexOf("√(");
+                End = expr.IndexOf(")", Start);
+                result = double.Parse(execute(expr.Substring(Start, (End - Start) + 1)));
+                StartElem = expr.Substring(0, Start);
+                EndElem = expr.Substring(End + 1);
+                expr = StartElem + result + EndElem;
+                return leftRightSearch(function, expr);
+            }
+            ///A jobb oldali zárojelek kiszámolása
+            index = expr.IndexOf("(", Start);
+            if (index > -1 && (index - 1) == Start)
+            {
+                Start = expr.IndexOf("(", Start) + 1;
+                End = expr.IndexOf(")", Start);
+                result = double.Parse(execute(expr.Substring(Start, End - Start)));
+                StartElem = expr.Substring(0, Start - 1);
+                EndElem = expr.Substring(End + 1);
+                expr = StartElem + result + EndElem;
+                return leftRightSearch(function, expr);
+            }
+            ///A bal oldali zárojelek kiszámolása
+            index = expr.LastIndexOf(")", Start);
+            if (index > -1 && (index + 1) == Start)
+            {
+                End = expr.LastIndexOf(")", Start);
+                Start = expr.LastIndexOf("(", Start) + 1;
+                //Ha a bal oldali érték egy gyök akkor azt kikeresi és kiszámolja
+                index = expr.LastIndexOf("sqrt(", Start);
+                if (index > -1 && (index + 5) == Start)
+                {
+                    StartElem = expr.Substring(0, Start - 5);
+                    result = double.Parse(execute(expr.Substring(Start - 5, (End - Start) + 6)));
+                    EndElem = expr.Substring(End + 1);
+                    expr = StartElem + result + EndElem;
+                }
+                else
+                {
+                    //Ha a bal oldali érték egy gyök akkor azt kikeresi és kiszámolja
+                    index = expr.LastIndexOf("√(", Start);
+                    if (index > -1 && (index + 2) == Start)
+                    {
+                        StartElem = expr.Substring(0, Start - 2);
+                        result = double.Parse(execute(expr.Substring(Start - 2, (End - Start) + 3)));
+                        EndElem = expr.Substring(End + 1);
+                        expr = StartElem + result + EndElem;
+                    }
+                    else
+                    {
+                        StartElem = expr.Substring(0, Start - 1);
+                        result = double.Parse(execute(expr.Substring(Start, End - Start)));
+                        EndElem = expr.Substring(End + 1);
+                        expr = StartElem + result + EndElem;
+                    }
+                }
+                return leftRightSearch(function, expr);
+            }
+            //A müveleti jel jobb oldali számnak a határ indexe
+            End = expr.IndexOfAny(new char[] { ')', '/', '*', '+', '-' }, Start + 1) - 1;
+            switch (End)
+            {
+                case -2:
+                    right = expr.Substring(Start + 1);
+                    End2 = expr.LastIndexOfAny(new char[] { '(', '/', '*', '+', '-' }, Start - 1) + 1;
+                    left = expr.Substring(End2, Start - End2);
+                    StartElem = expr.Substring(0, End2);
+                    break;
+                default:
+                    right = expr.Substring(Start + 1, End - Start);
+                    End2 = expr.LastIndexOfAny(new char[] { '(', '/', '*', '+', '-' }, Start - 1) + 1;
+                    left = expr.Substring(End2, Start - End2);
+                    StartElem = expr.Substring(0, End2);
+                    EndElem = expr.Substring(End + 1);
+                    break;
+            }
+            //Müveletek végrehajtása
+            switch (function)
+            {
+                case "+":
+                    result = double.Parse(left) + double.Parse(right);
+                    break;
+                case "-":
+                    result = double.Parse(left) - double.Parse(right);
+                    break;
+                case "/":
+                    if (right != "0")
+                        result = double.Parse(left) / double.Parse(right);
+                    else
+                        result = 0;
+ 
+                    break;
+                case "*":
+                    result = double.Parse(left) * double.Parse(right);
+                    break;
+                case "^":
+                    if (left != "0")
+                        result = Math.Pow(double.Parse(left), double.Parse(right));
+                    else
+                        result = 0;
+                    break;
+                default:
+                    result = 0;
+                    break;
+            }
+            return StartElem + (result < 0.0001? String.Format("{0:F20}", result): result.ToString()) + EndElem;
+        }
+        /// <summary>
+        /// A beilesztet paraméterel rendelkező függvények kiszámolása
+        /// </summary>
+        /// <param name="expr">Az aktuális pont függvénye</param>
+        /// <returns>A ponthoz tartózó fitness érték</returns>
+        private string execute(string expr)
+        {
+            int Start, End;
+            string expr2;
+            for (int i = 0; i < expr.Length; i++)
+            {
+                if (!expr.Contains("*") && !expr.Contains("/") && !expr.Contains("+") && !expr.Contains("-") && !expr.Contains("√(") && !expr.Contains("sqrt(") && !expr.Contains("^"))
+                    return expr;
+                if (expr.Contains("*") || expr.Contains("/"))
+                {
+                    if (expr.Contains("*"))
+                    {
+                        expr = leftRightSearch("*", expr);
+                    }
+                    if (expr.Contains("/"))
+                    {
+                        expr = leftRightSearch("/", expr);
+                    }
+                }
+                else
+                {
+                    if (expr.Contains("+"))
+                    {
+                        expr = leftRightSearch("+", expr);
+                    }
+                    if (expr.Contains("-"))
+                    {
+                        expr = leftRightSearch("-", expr);
+                    }
+                }
+                if (expr.Contains("^"))
+                {
+                    expr = leftRightSearch("^", expr);
+                }
+                if (expr.Contains("√("))
+                {
+                    Start = expr.IndexOf("√(") + 2;
+                    End = expr.IndexOf(")", Start);
+                    expr2 = expr.Substring(Start, End - Start);
+                    expr = expr.Substring(0, Start - 2) + Math.Sqrt(double.Parse(expr2)).ToString() + expr.Substring(End + 1);
+                }
+                if (expr.Contains("sqrt("))
+                {
+                    Start = expr.IndexOf("sqrt(") + 5;
+                    End = expr.IndexOf(")", Start);
+                    expr2 = expr.Substring(Start, End - Start);
+                    expr2 = execute(expr2);
+                    expr = expr.Substring(0, Start - 5) + Math.Sqrt(double.Parse(expr2)).ToString() + expr.Substring(End + 1);
+                }
+            }
+            return expr;
+        }
     }
     /// <summary>
     /// NewtonPoint osztály a koordináták és az összehasonlitás használatára
@@ -275,7 +573,7 @@ namespace Optimization
         /// 10 tizedes pontosági konstans
         /// Az egyenlöség ellenörzéséhez szükséges
         /// </summary>
-        const double _7 = 0.0000001;
+        const double _7 = 0.0000005;
         public double this[int index]
         {
             get { return Points[index]; }
@@ -300,6 +598,15 @@ namespace Optimization
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+        public override string ToString()
+        {
+            string final = "| ";
+            foreach (var item in this.Points)
+            {
+                final += " " + item + " |";
+            }
+            return final;
         }
         public override bool Equals(object obj)
         {
@@ -337,6 +644,18 @@ namespace Optimization
                 if (Math.Abs(Points[i] - other.Points[i]) > _7) return false;
             }
             return true;
+        }
+        public static bool operator ==(NewtonPoint left, NewtonPoint right)
+        {
+            if ((object)left == null) return false;
+            if ((object)right == null) return false;
+            return left.Equals(right);
+        }
+        public static bool operator !=(NewtonPoint left, NewtonPoint right)
+        {
+            if ((object)left == null) return false;
+            if ((object)right == null) return false;
+            return !left.Equals(right);
         }
     }
 }
