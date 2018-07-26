@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Optimization.BeeAlg;
 
 namespace OptimizationTester
 {
@@ -85,6 +86,11 @@ namespace OptimizationTester
         private double cp;
         private double c0;
         private double cg;
+        // Bee algorithm parameters
+        private double ExploratoryRadius;
+        private double SearchRadius;
+        private int MaxStep;
+        private int MaxElite;
         // Storing the opened parameter list
         private int openParams;
 
@@ -125,7 +131,7 @@ namespace OptimizationTester
             b = 0.8;
             Amax = 40;
             mhat = NA;
-            // Particle swarm parrams
+            // Particle swarm params
             c0 = 0.8;
             cp = 0.2;
             cg = 0.2;
@@ -133,6 +139,10 @@ namespace OptimizationTester
             P = NA / 2;
             pm = 0.6;
             crossoverCount = NA;
+            // Bee algorithm params
+            ExploratoryRadius = 10;
+            SearchRadius = 3;
+            MaxStep = 30;
         }
 
         /// <summary>
@@ -167,6 +177,7 @@ namespace OptimizationTester
             miCGO.IsChecked = false;
             miCGOL.IsChecked = false;
             miGa.IsChecked = false;
+            miBee.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
         {
@@ -205,6 +216,14 @@ namespace OptimizationTester
             uncheckMethods();
             method = 3;
             miGa.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miBee_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 5;
+            miBee.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
@@ -515,6 +534,34 @@ namespace OptimizationTester
                         StoppingNumberOfEvaluations = nev,
                         // Affinity treshold.
                         StoppingFitnessTreshold = Ftr,
+                        Slow = Slow
+                    };
+                    break;
+                case 5:
+                    Optimizer = new BeeAlg
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        FitnessFunction = ffd,
+                        // Size of the antibody pool.
+                        NumberOfElements = NA,
+                        EliteBees = new ArrayList(),
+                        //Felderitő méhek keresési rádiusza
+                        ExploratoryRadius = ExploratoryRadius,
+                        //Kereső méhek keresési rádiusza
+                        SearchRadius = SearchRadius,
+                        //Felderitő méhek maximális keressi számas ciklus alatt
+                        MaxStep = MaxStep,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
                         Slow = Slow
                     };
                     break;
