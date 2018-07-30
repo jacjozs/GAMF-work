@@ -90,7 +90,6 @@ namespace OptimizationTester
         private double ExploratoryRadius;
         private double SearchRadius;
         private int MaxStep;
-        private int MaxElite;
         // Storing the opened parameter list
         private int openParams;
 
@@ -177,6 +176,7 @@ namespace OptimizationTester
             miCGO.IsChecked = false;
             miCGOL.IsChecked = false;
             miGa.IsChecked = false;
+            miNew.IsChecked = false;
             miBee.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
@@ -219,10 +219,18 @@ namespace OptimizationTester
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
-        private void miBee_Click(object sender, RoutedEventArgs e)
+        private void miNew_Click(object sender, RoutedEventArgs e)
         {
             uncheckMethods();
             method = 5;
+            miNew.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miBee_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 6;
             miBee.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
@@ -538,6 +546,25 @@ namespace OptimizationTester
                     };
                     break;
                 case 5:
+                    Optimizer = new NewtonL
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 6:
                     Optimizer = new BeeAlg
                     {
                         InitialParameters = InitialParameters,

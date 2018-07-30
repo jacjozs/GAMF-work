@@ -22,6 +22,7 @@
                 <MenuItem x:Name="miCGO" Header="Clonal Generation" Click="miCGO_Click"/>
                 <MenuItem x:Name="miCGOL" Header="Clonal Generation Local" Click="miCGOL_Click"/>
                 <MenuItem x:Name="miGa" Header="Genetic Algorithm" Click="miGa_Click"/>
+                <MenuItem x:Name="miNew" Header="Newton Algorithm" Click="miNew_Click"/>
                 <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
             </MenuItem>
             <MenuItem Header="Stopping condition">
