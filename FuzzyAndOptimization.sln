@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimizationTester", "Optim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuzzyManager", "FuzzyManager\FuzzyManager.csproj", "{F49E7F41-C798-4DCF-87E5-5154B64E482E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewtonLTester", "NewtonLTester\NewtonLTester.csproj", "{D75D3002-F77C-42A8-A265-355BF26DDFF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D75D3002-F77C-42A8-A265-355BF26DDFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D75D3002-F77C-42A8-A265-355BF26DDFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D75D3002-F77C-42A8-A265-355BF26DDFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D75D3002-F77C-42A8-A265-355BF26DDFF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
