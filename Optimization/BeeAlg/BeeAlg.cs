@@ -80,18 +80,22 @@ namespace Optimization.BeeAlg
                 }
             }
             ExploratoryBees.AddRange(Elements);
-            EliteBees.Sort();
-            if (Generation % 20 == 0 && EliteBees.Count > 2)
-                EliteBees.RemoveRange((Elite / 2) - 1, EliteBees.Count - (Elite / 2));
             ExploratoryBees.Sort();
             Elements[0] = ((BaseElement)ExploratoryBees[0]);
             for (int j = 1; j < NumberOfElements; j++)
-            {
+            {//új radom poziciokat válogatunk az elemek helyére
                 Elements[j] = (BaseElement)ExploratoryBees[RNG.Next(ExploratoryBees.Count)];
             }
+            EliteBees.Sort();
+            //Minden 20. generáció után az Elit méhek számát megfelezűk
+            if (Generation % 20 == 0 && EliteBees.Count > 2)
+                EliteBees.RemoveRange((Elite / 2) - 1, EliteBees.Count - (Elite / 2));
         }
+        /// <summary>
+        /// A felderítő méhek által talált virágokhoz kirendelni  keresőket
+        /// </summary>
         private void UpdateFollowerSizes()
-        {
+        {//A felderitő méhek által talált virágokhoz mennyi keresőt kell rendelni
             Flowers = new int[Elite];
             for (int i = 0; i < Flowers.Length; i++)
             {
@@ -116,9 +120,7 @@ namespace Optimization.BeeAlg
                     else if ((double)Start.Position[p] < (double)LowerParamBounds[p])
                         Start.Position[p] = LowerParamBounds[p];
                     if (Integer[p])
-                    {
                         Start.Position[p] = Math.Round((double)Start.Position[p]);
-                    }
                 }
 
                 Start = (BaseElement)GetNewElement(FitnessFunction, Start.Position);
