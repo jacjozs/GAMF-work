@@ -1,4 +1,6 @@
 ﻿using Optimization;
+using Optimization.BacterialAlg;
+using Optimization.BeeAlg;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +17,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Optimization.BeeAlg;
 
 namespace OptimizationTester
 {
@@ -178,6 +179,7 @@ namespace OptimizationTester
             miGa.IsChecked = false;
             miNew.IsChecked = false;
             miBee.IsChecked = false;
+            miBacterial.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
         {
@@ -232,6 +234,14 @@ namespace OptimizationTester
             uncheckMethods();
             method = 6;
             miBee.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miBacterial_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 7;
+            miBacterial.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
@@ -581,6 +591,28 @@ namespace OptimizationTester
                         SearchRadius = SearchRadius,
                         //Felderitő méhek maximális keressi számas ciklus alatt
                         MaxStep = MaxStep,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 7:
+                    Optimizer = new BacterialAlg
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        // Size of the antibody pool.
+                        NumberOfElements = NA,
+
+                        FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.
