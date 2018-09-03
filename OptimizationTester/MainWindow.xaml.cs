@@ -91,6 +91,8 @@ namespace OptimizationTester
         private double ExploratoryRadius;
         private double SearchRadius;
         private int MaxStep;
+        // Bacterial algorithm parameters
+        private int Infections;
         // Storing the opened parameter list
         private int openParams;
 
@@ -143,6 +145,8 @@ namespace OptimizationTester
             ExploratoryRadius = 10;
             SearchRadius = 3;
             MaxStep = 30;
+            // Bacterial algorithm params
+            Infections = 10;
         }
 
         /// <summary>
@@ -611,7 +615,7 @@ namespace OptimizationTester
                         Integer = Integer,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
-
+                        Infections = Infections,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
