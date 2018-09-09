@@ -9,6 +9,11 @@ namespace Optimization.BacterialAlg
         /// Génátadások száma
         /// </summary>
         public int Infections { get; set; }
+        /// <summary>
+        /// egyedengénti maximálasan generált klonok száma
+        /// a random generálás maximuma
+        /// </summary>
+        public int ClonesCount { get; set; }
 
         protected override void CreateNextGeneration()
         {
@@ -28,7 +33,7 @@ namespace Optimization.BacterialAlg
         {
             ArrayList Clones = new ArrayList();
             BaseElement copy = entity;
-            int rnd = RNG.Next(1, 20);
+            int rnd = RNG.Next(1, ClonesCount);
             for (int h = 0; h < rnd; h++)
             {//másolatok létrehozása
                 Clones.Add(copy);

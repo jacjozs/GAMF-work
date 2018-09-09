@@ -93,6 +93,7 @@ namespace OptimizationTester
         private int MaxStep;
         // Bacterial algorithm parameters
         private int Infections;
+        private int ClonesCount;
         // Storing the opened parameter list
         private int openParams;
 
@@ -147,6 +148,7 @@ namespace OptimizationTester
             MaxStep = 30;
             // Bacterial algorithm params
             Infections = 10;
+            ClonesCount = 25;
         }
 
         /// <summary>
@@ -615,6 +617,7 @@ namespace OptimizationTester
                         Integer = Integer,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
+                        ClonesCount = ClonesCount,
                         Infections = Infections,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
