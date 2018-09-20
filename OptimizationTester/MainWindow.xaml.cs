@@ -1,6 +1,4 @@
 ﻿using Optimization;
-using Optimization.BacterialAlg;
-using Optimization.BeeAlg;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -186,6 +184,7 @@ namespace OptimizationTester
             miNew.IsChecked = false;
             miBee.IsChecked = false;
             miBacterial.IsChecked = false;
+            miAnt.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
         {
@@ -248,6 +247,14 @@ namespace OptimizationTester
             uncheckMethods();
             method = 7;
             miBacterial.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miAnt_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 8;
+            miAnt.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
@@ -619,6 +626,27 @@ namespace OptimizationTester
                         NumberOfElements = NA,
                         ClonesCount = ClonesCount,
                         Infections = Infections,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 8:
+                    Optimizer = new AntAlg
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        // Size of the antibody pool.
+                        NumberOfElements = NA,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,

@@ -25,6 +25,7 @@
                 <MenuItem x:Name="miNew" Header="Newton Algorithm" Click="miNew_Click"/>
                 <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
                 <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm" Click="miBacterial_Click"/>
+                <MenuItem x:Name="miAnt" Header="Ant Algorithm" Click="miAnt_Click"/>
             </MenuItem>
             <MenuItem Header="Stopping condition">
                 <MenuItem x:Name="miGeneration" Header="Number of generations" Click="miGeneration_Click" IsChecked="True"/>

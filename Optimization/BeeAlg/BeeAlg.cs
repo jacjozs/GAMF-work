@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Optimization.BeeAlg
+namespace Optimization
 {
     public class BeeAlg : BaseOptimizationMethod
     {
@@ -35,6 +35,7 @@ namespace Optimization.BeeAlg
         /// Elit méhek által talált pontokhoz (virágokhoz) tartozó kereső méhek száma
         /// </summary>
         public int[] Flowers { get; set; }
+
         protected override void CreateNextGeneration()
         {
 

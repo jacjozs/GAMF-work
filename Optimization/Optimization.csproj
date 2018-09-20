@@ -41,6 +41,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntAlg\AntAlg.cs" />
     <Compile Include="BacterialAlg\BacterialAlg.cs" />
     <Compile Include="BeeAlg\BeeAlg.cs" />
     <Compile Include="ClonalGenL\ClonalGenerationLocal.cs" />

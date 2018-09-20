@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace Optimization.BacterialAlg
+namespace Optimization
 {
     public class BacterialAlg : BaseOptimizationMethod
     {
