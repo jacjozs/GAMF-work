@@ -38,12 +38,14 @@ namespace Optimization
 
         protected override void CreateNextGeneration()
         {
-
+            if (EliteBees == null)
+                EliteBees = new ArrayList();
             int count = RNG.Next(1, 10);
             for (int i = 0; i < count; i++)
             {//felderitő méhek keresése, A kiindulási pont lesz a kaptár ahonnan keresnek a felderítők
                 Exploratory();
             }
+            MaxStep++;
             EliteBees.Sort();
             Elite = EliteBees.Count;
 
@@ -111,26 +113,23 @@ namespace Optimization
             double Radius = ExploratoryRadius + (ExploratoryRadius * (Generation / 10));
             BaseElement Start = (BaseElement)GetNewElement(FitnessFunction, InitialParameters);
             double OldFitness = Start.Fitness;
-            for (int i = 0; i < MaxStep; i++)
+            for (int p = 0; p < Start.Position.Count; p++)
             {
-                for (int p = 0; p < Start.Position.Count; p++)
-                {
-                    Start.Position[p] = (double)Start.Position[p] + Radius > (double)UpperParamBounds[p]? (double)UpperParamBounds[p] : Radius * i * (RNG.NextDouble() * 2 - 1);
-                    if ((double)Start.Position[p] > (double)UpperParamBounds[p])
-                        Start.Position[p] = UpperParamBounds[p];
-                    else if ((double)Start.Position[p] < (double)LowerParamBounds[p])
-                        Start.Position[p] = LowerParamBounds[p];
-                    if (Integer[p])
-                        Start.Position[p] = Math.Round((double)Start.Position[p]);
-                }
+                Start.Position[p] = (double)Start.Position[p] + Radius > (double)UpperParamBounds[p] ? (double)UpperParamBounds[p] : Radius * MaxStep * (RNG.NextDouble() * 2 - 1);
+                if ((double)Start.Position[p] > (double)UpperParamBounds[p])
+                    Start.Position[p] = UpperParamBounds[p];
+                else if ((double)Start.Position[p] < (double)LowerParamBounds[p])
+                    Start.Position[p] = LowerParamBounds[p];
+                if (Integer[p])
+                    Start.Position[p] = Math.Round((double)Start.Position[p]);
+            }
 
-                Start = (BaseElement)GetNewElement(FitnessFunction, Start.Position);
-                //Ha az új pozicó jobb mint a kezdeti akkor azt hozzá adja az Elitekhez
-                if (Start.Fitness < OldFitness)
-                {
-                    EliteBees.Add(Start);
-                    return;
-                }
+            Start = (BaseElement)GetNewElement(FitnessFunction, Start.Position);
+            //Ha az új pozicó jobb mint a kezdeti akkor azt hozzá adja az Elitekhez
+            if (Start.Fitness < OldFitness)
+            {
+                EliteBees.Add(Start);
+                return;
             }
         }
     }
