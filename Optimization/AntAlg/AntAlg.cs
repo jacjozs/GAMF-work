@@ -10,7 +10,7 @@ namespace Optimization
         /// <summary>
         /// Keresési kör sugara
         /// </summary>
-        private double R = 10;
+        private double R = 15;
         /// <summary>
         /// Hangya elemek tárolására
         /// </summary>
@@ -22,49 +22,84 @@ namespace Optimization
         /// <summary>
         /// Feromon pontok tárolására
         /// </summary>
-        private Feromon FeromonPoints;
+        private ArrayList FeromonPoints;
+
+        private double MaxSize = double.MaxValue;
+        private int count = 0;
         protected override void CreateNextGeneration()
         {
             if(isFirst)
             {
                 Ants = new ArrayList();
 
-                var elem = GetNewElement(FitnessFunction, InitialParameters);
+                //var elem = GetNewElement(FitnessFunction, InitialParameters);
                 for (int i = 0; i < NumberOfElements; i++)
                 {
-                    Ants.Add(new Ant((BaseElement)elem));
+                    Ants.Add(new Ant((BaseElement)Elements[i]));
                 }
-                FeromonPoints = new Feromon(((Ant)Ants[0]).Vectors, int.MaxValue);
+                //FeromonPoints = new Feromon(((Ant)Ants[0]).Vectors, int.MaxValue);
+                FeromonPoints = new ArrayList(); 
                 isFirst = false;
+            }
+            
+            if (count >= NumberOfElements / 10)
+            {
+                MaxSize /= NumberOfElements * 2;
+                count = 0;
+                if (MaxSize < R / 2)
+                {
+                    R /= 2;
+                }
+                for (int i = 0; i < NumberOfElements; i++)
+                {
+                    ((Ant)Ants[i]).IsIn = false;
+                }
             }
             for (int i = 0; i < NumberOfElements; i++)
             {
                 var parameter = new ArrayList();
-                //Feromonok keresése
-                if (!FeromonSearch((Ant)Ants[i]))
+                var parameterBack = new ArrayList();
+                BaseElement Elem;
+                if (!FeromonSearch((Ant)Ants[i]) || MaxSize < R / 2)//Feromonok keresése
                 {
-                    for (int p = 0; p < InitialParameters.Count; p++)
+                    do
                     {
-                        parameter.Add((double)((Ant)Ants[i]).Elem[p] + R * (RNG.NextDouble() * 2 - 1));
-
-                        if ((double)parameter[p] > (double)UpperParamBounds[p])
-                            parameter[p] = UpperParamBounds[p];
-                        else if ((double)parameter[p] < (double)LowerParamBounds[p])
-                            parameter[p] = LowerParamBounds[p];
-                        if (Integer[p])
-                            parameter[p] = Math.Round((double)parameter[p]);
-                    }
-                    ((Ant)Ants[i]).newVectorAdd((BaseElement)GetNewElement(FitnessFunction, parameter));
+                        for (int p = 0; p < InitialParameters.Count; p++)
+                        {
+                            if(((Ant)Ants[i]).IsIn)
+                                parameter.Add((double)((Ant)Ants[i]).Elem[p] + (R / 2) * (RNG.NextDouble() * 2 - 1));
+                            else
+                                parameter.Add((double)((Ant)Ants[i]).Elem[p] + R * (RNG.NextDouble() * 2 - 1));
+                            if ((double)parameter[p] > (double)UpperParamBounds[p])
+                                parameter[p] = UpperParamBounds[p];
+                            else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                                parameter[p] = LowerParamBounds[p];
+                            if (Integer[p])
+                                parameter[p] = Math.Round((double)parameter[p]);
+                        }
+                        Elem = (BaseElement)GetNewElement(FitnessFunction, parameter);
+                        parameter.Clear();
+                    } while (Elem.Fitness > MaxSize && ((Ant)Ants[i]).IsIn);
+                    ((Ant)Ants[i]).newVectorAdd(Elem);
                 }
-                if(1 >= ((Ant)Ants[i]).Elem.Fitness && FeromonPoints.Steps > ((Ant)Ants[i]).Vectors.Count)
+                if(MaxSize >= ((Ant)Ants[i]).Elem.Fitness && Math.Abs(MaxSize - ((Ant)Ants[i]).Elem.Fitness) > 0.1)
                 {
-                    FeromonPoints = new Feromon(((Ant)Ants[i]).Vectors);
-                    ((Ant)Ants[i]).Vectors.Clear();
+                    if (!((Ant)Ants[i]).IsIn)
+                    {
+                        count++;
+                        ((Ant)Ants[i]).IsIn = true;
+                    }
+                    if(((Ant)Ants[i]).Vectors.Count > 5)
+                    {
+                        FeromonPoints.Add(new Feromon(((Ant)Ants[i]).Vectors));
+                        ((Ant)Ants[i]).Vectors.Clear();
+                    }
                 }
                 Elements[i] = ((Ant)Ants[i]).Elem;
             }
             Ants.Sort();
             Elements.Sort();
+            Evaporation();//Párolgás
         }
         /// <summary>
         /// Feromon pontok keresése a közelben valamint érték modósítás
@@ -73,35 +108,88 @@ namespace Optimization
         /// <returns>Ha sikerült a keresés és modosítás akkor igazat ad vissza</returns>
         private bool FeromonSearch(Ant Ant)
         {
-            ArrayList Feromons = new ArrayList();
-            int Count = 0;
             if(FeromonPoints != null)
             {
-                foreach (Vector Vector in FeromonPoints.Vectors)
+                foreach (Feromon Feromon in FeromonPoints)
                 {
-                    if (isInRondure(Vector.Coordinates, Ant.Elem.Position) && Vector.Fitness < Ant.Elem.Fitness)
+                    ArrayList list = new ArrayList();
+                    list.Add(Feromon.Vectors[0]);
+                    list.Add(Feromon.Vectors[Feromon.Vectors.Count - 1]);
+                    if (isInLine(new Vector(Ant.Elem.Position, Ant.Elem.Fitness), list))
                     {
-                        //FeromonPoints.SearchVector.Add(Vector);
-                        Ant.newVectorAdd((BaseElement)GetNewElement(FitnessFunction, Vector.Coordinates));
-                        return true;
+                        foreach (Vector Vector in Feromon.Vectors)
+                        {
+                            if (isInRondure(Vector.Coordinates, Ant.Elem.Position) && Vector.Fitness < Ant.Elem.Fitness)
+                            {
+                                var parameters = new ArrayList();
+                                for (int i = 0; i < Vector.Coordinates.Count; i++)
+                                {
+                                    if (RNG.Next(2) % 2 == 0)
+                                        parameters.Add((double)(Vector.Coordinates[i]) + 0.1);
+                                    else
+                                        parameters.Add((double)(Vector.Coordinates[i]) - 0.1);
+                                }
+                                BaseElement Elem = (BaseElement)GetNewElement(FitnessFunction, parameters);
+                                if (!Ant.IsIn && Elem.Fitness < Ant.Elem.Fitness)
+                                    Ant.newVectorAdd(Elem);
+                                return true;
+                            }
+                        }
                     }
                 }
             }
             return false;
         }
         /// <summary>
-        /// Kör egyenlete Csak 2 dimenziós!!!
+        /// párolgás
+        /// </summary>
+        private void Evaporation()
+        {
+            for (int i = 0; i < FeromonPoints.Count; i++)
+            {
+                if(((Feromon)FeromonPoints[i]).BestFitness > ((BaseElement)Elements[NumberOfElements - 1]).Fitness)
+                {
+                    FeromonPoints.RemoveAt(i);
+                }
+            }
+        }
+        /// <summary>
+        /// 
         /// </summary>
         /// <param name="XY">Azon pont amire kiváncsik vagyunk hogy benne van e</param>
         /// <param name="UV">Azon kör középontja amit vizsgálunk</param>
         /// <returns></returns>
         private bool isInRondure(ArrayList XY, ArrayList UV)
         {
-            double value = Math.Pow(((double)XY[0] - (double)UV[0]), 2) + Math.Pow(((double)XY[1] - (double)UV[1]), 2);
+            double value = Math.Pow(((double)XY[0] - (double)UV[0]), 2);
+            for (int i = 1; i < XY.Count; i++)
+            {
+                value += Math.Pow(((double)XY[i] - (double)UV[i]), 2);
+            }
             if (value <= (R * R))
             {
                 return true;
             }
+            return false;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="XY"></param>
+        /// <param name="UV"></param>
+        /// <returns></returns>
+        private bool isInLine(Vector XY, ArrayList UV)
+        {
+            Vector UUVV_1 = (Vector)UV[0];
+            Vector UUVV_2 = (Vector)UV[1];
+            ArrayList NormalVector = new ArrayList();
+            NormalVector.Add(((double)UUVV_1.Coordinates[1] - (double)UUVV_2.Coordinates[1]) * (-1));
+            NormalVector.Add((double)UUVV_1.Coordinates[0] - (double)UUVV_2.Coordinates[0]);
+            Vector UUVV_3 = new Vector(NormalVector, 0);
+            double value = ((double)XY.Coordinates[0] * (double)UUVV_3.Coordinates[0]) + ((double)XY.Coordinates[1] * (double)UUVV_3.Coordinates[1]);
+            double value2 = ((double)UUVV_3.Coordinates[0] * (double)UUVV_3.Coordinates[0]) + ((double)UUVV_3.Coordinates[1] * (double)UUVV_3.Coordinates[1]);
+            if (value >= value2 - (value2 / 2) && value <= value2 + (value2 / 2))
+                return true;
             return false;
         }
         private class Feromon : IComparable
@@ -111,10 +199,8 @@ namespace Optimization
             /// </summary>
             public ArrayList Vectors { get; set; }
             public int Steps { get; set; }
-            /// <summary>
-            /// A keresés során ebben tárolodnak el azok a pontok amik a keresési pont körül vannak
-            /// </summary>
-            public ArrayList SearchVector { get; set; }
+            public double BestFitness { get; set; }
+
             public Feromon(ArrayList Vectors)
             {
                 this.Vectors = new ArrayList();
@@ -123,7 +209,7 @@ namespace Optimization
                     this.Vectors.Add(Vector);
                 }
                 Steps = this.Vectors.Count;
-                SearchVector = new ArrayList();
+                BestFitness = ((Vector)this.Vectors[this.Steps - 1]).Fitness;
             }
             public Feromon(ArrayList Vectors, int Steps)
             {
@@ -133,7 +219,7 @@ namespace Optimization
                     this.Vectors.Add(Vector);
                 }
                 this.Steps = Steps;
-                SearchVector = new ArrayList();
+                BestFitness = ((Vector)this.Vectors[this.Steps - 1]).Fitness;
             }
             public int CompareTo(object other)
             {
@@ -152,11 +238,13 @@ namespace Optimization
             /// Vector elemeket fog tartalmazni
             /// </summary>
             public ArrayList Vectors { get; set; }
+            public bool IsIn { get; set; }
             public Ant(BaseElement Elem)
             {
                 this.Elem = Elem;
                 Vectors = new ArrayList();
                 this.Vectors.Add(new Vector(Elem.Position, Elem.Fitness));
+                IsIn = false;
             }
             /// <summary>
             /// Új vektord hozzáadása valamint az elem felül írása
@@ -177,7 +265,7 @@ namespace Optimization
                 return 0;
             }
         }
-        private class Vector : IComparable
+        private class Vector
         {
             /// <summary>
             /// A paraméter elemeket fogja tartalmazni
@@ -191,15 +279,6 @@ namespace Optimization
             {
                 this.Coordinates = Coordinates;
                 this.Fitness = Fitness;
-            }
-            public int CompareTo(object other)
-            {
-                var otherVector = (Vector)other;
-                if (otherVector.Fitness < Fitness)
-                    return 1;
-                if (otherVector.Fitness > Fitness)
-                    return -1;
-                return 0;
             }
         }
     }
