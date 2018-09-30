@@ -38,13 +38,20 @@ namespace Optimization
                 FeromonPoints = new ArrayList(); 
                 isFirst = false;
             }
-            BestFitness = ((BaseElement)Elements[0]).Fitness;
+            //Azért kell a 5. legjobb eredmény mivel a legjobbat sokkal kisebb esélyel tudják felülmúlni
+            if(((BaseElement)Elements[4]).Fitness < BestFitness)//szükséges, hogy a bolyt egyben tartsa
+                BestFitness = ((BaseElement)Elements[4]).Fitness;
             BaseElement Elem;
             ArrayList parameter;
             for (int i = 0; i < NumberOfElements; i++)
             {
+                //Ha az egyik lokális elem fitnesze nagyobb mint az 5.-é valamint nagyobb a különbségük mint 10 akkor vissza kerül globális keresövé
+                if (((Ant)Ants[i]).IsLocal && ((Ant)Ants[i]).Elem.Fitness > BestFitness && Math.Abs(BestFitness - ((Ant)Ants[i]).Elem.Fitness) > 10)
+                {
+                    ((Ant)Ants[i]).IsLocal = false;
+                }
                 //Ha a hangya már csak lokálisan keres akkor nem nézi meg a feromon pontokat
-                if (((Ant)Ants[i]).IsLocal || i >= (NumberOfElements - (NumberOfElements / 10)) || !FeromonSearch((Ant)Ants[i]))//Feromonok keresése
+                if (((Ant)Ants[i]).IsLocal || !FeromonSearch((Ant)Ants[i]))//Feromonok keresése
                 {
                     parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
@@ -59,16 +66,15 @@ namespace Optimization
                     }
                     Elem = (BaseElement)GetNewElement(FitnessFunction, parameter);
                     //Csak akkor adodik hozzá az új elem ha az nem lokálisan keress vagy pedig kisebb vagy egyenlő a fitnessze mint a legjobbnak
-                    if (!((Ant)Ants[i]).IsLocal || (Elem.Fitness <= BestFitness && ((Ant)Ants[i]).IsLocal))
+                    if (!((Ant)Ants[i]).IsLocal || (Elem.Fitness < BestFitness && ((Ant)Ants[i]).IsLocal))
                         ((Ant)Ants[i]).newVectorAdd(Elem);
                 }
                 if (((Ant)Ants[i]).Elem.Fitness < BestFitness && !((Ant)Ants[i]).IsLocal)
                 {
                     FeromonPoints.Add(new Feromon(((Ant)Ants[i]).Vectors));
                 }
-                //Olyan függvényeknél ahol nehéz akár az 1 körüli értéket is megtalálni nem elég hatékony ez a szám
-                //Keress rá megoldást!!!
-                if (((Ant)Ants[i]).Elem.Fitness < 1)//Mivel nulla a keressett érték ezért 1, után már csak lokálisan keresnek
+                //Lokális keresésre váltás akkor történik meg ha az elöző körben legjobb 5. elemnél jobb az értéke
+                if (((Ant)Ants[i]).Elem.Fitness < BestFitness)
                 {
                     ((Ant)Ants[i]).Vectors.Clear();//Lokális keresés során nincs szükség feromon vonalra a késöbbiekben
                     ((Ant)Ants[i]).IsLocal = true;
