@@ -143,7 +143,7 @@ namespace OptimizationTester
             // Bee algorithm params
             ExploratoryRadius = 10;
             SearchRadius = 3;
-            MaxStep = 30;
+            MaxStep = 1;
             // Bacterial algorithm params
             Infections = 10;
             ClonesCount = 25;
@@ -597,7 +597,6 @@ namespace OptimizationTester
                         FitnessFunction = ffd,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
-                        EliteBees = new ArrayList(),
                         //Felderitő méhek keresési rádiusza
                         ExploratoryRadius = ExploratoryRadius,
                         //Kereső méhek keresési rádiusza
