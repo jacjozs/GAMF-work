@@ -46,7 +46,7 @@ namespace Optimization
             for (int i = 0; i < NumberOfElements; i++)
             {
                 //Ha az egyik lokális elem fitnesze nagyobb mint az 5.-é valamint nagyobb a különbségük mint 10 akkor vissza kerül globális keresövé
-                if (((Ant)Ants[i]).IsLocal && ((Ant)Ants[i]).Elem.Fitness > BestFitness && Math.Abs(BestFitness - ((Ant)Ants[i]).Elem.Fitness) > 10)
+                if (((Ant)Ants[i]).IsLocal && (((Ant)Ants[i]).Elem.Fitness - BestFitness) >= 10)
                 {
                     ((Ant)Ants[i]).IsLocal = false;
                 }
@@ -65,17 +65,14 @@ namespace Optimization
                             parameter[p] = Math.Round((double)parameter[p]);
                     }
                     Elem = (BaseElement)GetNewElement(FitnessFunction, parameter);
-                    //Csak akkor adodik hozzá az új elem ha az nem lokálisan keress vagy pedig kisebb vagy egyenlő a fitnessze mint a legjobbnak
+                    //Csak akkor adodik hozzá az új elem ha az nem lokálisan keress vagy pedig kisebb a fitnessze mint az 5. legjobbnak
                     if (!((Ant)Ants[i]).IsLocal || (Elem.Fitness < BestFitness && ((Ant)Ants[i]).IsLocal))
                         ((Ant)Ants[i]).newVectorAdd(Elem);
                 }
-                if (((Ant)Ants[i]).Elem.Fitness < BestFitness && !((Ant)Ants[i]).IsLocal)
+                //Lokális keresésre váltás akkor történik meg ha az elöző körben legjobb 5. elemnél jobb az értéke
+                if (!((Ant)Ants[i]).IsLocal && ((Ant)Ants[i]).Elem.Fitness < BestFitness)
                 {
                     FeromonPoints.Add(new Feromon(((Ant)Ants[i]).Vectors));
-                }
-                //Lokális keresésre váltás akkor történik meg ha az elöző körben legjobb 5. elemnél jobb az értéke
-                if (((Ant)Ants[i]).Elem.Fitness < BestFitness)
-                {
                     ((Ant)Ants[i]).Vectors.Clear();//Lokális keresés során nincs szükség feromon vonalra a késöbbiekben
                     ((Ant)Ants[i]).IsLocal = true;
                 }
@@ -85,7 +82,7 @@ namespace Optimization
             Elements.Sort();//Rendezés a kimenethez
         }
         /// <summary>
-        /// Feromon pontok keresése a közelben valamint érték modósítás
+        /// Feromon pontok keresése a közelben valamint érték módosítás
         /// </summary>
         /// <param name="Ant">Az aktuális hangya ami körül keresünk</param>
         /// <returns>Ha sikerült a keresés és modosítás akkor igazat ad vissza</returns>
@@ -139,8 +136,8 @@ namespace Optimization
                 }
             }
             for (int i = 0; i < NumberOfElements; i++)
-            {
-                if (!((Ant)Ants[i]).IsLocal && ((Ant)Ants[i]).Vectors.Count >= NumberOfElements * 2)
+            {//Kritikus pont lehet a második feltétel!!!
+                if (!((Ant)Ants[i]).IsLocal && ((Ant)Ants[i]).Vectors.Count >= NumberOfElements * 2)//TODO
                 {
                     ((Ant)Ants[i]).Vectors.RemoveRange(((Ant)Ants[i]).Vectors.Count / 2, ((Ant)Ants[i]).Vectors.Count / 2);
                 }
@@ -154,8 +151,8 @@ namespace Optimization
         /// <returns>Bent van e a körben vagy nem</returns>
         private bool isInRondure(ArrayList XY, ArrayList UV)
         {
-            double value = Math.Pow(((double)XY[0] - (double)UV[0]), 2);
-            for (int i = 1; i < XY.Count; i++)
+            double value = 0;
+            for (int i = 0; i < XY.Count; i++)
             {
                 value += Math.Pow(((double)XY[i] - (double)UV[i]), 2);
             }
