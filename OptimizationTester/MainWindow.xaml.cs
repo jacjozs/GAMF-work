@@ -574,6 +574,8 @@ namespace OptimizationTester
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
+                        // Size of the antibody pool.
+                        NumberOfElements = 1,
                         Integer = Integer,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
@@ -588,7 +590,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 6:
-                    Optimizer = new BeeAlg
+                    Optimizer = new ABC
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -597,12 +599,12 @@ namespace OptimizationTester
                         FitnessFunction = ffd,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
-                        //Felderitő méhek keresési rádiusza
-                        ExploratoryRadius = ExploratoryRadius,
                         //Kereső méhek keresési rádiusza
                         SearchRadius = SearchRadius,
                         //Felderitő méhek maximális keressi számas ciklus alatt
                         MaxStep = MaxStep,
+                        //Felderítő méhek száma
+                        Elite = 10,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.

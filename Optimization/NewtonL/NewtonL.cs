@@ -19,8 +19,6 @@ namespace Optimization
         {
             var M1Left = new ArrayList();
             var M2Right = new ArrayList();
-            Elements.Sort();
-            Elements.RemoveRange(0, Elements.Count - 1);
             var StartPosition = (BaseElement)Elements[0];
             HistoryFitness = ((BaseElement) Elements[0]).Fitness;
             for (int p = 0; p < InitialParameters.Count; p++)

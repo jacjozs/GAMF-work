@@ -28,7 +28,7 @@
       <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAAAABBA=</HashCode>
       <FileName>Common\BaseOptimizationMethod.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Orientation="Left" Position="3.679" />
+    <Lollipop Orientation="Bottom" Position="0.1" />
   </Class>
   <Class Name="Optimization.Result">
     <Position X="8" Y="11.75" Width="2" />
@@ -63,6 +63,21 @@
     <TypeIdentifier>
       <HashCode>ACAgAAAAAAAAAhEAAAAAAACAAAgAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>ParticleSwarm\ParticleSwarm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.ABC">
+    <Position X="10.25" Y="1.25" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.25" />
+        <Point X="4.75" Y="0.875" />
+        <Point X="11" Y="0.875" />
+        <Point X="11" Y="1.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAQAAAAAIAAACAAAABAAAAAAAQAAAQAAAACA=</HashCode>
+      <FileName>ABC\ABC.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">
