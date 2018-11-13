@@ -29,25 +29,24 @@ namespace Optimization
 
         protected override void CreateNextGeneration()
         {
-            if (EliteBees == null)
-                EliteBees = new ArrayList();
-            for (int i = 0; i < Elite; i++)
-            {
-                Exploratory((BaseElement)Elements[i], i);//Felderítés
-            }
+            //Kivétel kezelés
+            if (NumberOfElements < Elite) throw new ArgumentException("Elite parameter cannot be greater than NumberOfElements", "original");
+            if (EliteBees == null) EliteBees = new ArrayList();
+            for (int i = 0; i < Elite; i++) Exploratory((BaseElement)Elements[i], i);//Felderítés 
             if (EliteBees.Count > Elite)
-            {
+            {// Ha több felderített pont van mint az előírt akkor a legrosszabbakat törli
                 EliteBees.Sort();
                 EliteBees.RemoveRange(Elite, EliteBees.Count - Elite);
             }
             UpdateFollowerSizes();//Kereső méhek kiosztása
             int EliteIndex = Elite;
-            int rnd = 0;
+            int rnd = 0, BeeGroupI = 0;
             for (int k = 0; k < Flowers.Length; k++)
             {
                 double OldFitness = ((BaseElement)EliteBees[EliteBees.Count - 1]).Fitness;
                 for (int i = 0; i < Flowers[k]; i++)
                 {
+                    BeeGroupI = EliteIndex + i;//A keresési csoporton belüli méh indexe
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
                     {
@@ -62,13 +61,10 @@ namespace Optimization
                         if (Integer[p])
                             parameter[p] = Math.Round((double)parameter[p]);
                     }
-                    Elements[EliteIndex + i] = GetNewElement(FitnessFunction, parameter);
-                    if (((BaseElement)Elements[EliteIndex + i]).Fitness < OldFitness)
-                    {
-                        EliteBees[k] = Elements[EliteIndex + i];
-                    }
+                    Elements[BeeGroupI] = GetNewElement(FitnessFunction, parameter);
+                    if (((BaseElement)Elements[BeeGroupI]).Fitness < OldFitness) EliteBees[k] = Elements[BeeGroupI];
                 }
-                EliteIndex += Flowers[k];
+                EliteIndex += Flowers[k];//Tovább lépés a következő kereső csoportra
             }
             if (EliteBees.Count >= (NumberOfElements - Elite) / 2)
             {
@@ -85,17 +81,15 @@ namespace Optimization
             Flowers = new int[EliteBees.Count];
             var count = NumberOfElements - Elite;
             EliteBees.Sort();
-            int i = 0;
-            while (EliteBees.Count != 0 && count / EliteBees.Count > 0)
+            for (int i = 0; EliteBees.Count != 0 && count / EliteBees.Count > 0; i++)
             {
-                Flowers[i % EliteBees.Count] += (int)Math.Round((double)count / EliteBees.Count, MidpointRounding.ToEven);
+                Flowers[i % EliteBees.Count] += (int)Math.Round((double)count / EliteBees.Count);
                 count -= Flowers[i % EliteBees.Count];
-                i++;
             }
             if (Flowers.Length >= 1)
             {
-                Flowers[0] += count;
-                Flowers[0] += (NumberOfElements - Elite) - Flowers.Sum();
+                Flowers[0] += count;//A fennmaradt egyedeket a legjobb kereséséhez állitja be
+                Flowers[0] += (NumberOfElements - Elite) - Flowers.Sum();//Az osztás miatt keletkezett veszteségeket a legjobbnak adja
             }
         }
         /// <summary>
@@ -105,11 +99,11 @@ namespace Optimization
         {
             BaseElement old = (BaseElement)GetNewElement(FitnessFunction, bee.Position);
             int rnd = 0, Step = 0;
-            while (MaxStep != Step)
+            while (MaxStep != Step)//Ismétlés ameddig el nem éri a maximálos lépés számot
             {
-                for (int p = 0; p < bee.Position.Count; p++)
+                for (int p = 0; p < InitialParameters.Count; p++)
                 {
-                    do rnd = RNG.Next(NumberOfElements); while (rnd == index);
+                    do rnd = RNG.Next(NumberOfElements); while (rnd == index);//Egy olyan elem keresése ami nem egyenlő a kiválasztot elemel
                     bee.Position[p] = (double)bee[p] + ((double)bee[p] - (double)((BaseElement)Elements[rnd])[p]) * (RNG.NextDouble() * 2 - 1);
                     if ((double)bee.Position[p] > (double)UpperParamBounds[p])
                         bee.Position[p] = UpperParamBounds[p];

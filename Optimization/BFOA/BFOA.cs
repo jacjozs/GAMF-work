@@ -5,6 +5,7 @@ namespace Optimization
 {
     /// <summary>
     /// BFOA = Bacterial Foraging Optimization Algorithm
+    /// TODO fenn áll a túlszámolás, ezért nem javasólt a fitnesz értékes megállási feltétel
     /// </summary>
     public class BFOA : BaseOptimizationMethod
     {
@@ -18,10 +19,7 @@ namespace Optimization
         public int ClonesCount { get; set; }
         protected override void CreateNextGeneration()
         {
-            for (int i = 0; i < NumberOfElements; i++)
-            {
-                Cemotoxia(i);
-            }
+            for (int i = 0; i < NumberOfElements; i++) Cemotoxia(i); 
             Elements.Sort();
             GenTransfer();
         }
@@ -65,11 +63,11 @@ namespace Optimization
             int Chromosome;//Az átadandó kromoszoma indexe (x, y .. koordináták)
             for (int i = 0; i < Infections; i++)
             {
-                GoodIndex = RNG.Next(0, NumberOfElements / 2);
-                BadIndex = RNG.Next(NumberOfElements / 2, NumberOfElements);
-                Chromosome = RNG.Next(0, InitialParameters.Count);
-                ((BaseElement)Elements[BadIndex])[Chromosome] = ((BaseElement)Elements[GoodIndex])[Chromosome];
-                Elements[BadIndex] = GetNewElement(FitnessFunction, ((BaseElement)Elements[GoodIndex]).Position);
+                GoodIndex = RNG.Next(0, NumberOfElements / 2);//Jó elem indexének kiválasztása
+                BadIndex = RNG.Next(NumberOfElements / 2, NumberOfElements);// Rossze elem indexének kiválasztása
+                Chromosome = RNG.Next(0, InitialParameters.Count);// Random kromoszoma kiválasztása
+                ((BaseElement)Elements[BadIndex])[Chromosome] = ((BaseElement)Elements[GoodIndex])[Chromosome];// Génátadás
+                Elements[BadIndex] = GetNewElement(FitnessFunction, ((BaseElement)Elements[GoodIndex]).Position);// Így kapott paraméter lista számítás
             }
         }
     }
