@@ -44,8 +44,7 @@
     <Compile Include="ABC\ABC.cs" />
     <Compile Include="AlgoSelector\AlgoSelector.cs" />
     <Compile Include="AntAlg\AntAlg.cs" />
-    <Compile Include="BacterialAlg\BacterialAlg.cs" />
-    <Compile Include="BeeAlg\BeeColonyAlg.cs" />
+    <Compile Include="BFOA\BFOA.cs" />
     <Compile Include="ClonalGenL\ClonalGenerationLocal.cs" />
     <Compile Include="ClonalGen\ClonalGeneration.cs" />
     <Compile Include="Common\BaseElement.cs" />

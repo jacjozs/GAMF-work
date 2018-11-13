@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Optimization
 {
@@ -11,12 +9,6 @@ namespace Optimization
     /// </summary>
     public class ABC : BaseOptimizationMethod
     {
-
-        /// <summary>
-        /// Keresőméhek rádiusza
-        /// a kereső méhek a felderitők általt talált pont körül keresés mérete
-        /// </summary>
-        public double SearchRadius { get; set; }
         /// <summary>
         /// A felderítő méhek száma
         /// </summary>
@@ -50,6 +42,7 @@ namespace Optimization
             }
             UpdateFollowerSizes();//Kereső méhek kiosztása
             int EliteIndex = Elite;
+            int rnd = 0;
             for (int k = 0; k < Flowers.Length; k++)
             {
                 double OldFitness = ((BaseElement)EliteBees[EliteBees.Count - 1]).Fitness;
@@ -59,8 +52,9 @@ namespace Optimization
                     for (int p = 0; p < InitialParameters.Count; p++)
                     {
                         parameter.Add(((BaseElement)EliteBees[k])[p]);
+                        do rnd = RNG.Next(NumberOfElements); while (rnd == i);
                         // a kereső méhet a kezdőpontól a megfelelő sugáron belülre mozgatja.
-                        parameter[p] = (double)((BaseElement)EliteBees[k])[p] + SearchRadius * (RNG.NextDouble() * 2 - 1);
+                        parameter[p] = (double)parameter[p] + ((double)parameter[p] - (double)((BaseElement)Elements[rnd])[p]) * (RNG.NextDouble() * 2 - 1);
                         if ((double)parameter[p] > (double)UpperParamBounds[p])
                             parameter[p] = UpperParamBounds[p];
                         else if ((double)parameter[p] < (double)LowerParamBounds[p])

@@ -86,8 +86,7 @@ namespace OptimizationTester
         private double c0;
         private double cg;
         // Bee algorithm parameters
-        private double ExploratoryRadius;
-        private double SearchRadius;
+        private int Elite;
         private int MaxStep;
         // Bacterial algorithm parameters
         private int Infections;
@@ -141,8 +140,7 @@ namespace OptimizationTester
             pm = 0.6;
             crossoverCount = NA;
             // Bee algorithm params
-            ExploratoryRadius = 10;
-            SearchRadius = 3;
+            Elite = 10;
             MaxStep = 1;
             // Bacterial algorithm params
             Infections = 10;
@@ -599,12 +597,10 @@ namespace OptimizationTester
                         FitnessFunction = ffd,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
-                        //Kereső méhek keresési rádiusza
-                        SearchRadius = SearchRadius,
                         //Felderitő méhek maximális keressi számas ciklus alatt
                         MaxStep = MaxStep,
                         //Felderítő méhek száma
-                        Elite = 10,
+                        Elite = Elite,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.
@@ -617,7 +613,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 7:
-                    Optimizer = new BacterialAlg
+                    Optimizer = new BFOA
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,

@@ -76,8 +76,25 @@
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAQAAAAAIAAACAAAABAAAAAAAQAAAQAAAACA=</HashCode>
+      <HashCode>ACAAAAAAAQAAAAAIAAACAAAAAAAAAAAAQAAAQAAAACA=</HashCode>
       <FileName>ABC\ABC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.BFOA">
+    <Position X="10.25" Y="4.25" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6" Y="4.438" />
+        <Point X="7.918" Y="4.438" />
+        <Point X="7.918" Y="3.864" />
+        <Point X="10.127" Y="3.864" />
+        <Point X="10.127" Y="5.375" />
+        <Point X="10.25" Y="5.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAEAQAAAAQAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BFOA\BFOA.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">

@@ -3,66 +3,57 @@ using System.Collections;
 
 namespace Optimization
 {
-    public class BacterialAlg : BaseOptimizationMethod
+    /// <summary>
+    /// BFOA = Bacterial Foraging Optimization Algorithm
+    /// </summary>
+    public class BFOA : BaseOptimizationMethod
     {
         /// <summary>
         /// Génátadások száma
         /// </summary>
         public int Infections { get; set; }
         /// <summary>
-        /// egyedengénti maximálasan generált klonok száma
-        /// a random generálás maximuma
+        /// Egyedengénti generált klonok száma
         /// </summary>
         public int ClonesCount { get; set; }
-
         protected override void CreateNextGeneration()
         {
             for (int i = 0; i < NumberOfElements; i++)
             {
-                Elements[i] = Mutate((BaseElement)Elements[i]);
+                Cemotoxia(i);
             }
             Elements.Sort();
             GenTransfer();
         }
         /// <summary>
-        /// A megadot elemn végrehajtja a mutáció folyamatát
+        /// A sejetek mozgását rekonstruáló methodus
+        /// Az elemből klónokat hoz létre majd azokat módosítja és a legjobbal felcserélni a megadott elemet
         /// </summary>
-        /// <param name="entity">mutálni kivánt elem</param>
-        /// <returns>mutáción átestt elem</returns>
-        private BaseElement Mutate(BaseElement entity)
+        /// <param name="index">Az Elements listában elfoglalt indexe</param>
+        private void Cemotoxia(int index)
         {
+            int rnd = 0;
             ArrayList Clones = new ArrayList();
-            BaseElement copy = entity;
-            int rnd = RNG.Next(1, ClonesCount);
-            for (int h = 0; h < rnd; h++)
-            {//másolatok létrehozása
-                Clones.Add(copy);
-            }
-            for (int p = 0; p < InitialParameters.Count; p++)
-            {//paraméterenkénti modosítás majd kiértékelés
+            for (int i = 0; i < ClonesCount; i++)//Klónok létrehozása és módosítása
+            {
+                Clones.Add((BaseElement)Elements[index]);
                 var parameter = new ArrayList();
-                for (int j = 0; j < Clones.Count; j++)
-                {//minden klonon végrehajtottt modosítás
-                    parameter = ((BaseElement)Clones[j]).Position;
-                    parameter[p] = (double)((BaseElement)Clones[j])[p] + 3 * (RNG.NextDouble() * 2 - 1);
+                for (int p = 0; p < InitialParameters.Count; p++)
+                {
+                    parameter.Add(((BaseElement)Clones[i])[p]);
+                    do rnd = RNG.Next(NumberOfElements); while (rnd == index);
+                    parameter[p] = (double)parameter[p] + ((double)parameter[p] - (double)((BaseElement)Elements[rnd])[p]) * (RNG.NextDouble() * 2 - 1);
                     if ((double)parameter[p] > (double)UpperParamBounds[p])
                         parameter[p] = UpperParamBounds[p];
                     else if ((double)parameter[p] < (double)LowerParamBounds[p])
                         parameter[p] = LowerParamBounds[p];
                     if (Integer[p])
                         parameter[p] = Math.Round((double)parameter[p]);
-
-                    Clones[j] = GetNewElement(FitnessFunction, parameter);
-                }//a legjobb értékel rendelkező paraméterének átadása a többi klonak
-                Clones.Sort();
-                for (int j = 0; j < Clones.Count; j++)
-                {//A legjobb értékel modosítot elem paraméterének átadása majd újraszámolása a modosítot klonban
-                    ((BaseElement)Clones[j])[p] = ((BaseElement)Clones[0])[p];
-                    Clones[j] = GetNewElement(FitnessFunction, ((BaseElement)Clones[j]).Position);
                 }
-            }//rendezés majd a legjobb klon vissza adása és kilépés
+                Clones[i] = GetNewElement(FitnessFunction, parameter);
+            }
             Clones.Sort();
-            return (BaseElement)Clones[0];
+            Elements[index] = Clones[0];
         }
         /// <summary>
         /// Feladata a génátadás végrehajtása a populáscioban
