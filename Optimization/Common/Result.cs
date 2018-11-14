@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Optimization
 {
@@ -14,14 +15,14 @@ namespace Optimization
 		/// <summary>
 		/// Vector containing other information about the optimization process.
 		/// </summary>
-		public ArrayList InfoList;
+		public Dictionary<InfoTypes, object> InfoList;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="op">Vector containing the optimized values of the parameters.</param>
 		/// <param name="il">Vector containing information about the optimization process.</param>
-		public Result(ArrayList op, ArrayList il)
+		public Result(ArrayList op, Dictionary<InfoTypes, object> il)
 		{
 			OptimizedParameters = op;
 			InfoList = il;

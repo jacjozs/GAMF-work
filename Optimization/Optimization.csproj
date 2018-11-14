@@ -53,6 +53,7 @@
     <Compile Include="Common\EventHandlerDelegate.cs" />
     <Compile Include="Common\FitnessFunctionDelegate.cs" />
     <Compile Include="Common\IElement.cs" />
+    <Compile Include="Common\InfoTypes.cs" />
     <Compile Include="Common\IOptimizationMethod.cs" />
     <Compile Include="Common\Result.cs" />
     <Compile Include="Common\StoppingTypes.cs" />

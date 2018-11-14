@@ -36,10 +36,8 @@ namespace Optimization
         private double a;
         private double b;
         private double Amax;
-        private int mhat;
         // Genetic algorithm parameters
         private double pm;
-        private int crossoverCount;
         // Particle swarm parameters
         private double cp;
         private double c0;
@@ -79,7 +77,8 @@ namespace Optimization
         }
         protected override void CreateNextGeneration()
         {
-            ArrayList AlgInfos = new ArrayList();
+            ArrayList AllAlgInfos = new ArrayList();
+            Result[] result = new Result[3];
             for (int l = 0; l < 3; l++)
             {
                 Result[,] results = new Result[9, 2];
@@ -95,47 +94,57 @@ namespace Optimization
                             case 1:
                                 StoppingType = StoppingType.EvaluationNumber;
                                 break;
+                            case 2:
+                                StoppingType = StoppingType.PerformanceTreshold;
+                                break;
                         }
                         OptMethod(j);
                         Result Results = Optimizer.Optimize();
-                        Results.InfoList.Add(Optimizer.GetType());
-                        Results.InfoList.Add(l);
+                        Results.InfoList.Add(InfoTypes.AlgType, Optimizer.GetType());
+                        Results.InfoList.Add(InfoTypes.SelectAlgNum, l);
                         results[j, i] = Results;
-                        AlgInfos.Add(results);
+                        AllAlgInfos.Add(Results);
                     }
                 }
+                result[l] = BestCalc(results);
             }
-            Info.Add(BestCalc(AlgInfos));
-            Info.Add(AlgInfos);
+            int index = -1;
+            double id = double.MaxValue;
+            for (int i = 0; i < result.Length; i++)
+            {
+                if ((double)result[i].InfoList[InfoTypes.SelectAlgFitness] < id)
+                {
+                    id = (double)result[i].InfoList[InfoTypes.SelectAlgFitness];
+                    index = i;
+                }
+            }
+            Info.Add(InfoTypes.SelectAlgType, result[index].InfoList[InfoTypes.AlgType]);
+            Info.Add(InfoTypes.SelectAlgResult, result[index]);
+            Info.Add(InfoTypes.SelectAlgInfos, AllAlgInfos);
             Stop = true;
         }
 
-        private Type BestCalc(ArrayList AlgInfos)
+        private Result BestCalc(Result[,] results)
         {
             int index = -1;
-            int index2 = -1;
             double id = double.MaxValue;
-            for (int j = 0; j < AlgInfos.Count / 3; j++)
+            for (int i = 0; i < results.Length / 2; i++)
             {
-                for (int i = 0; i < ((Result[,])AlgInfos[i]).Length / 2; i++)
+                double ev = double.Parse(results[i, 0].InfoList[InfoTypes.Evaluations].ToString()) / StoppingNumberOfEvaluations;
+                double ge = double.Parse(results[i, 1].InfoList[InfoTypes.Generations].ToString()) / StoppingNumberOfGenerations;
+                //double EvGe = double.Parse(results[i, 2].InfoList[InfoTypes.Evaluations].ToString()) + double.Parse(results[i, 2].InfoList[InfoTypes.Generations].ToString());
+                double deltaA = Math.Abs(ev - ge /*- EvGe*/);
+                ev = double.Parse(results[i, 0].InfoList[InfoTypes.FinalFitness].ToString());
+                ge = double.Parse(results[i, 1].InfoList[InfoTypes.FinalFitness].ToString());
+                double deltaB = Math.Abs(ev - ge);
+                results[i, 0].InfoList.Add(InfoTypes.SelectAlgFitness, deltaA * deltaB);
+                if ((double)results[i, 0].InfoList[InfoTypes.SelectAlgFitness] < id)
                 {
-                    Result[,] results = (Result[,])AlgInfos[i];
-                    double ev = double.Parse(results[i, 0].InfoList[3].ToString()) / StoppingNumberOfEvaluations;
-                    double ge = double.Parse(results[i, 1].InfoList[2].ToString()) / StoppingNumberOfGenerations;
-                    double deltaA = Math.Abs(ev - ge);
-                    ev = double.Parse(results[i, 0].InfoList[1].ToString());
-                    ge = double.Parse(results[i, 1].InfoList[1].ToString());
-                    double deltaB = Math.Abs(ev - ge);
-                    results[i, 0].InfoList[0] = deltaA * deltaB;
-                    if ((double)results[i, 0].InfoList[0] < id)
-                    {
-                        id = (double)results[i, 0].InfoList[0];
-                        index = i;
-                        index2 = j;
-                    }
+                    id = (double)results[i, 0].InfoList[InfoTypes.SelectAlgFitness];
+                    index = i;
                 }
             }
-            return (Type)((Result[,])AlgInfos[index2])[index, 0].InfoList[6];
+            return results[index, 0];
         }
 
         private void OptMethod(int id)

@@ -434,12 +434,12 @@ namespace OptimizationTester
                 var x = Task.Run(() => (Optimizer.Optimize()));
                 var Results = await x;
 
-                tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[0] + "\r\n" +
+                tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                     "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
-                    "Final fitness: " + $"{Results.InfoList[1],10:F60}" + "\r\n" +
-                    "Number of generations: " + Results.InfoList[2] + "\r\n" +
-                    "Number of fitness evaluations: " + Results.InfoList[3] + "\r\n" +
-                    "Best affinities in each generation: " + List((ArrayList)Results.InfoList[4]);
+                    "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F60}" + "\r\n" +
+                    "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
+                    "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n" +
+                    "Best affinities in each generation: " + List((ArrayList)Results.InfoList[InfoTypes.Affinities]);
             }
             else
             {
@@ -447,13 +447,11 @@ namespace OptimizationTester
                 Result[,] results = new Result[9, 2];
                 var x = Task.Run(() => (Optimizer.Optimize()));
                 var Results = await x;
-                tbResults.Text += "Final Method: " + ((Type)Results.InfoList[1]).Name +"\n";
-                foreach (Result[,] item in (ArrayList)Results.InfoList[2])
+                tbResults.Text += "Final Method: " + ((Type)Results.InfoList[InfoTypes.SelectAlgType]).Name +"\n\n";
+                foreach (Result item in (ArrayList)Results.InfoList[InfoTypes.SelectAlgInfos])
                 {
-                    for (int i = 0; i < item.Length / 2; i++)
-                    {
-                        tbResults.Text += ((Type)item[i,0].InfoList[6]).Name + " fitness: " + $"{item[i,0].InfoList[0],10:F30}" + "\n";
-                    }
+                    if(item.InfoList.ContainsKey(InfoTypes.SelectAlgFitness))
+                        tbResults.Text += ((int)item.InfoList[InfoTypes.SelectAlgNum] + 1) + ".  " + ((Type)item.InfoList[InfoTypes.AlgType]).Name + " fitness: " + $"{item.InfoList[InfoTypes.SelectAlgFitness],10:F30}" + "\n\n";
                 }
             }
             btStart.Visibility = Visibility.Visible;

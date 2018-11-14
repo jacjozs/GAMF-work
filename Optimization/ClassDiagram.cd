@@ -25,7 +25,7 @@
   <Class Name="Optimization.BaseOptimizationMethod">
     <Position X="3.5" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMABQgAAIQAAAAAABBA=</HashCode>
+      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAEAABBA=</HashCode>
       <FileName>Common\BaseOptimizationMethod.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Bottom" Position="0.1" />
@@ -70,8 +70,8 @@
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.75" Y="1.25" />
-        <Point X="4.75" Y="0.782" />
-        <Point X="11" Y="0.782" />
+        <Point X="4.75" Y="0.938" />
+        <Point X="11" Y="0.938" />
         <Point X="11" Y="1.25" />
       </Path>
     </InheritanceLine>
@@ -85,8 +85,8 @@
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.938" Y="1.25" />
-        <Point X="4.938" Y="1.049" />
-        <Point X="10.127" Y="1.049" />
+        <Point X="4.938" Y="1.07" />
+        <Point X="10.127" Y="1.07" />
         <Point X="10.127" Y="5.125" />
         <Point X="10.25" Y="5.125" />
       </Path>
@@ -98,9 +98,33 @@
   </Class>
   <Class Name="Optimization.ACO">
     <Position X="10.25" Y="6.5" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.562" Y="1.25" />
+        <Point X="4.562" Y="0.803" />
+        <Point X="12.125" Y="0.803" />
+        <Point X="12.125" Y="7.125" />
+        <Point X="11.75" Y="7.125" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ACO\ACO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.AlgoSelecter">
+    <Position X="12.75" Y="1.25" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.438" Y="1.25" />
+        <Point X="4.438" Y="0.698" />
+        <Point X="13.5" Y="0.698" />
+        <Point X="13.5" Y="1.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AiAAAAAEAQAIAQEIAAREBACCAAAAAEAkA4AAAAAAABA=</HashCode>
+      <FileName>AlgoSelecter\AlgoSelecter.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">
@@ -122,6 +146,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAABAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>Common\StoppingTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Optimization.InfoTypes">
+    <Position X="10.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAACQAAQAAAAAAAAAAACAAAMAAAAAAFAAAAQDACgA=</HashCode>
+      <FileName>Common\InfoTypes.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Delegate Name="Optimization.EventHandlerDelegate">

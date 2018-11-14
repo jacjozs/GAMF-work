@@ -77,7 +77,7 @@ namespace Optimization
         /// <summary>
         /// Returned informations
         /// </summary>
-        public ArrayList Info;
+        public Dictionary<InfoTypes, object> Info;
 
         /// <summary>
         /// Method responsible for the optimization.
@@ -104,9 +104,9 @@ namespace Optimization
             // Check if the stopping condition was met
             CheckStop();
             // Create an object for the returned information.
-            Info = new ArrayList();
+            Info = new Dictionary<InfoTypes, object>();
             // Add the affinity (performance) corresponding to the initial parameter values.
-            Info.Add(((BaseElement)Elements[0]).Fitness);
+            Info.Add(InfoTypes.InitialFitness, ((BaseElement)Elements[0]).Fitness);
             // Create the rest of the initial pool (first generation) of elementes creating elementes at random positions.
             CreateRandomElements(NumberOfElements - 1);
             // Raise GenerationCreated event if there are any subscribers.
@@ -138,15 +138,15 @@ namespace Optimization
                 Best.Add(((BaseElement)Elements[0])[dim]);
             }
             // Add the affinity (performance) value of the best antibody to the returned information.
-            Info.Add(((BaseElement)Elements[0]).Fitness);
+            Info.Add(InfoTypes.FinalFitness, ((BaseElement)Elements[0]).Fitness);
             // Add munber of generations.
-            Info.Add(Generation);
+            Info.Add(InfoTypes.Generations, Generation);
             // Add number of affinity evaluations.
-            Info.Add(Evaluation);
+            Info.Add(InfoTypes.Evaluations, Evaluation);
             // Define returned values.
-            Info.Add(BestAffinities);
+            Info.Add(InfoTypes.Affinities, BestAffinities);
             // Add execution time to result info
-            Info.Add(timer.ElapsedMilliseconds);
+            Info.Add(InfoTypes.ExecutionTime, timer.ElapsedMilliseconds);
             var res = new Result(Best, Info);
             return res;
         }
