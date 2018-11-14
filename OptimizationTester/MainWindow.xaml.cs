@@ -1,18 +1,11 @@
 ﻿using Optimization;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -99,12 +92,12 @@ namespace OptimizationTester
             InitializeComponent();
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { -100.0, -100.0 };
-            ubp = new ArrayList { 100.0, 100.0 };
+            lbp = new ArrayList { -100.0, -100.0, -100.0, -100.0 };
+            ubp = new ArrayList { 100.0, 100.0, 100.0, 100.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 60.0, -99.0 };
+            InitialParameters = new ArrayList { 60.0, -99.0, 70.0, -98.0 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { false, false };
+            Integer = new bool[] { false, false, false, false };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
@@ -141,7 +134,7 @@ namespace OptimizationTester
             crossoverCount = NA;
             // Bee algorithm params
             Elite = 10;
-            MaxStep = 1;
+            MaxStep = 5;
             // Bacterial algorithm params
             Infections = 10;
             ClonesCount = 25;
@@ -183,6 +176,7 @@ namespace OptimizationTester
             miBee.IsChecked = false;
             miBacterial.IsChecked = false;
             miAnt.IsChecked = false;
+            miBest_Alg_Select.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
         {
@@ -253,6 +247,14 @@ namespace OptimizationTester
             uncheckMethods();
             method = 8;
             miAnt.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miBest_Alg_Select_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 9;
+            miBest_Alg_Select.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
@@ -422,8 +424,48 @@ namespace OptimizationTester
             btStart.Visibility = Visibility.Collapsed;
             btStop.Visibility = Visibility.Visible;
             cvPage.Children.Clear();
+            OptMethod(method);
+            if (method != 9)
+            {
+                tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
+                                                 "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
+                                                 "Upper bounds for the parameters: " + List(ubp) + "\r\n";
 
-            switch (method)
+                var x = Task.Run(() => (Optimizer.Optimize()));
+                var Results = await x;
+
+                tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[0] + "\r\n" +
+                    "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
+                    "Final fitness: " + $"{Results.InfoList[1],10:F60}" + "\r\n" +
+                    "Number of generations: " + Results.InfoList[2] + "\r\n" +
+                    "Number of fitness evaluations: " + Results.InfoList[3] + "\r\n" +
+                    "Best affinities in each generation: " + List((ArrayList)Results.InfoList[4]);
+            }
+            else
+            {
+                tbResults.Text = "";
+                Result[,] results = new Result[9, 2];
+                var x = Task.Run(() => (Optimizer.Optimize()));
+                var Results = await x;
+                tbResults.Text += "Final Method: " + ((Type)Results.InfoList[1]).Name +"\n";
+                foreach (Result[,] item in (ArrayList)Results.InfoList[2])
+                {
+                    for (int i = 0; i < item.Length / 2; i++)
+                    {
+                        tbResults.Text += ((Type)item[i,0].InfoList[6]).Name + " fitness: " + $"{item[i,0].InfoList[0],10:F30}" + "\n";
+                    }
+                }
+            }
+            btStart.Visibility = Visibility.Visible;
+            btStop.Visibility = Visibility.Collapsed;
+        }
+        private void btStop_Click(object sender, RoutedEventArgs e)
+        {
+            Optimizer.Stop = true;
+        }
+        private void OptMethod(int id)
+        {
+            switch (id)
             {
                 case 0: //Firework
                     Optimizer = new Firework
@@ -567,7 +609,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 5:
-                    Optimizer = new NewtonL
+                    Optimizer = new CoordinateDescent
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -656,29 +698,29 @@ namespace OptimizationTester
                         Slow = Slow
                     };
                     break;
+                case 9:
+                    Optimizer = new AlgoSelecter()
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        // Size of the antibody pool.
+                        NumberOfElements = NA,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
             }
-
             Optimizer.GenerationCreated += this.ShowAntibodies;
-
-            tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                                             "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
-                                             "Upper bounds for the parameters: " + List(ubp) + "\r\n";
-
-            var x = Task.Run(() => (Optimizer.Optimize()));
-            var Results = await x;
-
-            tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[0] + "\r\n" +
-                "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
-                "Final fitness: " + $"{Results.InfoList[1],10:F6}" + "\r\n" +
-                "Number of generations: " + Results.InfoList[2] + "\r\n" +
-                "Number of fitness evaluations: " + Results.InfoList[3] + "\r\n" +
-                "Best affinities in each generation: " + List((ArrayList)Results.InfoList[4]);
-            btStart.Visibility = Visibility.Visible;
-            btStop.Visibility = Visibility.Collapsed;
-        }
-        private void btStop_Click(object sender, RoutedEventArgs e)
-        {
-            Optimizer.Stop = true;
         }
         private void ShowResults()
         {

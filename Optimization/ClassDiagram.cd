@@ -25,7 +25,7 @@
   <Class Name="Optimization.BaseOptimizationMethod">
     <Position X="3.5" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAAAABBA=</HashCode>
+      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMABQgAAIQAAAAAABBA=</HashCode>
       <FileName>Common\BaseOptimizationMethod.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Bottom" Position="0.1" />
@@ -67,11 +67,11 @@
   </Class>
   <Class Name="Optimization.ABC">
     <Position X="10.25" Y="1.25" Width="1.5" />
-    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedToPoint="true">
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.75" Y="1.25" />
-        <Point X="4.75" Y="0.875" />
-        <Point X="11" Y="0.875" />
+        <Point X="4.75" Y="0.782" />
+        <Point X="11" Y="0.782" />
         <Point X="11" Y="1.25" />
       </Path>
     </InheritanceLine>
@@ -81,20 +81,26 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Optimization.BFOA">
-    <Position X="10.25" Y="4.25" Width="1.5" />
+    <Position X="10.25" Y="4" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6" Y="4.438" />
-        <Point X="7.918" Y="4.438" />
-        <Point X="7.918" Y="3.864" />
-        <Point X="10.127" Y="3.864" />
-        <Point X="10.127" Y="5.375" />
-        <Point X="10.25" Y="5.375" />
+        <Point X="4.938" Y="1.25" />
+        <Point X="4.938" Y="1.049" />
+        <Point X="10.127" Y="1.049" />
+        <Point X="10.127" Y="5.125" />
+        <Point X="10.25" Y="5.125" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAEAQAAAAQAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BFOA\BFOA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.ACO">
+    <Position X="10.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ACO\ACO.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">

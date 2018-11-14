@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABC\ABC.cs" />
-    <Compile Include="AlgoSelector\AlgoSelector.cs" />
+    <Compile Include="ACO\ACO.cs" />
+    <Compile Include="AlgoSelecter\AlgoSelecter.cs" />
     <Compile Include="AntAlg\AntAlg.cs" />
     <Compile Include="BFOA\BFOA.cs" />
     <Compile Include="ClonalGenL\ClonalGenerationLocal.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Common\StoppingTypes.cs" />
     <Compile Include="Firework\Firework.cs" />
     <Compile Include="GenAlg\GeneticAlgorithm.cs" />
-    <Compile Include="NewtonL\NewtonL.cs" />
+    <Compile Include="CoordinateDescent\CoordinateDescent.cs" />
     <Compile Include="ParticleSwarm\Particle.cs" />
     <Compile Include="ParticleSwarm\ParticleSwarm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

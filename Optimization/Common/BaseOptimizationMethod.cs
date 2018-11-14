@@ -74,6 +74,10 @@ namespace Optimization
         /// The number of elements.
         /// </summary>
         public int NumberOfElements;
+        /// <summary>
+        /// Returned informations
+        /// </summary>
+        public ArrayList Info;
 
         /// <summary>
         /// Method responsible for the optimization.
@@ -100,7 +104,7 @@ namespace Optimization
             // Check if the stopping condition was met
             CheckStop();
             // Create an object for the returned information.
-            var Info = new ArrayList();
+            Info = new ArrayList();
             // Add the affinity (performance) corresponding to the initial parameter values.
             Info.Add(((BaseElement)Elements[0]).Fitness);
             // Create the rest of the initial pool (first generation) of elementes creating elementes at random positions.
