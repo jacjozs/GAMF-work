@@ -113,18 +113,32 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Optimization.AlgoSelecter">
-    <Position X="12.75" Y="1.25" Width="1.5" />
+    <Position X="12.5" Y="1.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.438" Y="1.25" />
         <Point X="4.438" Y="0.698" />
-        <Point X="13.5" Y="0.698" />
-        <Point X="13.5" Y="1.25" />
+        <Point X="13.25" Y="0.698" />
+        <Point X="13.25" Y="1.25" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AiAAAAAEAQAIAQEIAAREBACCAAAAAEAkA4AAAAAAABA=</HashCode>
       <FileName>AlgoSelecter\AlgoSelecter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.CoordinateDescent">
+    <Position X="6.25" Y="8" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="8.131" />
+        <Point X="5.75" Y="8.688" />
+        <Point X="6.25" Y="8.688" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AKAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CoordinateDescent\CoordinateDescent.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">

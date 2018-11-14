@@ -613,13 +613,13 @@ namespace FuzzyManager
             ProgressWindow.Close();
 
             // Add results to output string
-            outstr += "Initial MSE: " + Results.InfoList[0] + "\r\n" +
+            outstr += "Initial MSE: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                 "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
-                "Final MSE: " + $"{Results.InfoList[1],10:F6}" + "\r\n" +
-                "Number of generations: " + Results.InfoList[2] + "\r\n" +
-                "Number of fitness evaluations: " + Results.InfoList[3] + "\r\n" +
-                "Best affinities in each generation: " + List((ArrayList)Results.InfoList[4]) + "\r\n" +
-                "Optimization time in milliseconds: " + Results.InfoList[5];
+                "Final MSE: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
+                "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
+                "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n" +
+                "Best affinities in each generation: " + List((ArrayList)Results.InfoList[InfoTypes.Affinities]) + "\r\n" +
+                "Optimization time in milliseconds: " + Results.InfoList[InfoTypes.ExecutionTime];
 
             fuzzySystem = GetModifiedFuzzySystem(Results.OptimizedParameters);
             FuzzyBox.Text = fuzzySystem.ToString();

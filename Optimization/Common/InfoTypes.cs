@@ -2,19 +2,55 @@
 {
     public enum InfoTypes
     {
-        InitialFitness,//Indulási fitnesz
-        FinalParameters,//Végső paraméter lista
-        FinalFitness,//Végső fitnesz
-        Generations,//Generációk száma
-        Evaluations,//Számítások mennyisége
+        /// <summary>
+        /// Indulási fitnesz
+        /// </summary>
+        InitialFitness,
+        /// <summary>
+        /// Végső paraméter lista
+        /// </summary>
+        FinalParameters,
+        /// <summary>
+        /// Végső fitnesz
+        /// </summary>
+        FinalFitness,
+        /// <summary>
+        /// Generációk száma
+        /// </summary>
+        Generations,
+        /// <summary>
+        /// Számítások mennyisége
+        /// </summary>
+        Evaluations,
         Affinities,
-        ExecutionTime,//Idő tartam
+        /// <summary>
+        /// Idő tartam
+        /// </summary>
+        ExecutionTime,
         /*Választónál használt elemek*/
-        AlgType,//Algoritmus típusa
-        SelectAlgResult,//Kiválasztott algoritmus eredménye
-        SelectAlgType,//Kiválasztott algoritmus típusa
-        SelectAlgInfos,//Tesztek utáni eredmények az algoritmusoktól
-        SelectAlgNum,//Hanyadik körben futto az algoritmus
-        SelectAlgFitness//Az algoritmus teljesítmény fitnesze
+        /// <summary>
+        /// Algoritmus típusa
+        /// </summary>
+        AlgType,
+        /// <summary>
+        /// Kiválasztott algoritmus eredménye
+        /// </summary>
+        SelectAlgResult,
+        /// <summary>
+        /// Kiválasztott algoritmus típusa
+        /// </summary>
+        SelectAlgType,
+        /// <summary>
+        /// Tesztek utáni eredmények az algoritmusoktól
+        /// </summary>
+        SelectAlgInfos,
+        /// <summary>
+        /// Hanyadik körben futto az algoritmus
+        /// </summary>
+        SelectAlgNum,
+        /// <summary>
+        /// Az algoritmus teljesítmény fitnesze
+        /// </summary>
+        SelectAlgFitness
     }
 }
