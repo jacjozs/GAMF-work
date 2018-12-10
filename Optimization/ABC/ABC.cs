@@ -66,10 +66,12 @@ namespace Optimization
                 }
                 EliteIndex += Flowers[k];//Tovább lépés a következő kereső csoportra
             }
-            if (EliteBees.Count >= (NumberOfElements - Elite) / 2)
+            for (int i = 0; i < EliteBees.Count && EliteBees.Count > 1; i++)
             {
-                EliteBees.Sort();
-                EliteBees.RemoveRange((EliteBees.Count / 2) - 1, EliteBees.Count / 2);
+                if (((BaseElement)EliteBees[i]).Fitness > ((BaseElement)EliteBees[1]).Fitness - ((BaseElement)EliteBees[0]).Fitness)
+                {
+                    EliteBees.RemoveAt(i);
+                }
             }
             Elements.Sort();
         }

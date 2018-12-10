@@ -98,17 +98,30 @@
   </Class>
   <Class Name="Optimization.ACO">
     <Position X="10.25" Y="6.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Optimization.ACO.Feromon" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ACO\ACO.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Optimization.ACO.Ant" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ACO\ACO.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.562" Y="1.25" />
         <Point X="4.562" Y="0.803" />
         <Point X="12.125" Y="0.803" />
-        <Point X="12.125" Y="7.125" />
-        <Point X="11.75" Y="7.125" />
+        <Point X="12.125" Y="8.46" />
+        <Point X="11.75" Y="8.46" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>CCAAAAABAAAAAAAAAAAABAIAAABAAAAACAIUAABAAQA=</HashCode>
       <FileName>ACO\ACO.cs</FileName>
     </TypeIdentifier>
   </Class>

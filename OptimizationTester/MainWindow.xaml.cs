@@ -100,7 +100,7 @@ namespace OptimizationTester
             Integer = new bool[] { false, false, false, false };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 50;
+            NA = 200;
             method = 0;
             Slow = false;
             Preview = false;
@@ -176,6 +176,7 @@ namespace OptimizationTester
             miBee.IsChecked = false;
             miBacterial.IsChecked = false;
             miAnt.IsChecked = false;
+            miSoma.IsChecked = false;
             miBest_Alg_Select.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
@@ -247,6 +248,14 @@ namespace OptimizationTester
             uncheckMethods();
             method = 8;
             miAnt.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miSoma_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 10;
+            miSoma.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
@@ -676,7 +685,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 8:
-                    Optimizer = new AntAlg
+                    Optimizer = new ACO
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -705,6 +714,29 @@ namespace OptimizationTester
                         Integer = Integer,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 10:
+                    Optimizer = new SOMA
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        // Size of the antibody pool.
+                        NumberOfElements = NA,
+                        PRT = 0.5,
+                        Step = 0.11,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,

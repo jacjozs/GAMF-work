@@ -130,10 +130,10 @@ namespace Optimization
             double id = double.MaxValue;
             for (int i = 0; i < results.Length / 2; i++)
             {
-                double ev = double.Parse(results[i, 0].InfoList[InfoTypes.Evaluations].ToString()) / StoppingNumberOfEvaluations;
-                double ge = double.Parse(results[i, 1].InfoList[InfoTypes.Generations].ToString()) / StoppingNumberOfGenerations;
+                double ev = double.Parse(results[i, 0].InfoList[InfoTypes.Evaluations].ToString()) * double.Parse(results[i, 0].InfoList[InfoTypes.FinalFitness].ToString());
+                double ge = double.Parse(results[i, 1].InfoList[InfoTypes.Generations].ToString()) * double.Parse(results[i, 1].InfoList[InfoTypes.FinalFitness].ToString());
                 //double EvGe = double.Parse(results[i, 2].InfoList[InfoTypes.Evaluations].ToString()) + double.Parse(results[i, 2].InfoList[InfoTypes.Generations].ToString());
-                double deltaA = Math.Abs(ev - ge /*- EvGe*/);
+                double deltaA = Math.Abs(ev + ge /*- EvGe*/);
                 ev = double.Parse(results[i, 0].InfoList[InfoTypes.FinalFitness].ToString());
                 ge = double.Parse(results[i, 1].InfoList[InfoTypes.FinalFitness].ToString());
                 double deltaB = Math.Abs(ev - ge);
