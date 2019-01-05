@@ -119,7 +119,7 @@ namespace Optimization
             while (!Stop)
             {
                 if (Slow)
-                    System.Threading.Thread.Sleep(300);
+                    System.Threading.Thread.Sleep(100);
                 Generation++;
                 // Create next generation.
                 CreateNextGeneration();

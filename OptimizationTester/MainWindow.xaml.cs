@@ -100,7 +100,7 @@ namespace OptimizationTester
             Integer = new bool[] { false, false, false, false };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 200;
+            NA = 50;
             method = 0;
             Slow = false;
             Preview = false;
@@ -735,7 +735,9 @@ namespace OptimizationTester
                         Integer = Integer,
                         // Size of the antibody pool.
                         NumberOfElements = NA,
-                        PRT = 0.5,
+                        PRT = 0.1,
+                        ParthLength = 3,
+                        PopSize = 7,
                         Step = 0.11,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.

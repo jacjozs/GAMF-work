@@ -10,50 +10,55 @@ namespace Optimization
     public class SOMA : BaseOptimizationMethod
     {
         /// <summary>
-        /// [0,1]
+        /// Az az érték hogy mennyinél kell kisebbnek lennie a randomnak, hogy 
+        /// az aktuális paraméter módosítás 1 legyen [0,1]
         /// </summary>
         public double PRT { get; set; }
         /// <summary>
-        /// [0.11,5]
+        /// Maximális ugrási méret [0.11, 5]
         /// </summary>
         public double ParthLength { get; set; }
         /// <summary>
-        /// [0.11, ParthLength]
+        /// Ugrási méret [0.11, ParthLength]
         /// </summary>
         public double Step { get; set; }
-        public double MinDiv { get; set; }
+        /// <summary>
+        /// Ugrások maximális száma [2, PopSize]
+        /// </summary>
+        public int PopSize { get; set; }
         protected override void CreateNextGeneration()
         {
-            ParthLength = 1;
+            
+            int PRTVector = 0;
             for (int i = 0; i < NumberOfElements; i++)
             {
-                double t = 0;
-                while (t <= ParthLength)
+                double t = 0.0;
+                Elements.Sort();
+                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
                 {
                     var parameter = new ArrayList();
-                    for (int j = 0; j < InitialParameters.Count; j++)
+                    for (int p = 0; p < InitialParameters.Count; p++)
                     {
-                        if (RNG.NextDouble() < PRT)
-                            parameter.Add((double)((BaseElement)Elements[i])[j] + ((double)((BaseElement)Elements[0])[j] - (double)((BaseElement)Elements[i])[j]) * t);
-                        else
-                            parameter.Add((double)((BaseElement)Elements[i])[j] + ((double)((BaseElement)Elements[0])[j] - (double)((BaseElement)Elements[i])[j]) * t * -1);
-
-                        if ((double)parameter[j] > (double)UpperParamBounds[j])
-                            parameter[j] = UpperParamBounds[j];
-                        else if ((double)parameter[j] < (double)LowerParamBounds[j])
-                            parameter[j] = LowerParamBounds[j];
-                        if (Integer[j])
-                            parameter[j] = Math.Round((double)parameter[j]);
+                        if (RNG.NextDouble() < PRT) PRTVector = 1;
+                        else PRTVector = 0;
+                        parameter.Add(((BaseElement)Elements[i])[p]);
+                        parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[0])[p] - (double)parameter[p]) * t * PRTVector;
+                        if ((double)parameter[p] > (double)UpperParamBounds[p])
+                            parameter[p] = UpperParamBounds[p];
+                        else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                            parameter[p] = LowerParamBounds[p];
+                        if (Integer[p])
+                            parameter[p] = Math.Round((double)parameter[p]);
                     }
-                    BaseElement newElem = (BaseElement)GetNewElement(FitnessFunction, parameter);
-                    if (newElem.Fitness <= ((BaseElement)Elements[i]).Fitness)
+                    var newElem = GetNewElement(FitnessFunction, parameter);
+                    if(((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
                     {
                         Elements[i] = newElem;
                     }
                     t += Step;
                 }
+
             }
-            Elements.Sort();
         }
     }
 }
