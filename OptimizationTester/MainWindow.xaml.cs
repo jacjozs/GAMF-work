@@ -739,6 +739,7 @@ namespace OptimizationTester
                         ParthLength = 3,
                         PopSize = 7,
                         Step = 0.11,
+                        Type = SOMA_Type.AllToRand,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,

@@ -26,9 +26,37 @@ namespace Optimization
         /// Ugrások maximális száma [2, PopSize]
         /// </summary>
         public int PopSize { get; set; }
+        /// <summary>
+        /// Típus meghatározó
+        /// </summary>
+        public SOMA_Type Type { get; set; }
+
         protected override void CreateNextGeneration()
         {
-            
+            switch (Type)
+            {
+                case SOMA_Type.AllToOne:
+                    this.All_To_One();
+                    break;
+                case SOMA_Type.AllToAll:
+                    this.PRT = 1;
+                    this.All_To_All();
+                    break;
+                case SOMA_Type.AllToAllAdaptive:
+                    this.PRT = 1;
+                    this.All_To_All_Adaptive();
+                    break;
+                case SOMA_Type.AllToRand:
+                    this.All_To_Rand();
+                    break;
+                default:
+                    this.All_To_All();
+                    break;
+            }
+        }
+
+        private void All_To_One()
+        {
             int PRTVector = 0;
             for (int i = 0; i < NumberOfElements; i++)
             {
@@ -51,14 +79,123 @@ namespace Optimization
                             parameter[p] = Math.Round((double)parameter[p]);
                     }
                     var newElem = GetNewElement(FitnessFunction, parameter);
-                    if(((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
+                    if (((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
                     {
                         Elements[i] = newElem;
                     }
                     t += Step;
                 }
-
             }
+        }
+
+        private void All_To_All()
+        {
+            int PRTVector = 0;
+            for (int i = NumberOfElements - 1; i >= 0; i--)
+            {
+                double t = 0.0;
+                int rnd = 0;
+                do rnd = RNG.Next(NumberOfElements); while (rnd == i);
+                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
+                {
+                    var parameter = new ArrayList();
+                    for (int p = 0; p < InitialParameters.Count; p++)
+                    {
+                        if (RNG.NextDouble() < PRT) PRTVector = 1;
+                        else PRTVector = 0;
+                        parameter.Add(((BaseElement)Elements[i])[p]);
+                        parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[rnd])[p] - (double)parameter[p]) * t * PRTVector;
+                        if ((double)parameter[p] > (double)UpperParamBounds[p])
+                            parameter[p] = UpperParamBounds[p];
+                        else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                            parameter[p] = LowerParamBounds[p];
+                        if (Integer[p])
+                            parameter[p] = Math.Round((double)parameter[p]);
+                    }
+                    var newElem = GetNewElement(FitnessFunction, parameter);
+                    if (((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
+                    {
+                        Elements[i] = newElem;
+                    }
+                    t += Step;
+                }
+            }
+            Elements.Sort();
+        }
+
+        private void All_To_All_Adaptive()
+        {
+            int PRTVector = 0;
+            for (int i = 0; i < NumberOfElements; i++)
+            {
+                double t = 0.0;
+                int rnd = 0;
+                do rnd = RNG.Next(NumberOfElements); while (rnd == i);
+                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
+                {
+                    var parameter = new ArrayList();
+                    for (int p = 0; p < InitialParameters.Count; p++)
+                    {
+                        if (RNG.NextDouble() < PRT) PRTVector = 1;
+                        else PRTVector = 0;
+                        parameter.Add(((BaseElement)Elements[i])[p]);
+                        parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[rnd])[p] - (double)parameter[p]) * t * PRTVector;
+                        if ((double)parameter[p] > (double)UpperParamBounds[p])
+                            parameter[p] = UpperParamBounds[p];
+                        else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                            parameter[p] = LowerParamBounds[p];
+                        if (Integer[p])
+                            parameter[p] = Math.Round((double)parameter[p]);
+                    }
+                    var newElem = GetNewElement(FitnessFunction, parameter);
+                    if (((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
+                    {
+                        Elements[i] = newElem;
+                    }
+                    t += Step;
+                }
+            }
+            Elements.Sort();
+            for (int i = 1; i < NumberOfElements; i++)
+            {
+                Elements[i] = Elements[0];
+            }
+        }
+
+        private void All_To_Rand()
+        {
+            int PRTVector = 0;
+            for (int i = 0; i < NumberOfElements; i++)
+            {
+                double t = 0.0;
+                int size = RNG.Next(1, PopSize);
+                int rnd = 0;
+                do rnd = RNG.Next(NumberOfElements); while (rnd == i);
+                for (int j = 0; j <= size && t <= ParthLength; j++)
+                {
+                    var parameter = new ArrayList();
+                    for (int p = 0; p < InitialParameters.Count; p++)
+                    {
+                        if (RNG.NextDouble() < PRT) PRTVector = 1;
+                        else PRTVector = 0;
+                        parameter.Add(((BaseElement)Elements[i])[p]);
+                        parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[rnd])[p] - (double)parameter[p]) * t * PRTVector;
+                        if ((double)parameter[p] > (double)UpperParamBounds[p])
+                            parameter[p] = UpperParamBounds[p];
+                        else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                            parameter[p] = LowerParamBounds[p];
+                        if (Integer[p])
+                            parameter[p] = Math.Round((double)parameter[p]);
+                    }
+                    var newElem = GetNewElement(FitnessFunction, parameter);
+                    if (((BaseElement)newElem).Fitness <= ((BaseElement)Elements[i]).Fitness)
+                    {
+                        Elements[i] = newElem;
+                    }
+                    t += Step;
+                }
+            }
+            Elements.Sort();
         }
     }
 }

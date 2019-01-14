@@ -64,6 +64,7 @@
     <Compile Include="ParticleSwarm\ParticleSwarm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SOMA\SOMA.cs" />
+    <Compile Include="SOMA\SOMA_Type.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

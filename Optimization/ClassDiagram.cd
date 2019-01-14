@@ -69,8 +69,8 @@
     <Position X="10.25" Y="1.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.75" Y="1.25" />
-        <Point X="4.75" Y="0.938" />
+        <Point X="5" Y="1.25" />
+        <Point X="5" Y="0.938" />
         <Point X="11" Y="0.938" />
         <Point X="11" Y="1.25" />
       </Path>
@@ -84,8 +84,8 @@
     <Position X="10.25" Y="4" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.938" Y="1.25" />
-        <Point X="4.938" Y="1.07" />
+        <Point X="5.312" Y="1.25" />
+        <Point X="5.312" Y="1.07" />
         <Point X="10.127" Y="1.07" />
         <Point X="10.127" Y="5.125" />
         <Point X="10.25" Y="5.125" />
@@ -114,8 +114,8 @@
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.562" Y="1.25" />
-        <Point X="4.562" Y="0.803" />
-        <Point X="12.125" Y="0.803" />
+        <Point X="4.562" Y="0.636" />
+        <Point X="12.125" Y="0.636" />
         <Point X="12.125" Y="8.46" />
         <Point X="11.75" Y="8.46" />
       </Path>
@@ -130,8 +130,8 @@
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.438" Y="1.25" />
-        <Point X="4.438" Y="0.698" />
-        <Point X="13.25" Y="0.698" />
+        <Point X="4.438" Y="0.531" />
+        <Point X="13.25" Y="0.531" />
         <Point X="13.25" Y="1.25" />
       </Path>
     </InheritanceLine>
@@ -152,6 +152,24 @@
     <TypeIdentifier>
       <HashCode>AKAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CoordinateDescent\CoordinateDescent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.SOMA">
+    <Position X="12.5" Y="7" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.25" />
+        <Point X="4.75" Y="0.938" />
+        <Point X="12.042" Y="0.938" Type="JumpStart" />
+        <Point X="12.208" Y="0.938" Type="JumpEnd" />
+        <Point X="12.24" Y="0.938" />
+        <Point X="12.24" Y="8.934" />
+        <Point X="12.5" Y="8.934" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AmAAAAAAAAgAAAAAAAAAAAAAEEEAAAAAIRAAAAAAAAA=</HashCode>
+      <FileName>SOMA\SOMA.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">

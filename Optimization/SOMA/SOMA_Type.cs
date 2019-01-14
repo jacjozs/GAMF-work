@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Optimization
 {
-    public enum SomaTypes
+    public enum SOMA_Type
     {
         AllToAll,
+        AllToAllAdaptive,
         AllToOne,
-        AllToRand,
-        Clusters
+        AllToRand
     }
 }
