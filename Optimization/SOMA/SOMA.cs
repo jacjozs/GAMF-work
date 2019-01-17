@@ -70,7 +70,11 @@ namespace Optimization
                         if (RNG.NextDouble() < PRT) PRTVector = 1;
                         else PRTVector = 0;
                         parameter.Add(((BaseElement)Elements[i])[p]);
-                        parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[0])[p] - (double)parameter[p]) * t * PRTVector;
+                        if (i == 0)
+                            parameter[p] = (double)parameter[p] + ((double)parameter[p] - t * (RNG.NextDouble() * 2 - 1)) * PRTVector;
+                        else
+                            parameter[p] = (double)parameter[p] + ((double)((BaseElement)Elements[0])[p] - (double)parameter[p]) * t * PRTVector;
+                        
                         if ((double)parameter[p] > (double)UpperParamBounds[p])
                             parameter[p] = UpperParamBounds[p];
                         else if ((double)parameter[p] < (double)LowerParamBounds[p])
