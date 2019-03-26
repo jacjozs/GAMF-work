@@ -12,7 +12,7 @@ namespace Optimization
         /// <summary>
         /// A felderítő méhek száma
         /// </summary>
-        public int Elite { get; set; }
+        public int ExBeeCount { get; set; }
         /// <summary>
         /// Felderitő méhek által megtehető maximális utak száma 1 ciklus alatt
         /// </summary>
@@ -30,17 +30,17 @@ namespace Optimization
         protected override void CreateNextGeneration()
         {
             //Kivétel kezelés
-            if (NumberOfElements < Elite) throw new ArgumentException("Elite parameter cannot be greater than NumberOfElements", "original");
+            if (NumberOfElements < ExBeeCount) throw new ArgumentException("Elite parameter cannot be greater than NumberOfElements", "original");
             if (EliteBees == null) EliteBees = new ArrayList();
-            for (int i = 0; i < Elite; i++) Exploratory((BaseElement)Elements[i], i);//Felderítés 
-            if (EliteBees.Count > Elite)
+            for (int i = 0; i < ExBeeCount; i++) Exploratory((BaseElement)Elements[i], i);//Felderítés 
+            if (EliteBees.Count > ExBeeCount)
             {// Ha több felderített pont van mint az előírt akkor a legrosszabbakat törli
                 EliteBees.Sort();
-                EliteBees.RemoveRange(Elite, EliteBees.Count - Elite);
+                EliteBees.RemoveRange(ExBeeCount, EliteBees.Count - ExBeeCount);
             }
             UpdateFollowerSizes();//Kereső méhek kiosztása
-            int EliteIndex = Elite;
-            int rnd = 0, BeeGroupI = 0;
+            int EliteIndex = ExBeeCount;
+            int BeeGroupI = 0;
             for (int k = 0; k < Flowers.Length; k++)
             {
                 double OldFitness = ((BaseElement)EliteBees[EliteBees.Count - 1]).Fitness;
@@ -50,10 +50,9 @@ namespace Optimization
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
                     {
-                        parameter.Add(((BaseElement)EliteBees[k])[p]);
-                        do rnd = RNG.Next(NumberOfElements); while (rnd == i);
+                        parameter.Add(((BaseElement)Elements[BeeGroupI])[p]);
                         // a kereső méhet a kezdőpontól a megfelelő sugáron belülre mozgatja.
-                        parameter[p] = (double)parameter[p] + ((double)parameter[p] - (double)((BaseElement)Elements[rnd])[p]) * (RNG.NextDouble() * 2 - 1);
+                        parameter[p] = (double)parameter[p] + ((double)parameter[p] - (double)((BaseElement)EliteBees[k])[p]) * (RNG.NextDouble() * 2 - 1);
                         if ((double)parameter[p] > (double)UpperParamBounds[p])
                             parameter[p] = UpperParamBounds[p];
                         else if ((double)parameter[p] < (double)LowerParamBounds[p])
@@ -81,7 +80,7 @@ namespace Optimization
         private void UpdateFollowerSizes()
         {//A felderitő méhek által talált virágokhoz mennyi keresőt kell rendelni
             Flowers = new int[EliteBees.Count];
-            var count = NumberOfElements - Elite;
+            var count = NumberOfElements - ExBeeCount;
             EliteBees.Sort();
             for (int i = 0; EliteBees.Count != 0 && count / EliteBees.Count > 0; i++)
             {
@@ -91,7 +90,7 @@ namespace Optimization
             if (Flowers.Length >= 1)
             {
                 Flowers[0] += count;//A fennmaradt egyedeket a legjobb kereséséhez állitja be
-                Flowers[0] += (NumberOfElements - Elite) - Flowers.Sum();//Az osztás miatt keletkezett veszteségeket a legjobbnak adja
+                Flowers[0] += (NumberOfElements - ExBeeCount) - Flowers.Sum();//Az osztás miatt keletkezett veszteségeket a legjobbnak adja
             }
         }
         /// <summary>

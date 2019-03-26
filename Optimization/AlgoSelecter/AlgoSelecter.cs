@@ -326,7 +326,7 @@ namespace Optimization
                         //Felderitő méhek maximális keressi számas ciklus alatt
                         MaxStep = MaxStep,
                         //Felderítő méhek száma
-                        Elite = Elite,
+                        ExBeeCount = Elite,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations  = StoppingNumberOfEvaluations,
                         // Fitness treshold.

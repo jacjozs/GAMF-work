@@ -22,7 +22,7 @@
                 <MenuItem x:Name="miCGO" Header="Clonal Generation" Click="miCGO_Click"/>
                 <MenuItem x:Name="miCGOL" Header="Clonal Generation Local" Click="miCGOL_Click"/>
                 <MenuItem x:Name="miGa" Header="Genetic Algorithm" Click="miGa_Click"/>
-                <MenuItem x:Name="miNew" Header="Newton Algorithm" Click="miNew_Click"/>
+                <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm" Click="miNew_Click"/>
                 <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
                 <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm" Click="miBacterial_Click"/>
                 <MenuItem x:Name="miAnt" Header="Ant Algorithm" Click="miAnt_Click"/>

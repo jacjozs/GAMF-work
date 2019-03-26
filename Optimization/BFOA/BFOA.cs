@@ -51,7 +51,8 @@ namespace Optimization
                 Clones[i] = GetNewElement(FitnessFunction, parameter);
             }
             Clones.Sort();
-            Elements[index] = Clones[0];
+            if(((BaseElement)Elements[index]).Fitness > ((BaseElement)Clones[0]).Fitness)
+                Elements[index] = Clones[0];
         }
         /// <summary>
         /// Feladata a génátadás végrehajtása a populáscioban

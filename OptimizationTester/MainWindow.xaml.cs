@@ -79,7 +79,7 @@ namespace OptimizationTester
         private double c0;
         private double cg;
         // Bee algorithm parameters
-        private int Elite;
+        private int ExBeeCount;
         private int MaxStep;
         // Bacterial algorithm parameters
         private int Infections;
@@ -92,12 +92,12 @@ namespace OptimizationTester
             InitializeComponent();
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { -100.0, -100.0, -100.0, -100.0 };
-            ubp = new ArrayList { 100.0, 100.0, 100.0, 100.0 };
+            lbp = new ArrayList { -100.0, -100.0 };
+            ubp = new ArrayList { 100.0, 100.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 60.0, -99.0, 70.0, -98.0 };
+            InitialParameters = new ArrayList { 60.0, -99.0 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { false, false, false, false };
+            Integer = new bool[] { false, false, };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
@@ -133,7 +133,7 @@ namespace OptimizationTester
             pm = 0.6;
             crossoverCount = NA;
             // Bee algorithm params
-            Elite = 10;
+            ExBeeCount = 10;
             MaxStep = 5;
             // Bacterial algorithm params
             Infections = 10;
@@ -621,9 +621,9 @@ namespace OptimizationTester
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
-                        // Size of the antibody pool.
-                        NumberOfElements = 1,
+                        NumberOfElements = NA,
                         Integer = Integer,
+                        StepSizeRelative = 5,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
@@ -644,12 +644,11 @@ namespace OptimizationTester
                         UpperParamBounds = ubp,
                         Integer = Integer,
                         FitnessFunction = ffd,
-                        // Size of the antibody pool.
                         NumberOfElements = NA,
-                        //Felderitő méhek maximális keressi számas ciklus alatt
+                        //Felderitő méhek maximális keresési számas egy ciklus alatt
                         MaxStep = MaxStep,
                         //Felderítő méhek száma
-                        Elite = Elite,
+                        ExBeeCount = ExBeeCount,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.
@@ -691,7 +690,6 @@ namespace OptimizationTester
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
                         Integer = Integer,
-                        // Size of the antibody pool.
                         NumberOfElements = NA,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
@@ -712,7 +710,6 @@ namespace OptimizationTester
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
                         Integer = Integer,
-                        // Size of the antibody pool.
                         NumberOfElements = NA,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
@@ -733,7 +730,6 @@ namespace OptimizationTester
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
                         Integer = Integer,
-                        // Size of the antibody pool.
                         NumberOfElements = NA,
                         PRT = 0.1,
                         ParthLength = 3,
