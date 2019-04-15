@@ -56,7 +56,7 @@
             <MenuItem x:Name="miSugo" Header="Help" Click="miSugo_Click"/>
         </Menu>
         <StackPanel DockPanel.Dock="Left" Grid.Row="1" Grid.Column="0">
-            <Border Margin="0,35,0,35" BorderBrush="Black" BorderThickness="2" Width="205" Height="205">
+            <Border x:Name="brPage" Margin="0,35,0,35" BorderBrush="Black" BorderThickness="2" Width="205" Height="205">
                 <Canvas x:Name="cvPage" Width="201" Height="201" Margin="0" />
             </Border>
             <Grid>

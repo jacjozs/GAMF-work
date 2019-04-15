@@ -33,10 +33,10 @@ namespace Optimization
                     //Paraméterek módosítása
                     M1Minus[p] = (double)M1Minus[p] - ((double)M1Minus[p] - (double)LowerParamBounds[p]) / StepSizeRelative * randomScale;
                     M2Plus[p] = (double)M2Plus[p] + ((double)UpperParamBounds[p] - (double)M2Plus[p]) / StepSizeRelative * randomScale;
-                    if (Integer[p])
+                    if (Integer[p]) {
                         M1Minus[p] = Math.Round((double)M1Minus[p]);
-                    if (Integer[p])
                         M2Plus[p] = Math.Round((double)M2Plus[p]);
+                    }
                     //Fitnesz számítás
                     BaseElement newM1Minus = (BaseElement)GetNewElement(FitnessFunction, M1Minus);
                     BaseElement newM2Plus = (BaseElement)GetNewElement(FitnessFunction, M2Plus);

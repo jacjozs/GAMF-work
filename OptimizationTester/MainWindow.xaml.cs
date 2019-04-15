@@ -23,7 +23,8 @@ namespace OptimizationTester
         private int method;
         private bool Preview;
         private bool Slow;
-        WinRoutingTest RoutingTest;
+        private RoutingTest Routing;
+        private bool uniqueTest;
         // Stopping
         private StoppingType stoppingType;
         /// <summary>
@@ -91,20 +92,22 @@ namespace OptimizationTester
         public MainWindow()
         {
             InitializeComponent();
+            this.SizeChanged += Window_SizeChanged;
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { -100.0, -100.0 };
-            ubp = new ArrayList { 100.0, 100.0 };
+            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            ubp = new ArrayList { 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 60.0, -99.0 };
+            InitialParameters = new ArrayList { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { false, false, };
+            Integer = new bool[] { true, true, true, true, true, true, true, true, true, true, true, true };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
             method = 0;
             Slow = false;
             Preview = false;
+            uniqueTest = false;
             // Stopping
             stoppingType = StoppingType.GenerationNumber;
             ng = 1000;
@@ -435,8 +438,36 @@ namespace OptimizationTester
             btStop.Visibility = Visibility.Visible;
             cvPage.Children.Clear();
             OptMethod(method);
-            if (method != 9)
+            if(uniqueTest)
             {
+                Routing = new RoutingTest(12);
+                ffd = Routing.FitnessFunction;
+                OptMethod(method);
+                Optimizer.GenerationCreated += this.ShowRoutingAntibodies;
+                tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
+                                                     "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
+                                                     "Upper bounds for the parameters: " + List(ubp) + "\r\n";
+
+                var x = Task.Run(() => (Optimizer.Optimize()));
+                var Results = await x;
+                int[] EncryptInitialParameters = Routing.Encrypt(InitialParameters);
+                int[] EncryptOptimizedParameters = Routing.Encrypt(Results.OptimizedParameters);
+                ArrayList start = new ArrayList();
+                ArrayList end = new ArrayList();
+                for (int i = 0; i < InitialParameters.Count; i++)
+                {
+                    start.Add(EncryptInitialParameters[i]);
+                    end.Add(EncryptOptimizedParameters[i]);
+                }
+                tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
+                        "Initial parameters: " + List(InitialParameters) + "\r\n" +
+                        "Initial encrypt parameters: " + List(start) + "\r\n" +
+                        "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
+                        "Final encrypt parameters: " + List(end) + "\r\n" +
+                        "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
+                        "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
+                        "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n";
+            } else if (method != 9) {
                 tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
                                                  "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
                                                  "Upper bounds for the parameters: " + List(ubp) + "\r\n";
@@ -750,7 +781,8 @@ namespace OptimizationTester
                     };
                     break;
             }
-            Optimizer.GenerationCreated += this.ShowAntibodies;
+            if(!uniqueTest)
+                Optimizer.GenerationCreated += this.ShowAntibodies;
         }
         private void ShowResults()
         {
@@ -1032,9 +1064,137 @@ namespace OptimizationTester
 
         private void miRoutingTest_Click(object sender, RoutedEventArgs e)
         {
-            RoutingTest = new WinRoutingTest();
-            RoutingTest.Show();
+            this.uniqueTest = !this.uniqueTest;
+            this.miRoutingTest.IsChecked = !this.miRoutingTest.IsChecked;
+            if (uniqueTest)
+            {
+                this.WindowState = WindowState.Maximized;
+                cvPage.Width = cvPage.Width * 2;
+                cvPage.Height = cvPage.Height * 2;
+                brPage.Width = brPage.Width * 2;
+                brPage.Height = brPage.Height * 2;
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+                cvPage.Width = cvPage.Width / 2;
+                cvPage.Height = cvPage.Height / 2;
+                brPage.Width = brPage.Width / 2;
+                brPage.Height = brPage.Height / 2;
+            }
         }
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            switch (this.WindowState)
+            {
+                case WindowState.Normal:
+                    if(uniqueTest)
+                    {
+                        cvPage.Width = cvPage.Width / 2;
+                        cvPage.Height = cvPage.Height / 2;
+                        brPage.Width = brPage.Width / 2;
+                        brPage.Height = brPage.Height / 2;
+                        this.uniqueTest = false;
+                        this.miRoutingTest.IsChecked = false;
+                    }
+                    break;
+                case WindowState.Maximized:
+                    if (!uniqueTest)
+                    {
+                        cvPage.Width = cvPage.Width * 2;
+                        cvPage.Height = cvPage.Height * 2;
+                        brPage.Width = brPage.Width * 2;
+                        brPage.Height = brPage.Height * 2;
+                        this.uniqueTest = true;
+                        this.miRoutingTest.IsChecked = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        void ShowRoutingAntibodies(object sender, ArrayList Antibodies, double[] affinities)
+        {
+            int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
 
+            Application.Current.Dispatcher.Invoke((Action)(() =>
+            {
+                //clear the canvas
+                cvPage.Children.Clear();
+
+                var start = new Ellipse
+                {
+                    Width = 15,
+                    Height = 15,
+                    Fill = new SolidColorBrush(Colors.Blue)
+                };
+                start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
+                start.SetValue(Canvas.LeftProperty, Routing.Points[0].X);
+                var startLine = new Line
+                {
+                    X1 = Routing.Points[0].X + 5,
+                    Y1 = Routing.Points[0].Y + 5,
+                    X2 = Routing.Points[points[0]].X + 5,
+                    Y2 = Routing.Points[points[0]].Y + 5,
+                    StrokeThickness = 1,
+                    Stroke = new SolidColorBrush(Colors.Red)
+                };
+                var border = new Border()
+                {
+                    Child = new TextBlock() { Text = "0" },
+                };
+                border.SetValue(Canvas.TopProperty, Routing.Points[0].Y + 10);
+                border.SetValue(Canvas.LeftProperty, Routing.Points[0].X + 10);
+
+                cvPage.Children.Add(startLine);
+                cvPage.Children.Add(start);
+                cvPage.Children.Add(border);
+                for (int i = 1; i < points.Length; i++)
+                {
+                    var circle = new Ellipse
+                    {
+                        Width = 10,
+                        Height = 10,
+                        Fill = new SolidColorBrush(Colors.Black)
+                    };
+                    circle.SetValue(Canvas.TopProperty, Routing.Points[i].Y);
+                    circle.SetValue(Canvas.LeftProperty, Routing.Points[i].X);
+                    cvPage.Children.Add(circle);
+
+                    border = new Border()
+                    {
+                        Child = new TextBlock() { Text = i.ToString() },
+                    };
+                    border.SetValue(Canvas.TopProperty, Routing.Points[i].Y + 6);
+                    border.SetValue(Canvas.LeftProperty, Routing.Points[i].X + 6);
+                    cvPage.Children.Add(border);
+                }
+                for (int i = 1; i < points.Length; i++)
+                {
+                    var line = new Line
+                    {
+                        X1 = Routing.Points[points[i - 1]].X + 5,
+                        Y1 = Routing.Points[points[i - 1]].Y + 5,
+                        X2 = Routing.Points[points[i]].X + 5,
+                        Y2 = Routing.Points[points[i]].Y + 5,
+                        StrokeThickness = 1,
+                        Stroke = new SolidColorBrush(Colors.Red)
+                    };
+                    cvPage.Children.Add(line);
+                }
+
+                var end = new Line
+                {
+                    X1 = Routing.Points[points[points.Length - 1]].X + 5,
+                    Y1 = Routing.Points[points[points.Length - 1]].Y + 5,
+                    X2 = Routing.Points[0].X + 5,
+                    Y2 = Routing.Points[0].Y + 5,
+                    StrokeThickness = 1,
+                    Stroke = new SolidColorBrush(Colors.Red)
+                };
+                cvPage.Children.Add(end);
+
+            }), DispatcherPriority.Send, null);
+        }
     }
 }
