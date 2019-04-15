@@ -299,7 +299,8 @@ namespace Optimization
                         LowerParamBounds  = LowerParamBounds,
                         UpperParamBounds  = UpperParamBounds,
                         // Size of the antibody pool.
-                        NumberOfElements = 1,
+                        NumberOfElements = NumberOfElements,
+                        StepSizeRelative = 5,
                         Integer = Integer,
                         FitnessFunction = FitnessFunction,
                         // Number of allowed fitness evaluations.
@@ -379,6 +380,32 @@ namespace Optimization
                         StoppingNumberOfGenerations = StoppingNumberOfGenerations,
                         // Stopping criteria.
                         StoppingType = StoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 9:
+                    Optimizer = new SOMA
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = LowerParamBounds,
+                        UpperParamBounds = UpperParamBounds,
+                        Integer = Integer,
+                        NumberOfElements = NumberOfElements,
+                        PRT = 0.1,
+                        ParthLength = 3,
+                        PopSize = 7,
+                        Step = 0.11,
+                        Type = SOMA_Type.AllToRand,
+                        FitnessFunction = FitnessFunction,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = StoppingNumberOfEvaluations,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = StoppingFitnessTreshold,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = StoppingNumberOfGenerations,
+                        // Stopping criteria.
+                        StoppingType = StoppingType,
+                        Slow = Slow
                     };
                     break;
             }

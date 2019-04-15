@@ -72,6 +72,11 @@ namespace Optimization
                     newParamsPlus[dimId] = Math.Min((double)((BaseElement)Elements[0])[dimId] + StepSizeAbsoulte[dimId] * randomScale, (double)UpperParamBounds[dimId]);
                     newParamsMinus[dimId] = Math.Max((double)((BaseElement)Elements[0])[dimId] + StepSizeAbsoulte[dimId] * randomScale, (double)LowerParamBounds[dimId]);
 
+                    if (Integer[dimId])
+                        newParamsPlus[dimId] = Math.Round((double)newParamsPlus[dimId]);
+                    if (Integer[dimId])
+                        newParamsMinus[dimId] = Math.Round((double)newParamsMinus[dimId]);
+
                     // Create the new elements using the modified parameters
                     BaseElement newElementPlus = (BaseElement)GetNewElement(FitnessFunction, newParamsPlus);
                     BaseElement newElementMinus = (BaseElement)GetNewElement(FitnessFunction, newParamsMinus);

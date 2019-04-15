@@ -23,6 +23,7 @@ namespace OptimizationTester
         private int method;
         private bool Preview;
         private bool Slow;
+        WinRoutingTest RoutingTest;
         // Stopping
         private StoppingType stoppingType;
         /// <summary>
@@ -1027,6 +1028,12 @@ namespace OptimizationTester
         {
             MessageBox.Show(
                 "1. Choose an algorithm under the Algorithm menu\n\n2. Under Stopping condition you can choose when you want the optimization process to terminate automatically. This can be:\n\t-After X generations\n\t-After X particle value evaluations\n\t-After the best fittness value falling below X threshold value\n\n3. In the Function menu you can choose which function you want to find the minimum of. You can also set whether you want to see a preview of the function, which might take a while to appear after you select one.\n\n4. Under Parameters you can find various settings:\n\t-The Quick option lets you run the optimization without\n\ta delay,  although this might cause irresponsiveness\n\t-You can configure the stopping condition's values.\n\t-You can also access various settings related to the\n\toptimization from here.\n\n5. In the window's lower left corner you can find the Start button, which lets you start the optimization process. This is visualized in the top left panel. The Stop button lets you stop this process at any time. After the optimization is finished you can see the results on the right side.", "Help", MessageBoxButton.OK, MessageBoxImage.Question);
+        }
+
+        private void miRoutingTest_Click(object sender, RoutedEventArgs e)
+        {
+            RoutingTest = new WinRoutingTest();
+            RoutingTest.Show();
         }
 
     }

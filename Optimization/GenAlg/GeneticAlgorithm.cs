@@ -62,13 +62,19 @@ namespace Optimization
             var p = new ArrayList();
             for (int dimension = 0; dimension < InitialParameters.Count; dimension++)
             {
-                if (RNG.NextDouble() < 0.5)
-                    p.Add(element1[dimension]);
-                else
-                    p.Add(element2[dimension]);
+                if (RNG.NextDouble() < 0.5) {
+                    if (Integer[dimension])
+                        p.Add(Math.Round((double)element1[dimension]));
+                    else
+                        p.Add(element1[dimension]);
+                } else {
+                    if (Integer[dimension])
+                        p.Add(Math.Round((double)element2[dimension]));
+                    else
+                        p.Add(element2[dimension]);
+                }
             }
             Elements.Add(GetNewElement(FitnessFunction, p));
-            //Evaluation++;
         }
 
         /// <summary>
@@ -86,7 +92,11 @@ namespace Optimization
                 if (RNG.NextDouble() < MutationProbability)
                 {
                     //randomize the value
-                    element[i] = RNG.NextDouble() * ((double)UpperParamBounds[i] - (double)LowerParamBounds[i]) + (double)LowerParamBounds[i];
+                    double random = RNG.NextDouble() * ((double)UpperParamBounds[i] - (double)LowerParamBounds[i]) + (double)LowerParamBounds[i];
+                    if (Integer[i])
+                        element[i] = Math.Round(random);
+                    else
+                        element[i] = random;
                     changed = true;
                 }
             }
@@ -95,7 +105,6 @@ namespace Optimization
                 return;
             
             element.Update();
-            //Evaluation++;
         }
     }
 }

@@ -1,0 +1,44 @@
+﻿<Window x:Class="OptimizationTester.WinRoutingTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OptimizationTester"
+        mc:Ignorable="d"
+        Title="WinRoutingTest" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="102*"/>
+            <RowDefinition Height="23*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Column="0" Grid.Row="0">
+            <MenuItem Header="Algorithm">
+                <MenuItem x:Name="miFirework" Header="Firework" Click="miFirework_Click" IsChecked="True"/>
+                <MenuItem x:Name="miPSO" Header="Particle Swarm" Click="miPSO_Click"/>
+                <MenuItem x:Name="miCGO" Header="Clonal Generation" Click="miCGO_Click"/>
+                <MenuItem x:Name="miCGOL" Header="Clonal Generation Local" Click="miCGOL_Click"/>
+                <MenuItem x:Name="miGa" Header="Genetic Algorithm" Click="miGa_Click"/>
+                <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm" Click="miNew_Click"/>
+                <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
+                <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm" Click="miBacterial_Click"/>
+                <MenuItem x:Name="miAnt" Header="Ant Algorithm" Click="miAnt_Click"/>
+                <MenuItem x:Name="miSoma" Header="Self-Organizing Migrating Algorithm" Click="miSoma_Click"/>
+            </MenuItem>
+            <!--<MenuItem Header="Stopping condition">
+                <MenuItem x:Name="miGeneration" Header="Number of generations" Click="miGeneration_Click" IsChecked="True"/>
+                <MenuItem x:Name="miEvaluation" Header="Number of fitness evaluations" Click="miEvaluation_Click"/>
+                <MenuItem x:Name="miTreshold" Header="Fitness below threshold value" Click="miTreshold_Click"/>
+            </MenuItem>
+            <MenuItem Header="Parameters">
+                <MenuItem x:Name="miGyors" Header="Quick" IsCheckable="True" Checked="miGyors_Checked" Unchecked="miGyors_Unchecked" IsChecked="True"/>
+                <Separator/>
+                <MenuItem x:Name="miParamStopping" Header="Stopping parameters" Click="miParamStopping_Click"/>
+                <MenuItem x:Name="miParamGen" Header="General parameters" Click="miParamGen_Click"/>
+                <MenuItem x:Name="miParamAlg" Header="Algorithm parameters" Click="miParamAlg_Click"/>
+            </MenuItem>-->
+        </Menu>
+        <TextBox x:Name="tbResults" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" Width="auto" Margin="10" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Visibility="Visible"/>
+        <Button x:Name="btStart" Content="Start" HorizontalAlignment="Left" Margin="104,10,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="btStart_Click"/>
+    </Grid>
+</Window>
