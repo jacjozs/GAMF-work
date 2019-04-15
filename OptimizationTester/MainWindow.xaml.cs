@@ -94,6 +94,7 @@ namespace OptimizationTester
             InitializeComponent();
             this.SizeChanged += Window_SizeChanged;
             openParams = 0;
+            Routing = new RoutingTest(12);
             // Lower and upper bounds for the parameters.
             lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
             ubp = new ArrayList { 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0 };
@@ -440,7 +441,6 @@ namespace OptimizationTester
             OptMethod(method);
             if(uniqueTest)
             {
-                Routing = new RoutingTest(12);
                 ffd = Routing.FitnessFunction;
                 OptMethod(method);
                 Optimizer.GenerationCreated += this.ShowRoutingAntibodies;
@@ -1149,7 +1149,7 @@ namespace OptimizationTester
                 cvPage.Children.Add(startLine);
                 cvPage.Children.Add(start);
                 cvPage.Children.Add(border);
-                for (int i = 1; i < points.Length; i++)
+                for (int i = 1; i < points.Length + 1; i++)
                 {
                     var circle = new Ellipse
                     {
