@@ -1,4 +1,5 @@
 ﻿using Optimization;
+using OptimizationTester.ICA;
 using System;
 using System.Collections;
 using System.Linq;
@@ -94,14 +95,14 @@ namespace OptimizationTester
             InitializeComponent();
             this.SizeChanged += Window_SizeChanged;
             openParams = 0;
-            Routing = new RoutingTest(12);
+            Routing = new RoutingTest(11);
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            ubp = new ArrayList { 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0 };
+            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            ubp = new ArrayList { 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
+            InitialParameters = new ArrayList { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { true, true, true, true, true, true, true, true, true, true, true, true };
+            Integer = new bool[] { true, true, true, true, true, true, true, true, true };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
@@ -1128,7 +1129,7 @@ namespace OptimizationTester
                     Height = 15,
                     Fill = new SolidColorBrush(Colors.Blue)
                 };
-                start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
+                /*start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
                 start.SetValue(Canvas.LeftProperty, Routing.Points[0].X);
                 var startLine = new Line
                 {
@@ -1192,7 +1193,7 @@ namespace OptimizationTester
                     StrokeThickness = 1,
                     Stroke = new SolidColorBrush(Colors.Red)
                 };
-                cvPage.Children.Add(end);
+                cvPage.Children.Add(end);*/
 
             }), DispatcherPriority.Send, null);
         }
