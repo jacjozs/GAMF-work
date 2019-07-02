@@ -34,7 +34,7 @@ namespace OptimizationTester.ICA
             int dem = 0;
             for (int i = 0; i < pointsCount; i++)
             {
-                Point pos = new Point(RNG.NextDouble() * 300, RNG.NextDouble() * 300);
+                Point pos = new Point(RNG.NextDouble() * 150, RNG.NextDouble() * 150);
                 Points.Add(pos);
             }
             for (int i = 0; i < pointsCount; i++)

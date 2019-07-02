@@ -100,12 +100,12 @@ namespace OptimizationTester
             Routing = new RoutingTest(pointCount);
             double max = Routing.lines.Count - 1;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { 0.0 };
-            ubp = new ArrayList { max };
+            lbp = new ArrayList { 0.0, 0.0};
+            ubp = new ArrayList { max, max };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { max };
+            InitialParameters = new ArrayList { max, max };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { true };
+            Integer = new bool[] { true, true };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
@@ -1089,22 +1089,6 @@ namespace OptimizationTester
         {
             this.uniqueTest = !this.uniqueTest;
             this.miRoutingTest.IsChecked = !this.miRoutingTest.IsChecked;
-            if (uniqueTest)
-            {
-                this.WindowState = WindowState.Maximized;
-                cvPage.Width = cvPage.Width * 2;
-                cvPage.Height = cvPage.Height * 2;
-                brPage.Width = brPage.Width * 2;
-                brPage.Height = brPage.Height * 2;
-            }
-            else
-            {
-                this.WindowState = WindowState.Normal;
-                cvPage.Width = cvPage.Width / 2;
-                cvPage.Height = cvPage.Height / 2;
-                brPage.Width = brPage.Width / 2;
-                brPage.Height = brPage.Height / 2;
-            }
         }
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
