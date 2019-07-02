@@ -90,19 +90,26 @@ namespace OptimizationTester
         // Storing the opened parameter list
         private int openParams;
 
+        private int Factorial(int n)
+        {
+            if (n >= 2) return n * Factorial(n - 1);
+            return 1;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             this.SizeChanged += Window_SizeChanged;
             openParams = 0;
-            Routing = new RoutingTest(11);
+            Routing = new RoutingTest(4);
+            double max = Factorial(4 - 1) - 1;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            ubp = new ArrayList { 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 };
+            lbp = new ArrayList { 0.0 };
+            ubp = new ArrayList { max };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 };
+            InitialParameters = new ArrayList { max };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { true, true, true, true, true, true, true, true, true };
+            Integer = new bool[] { true };
             //Create optimizer object.
             // Number of antibodies.
             NA = 50;
@@ -448,23 +455,28 @@ namespace OptimizationTester
                 tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
                                                      "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
                                                      "Upper bounds for the parameters: " + List(ubp) + "\r\n";
-
+                
                 var x = Task.Run(() => (Optimizer.Optimize()));
                 var Results = await x;
-                int[] EncryptInitialParameters = Routing.Encrypt(InitialParameters);
-                int[] EncryptOptimizedParameters = Routing.Encrypt(Results.OptimizedParameters);
-                ArrayList start = new ArrayList();
-                ArrayList end = new ArrayList();
-                for (int i = 0; i < InitialParameters.Count; i++)
+
+                double bestFitness = double.MaxValue;
+                int param = int.MaxValue;
+                for (int i = 0; i < Routing.lines.Count; i++)
                 {
-                    start.Add(EncryptInitialParameters[i]);
-                    end.Add(EncryptOptimizedParameters[i]);
+                    double value = Routing.FitnessFunction(new ArrayList() { double.Parse(i.ToString()) });
+                    if(value < bestFitness)
+                    {
+                        bestFitness = value;
+                        param = Routing.lines[i];
+                    }
                 }
+
                 tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                         "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                        "Initial encrypt parameters: " + List(start) + "\r\n" +
+                        "Initial encrypt parameters: " +/* List(start) +*/ "\r\n" +
                         "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
-                        "Final encrypt parameters: " + List(end) + "\r\n" +
+                        "Best Fitness: " + bestFitness + "\r\n" +
+                        "Best parameters: " + param + "\r\n" +
                         "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
                         "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
                         "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n";
@@ -1116,7 +1128,7 @@ namespace OptimizationTester
         }
         void ShowRoutingAntibodies(object sender, ArrayList Antibodies, double[] affinities)
         {
-            int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
+            //int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
 
             Application.Current.Dispatcher.Invoke((Action)(() =>
             {
