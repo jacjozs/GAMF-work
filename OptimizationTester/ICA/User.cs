@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Windows;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OptimizationTester.ICA
 {
-    class User
+    public class User
     {
         /// <summary>
         /// Poziciós id
@@ -24,5 +24,7 @@ namespace OptimizationTester.ICA
         /// Felhasználói igény mértéke
         /// </summary>
         public int dem { get; set; }
+
+        public Point position { get; set; } 
     }
 }

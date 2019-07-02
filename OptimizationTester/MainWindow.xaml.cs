@@ -449,6 +449,7 @@ namespace OptimizationTester
             OptMethod(method);
             if(uniqueTest)
             {
+                Routing = new RoutingTest(4);
                 ffd = Routing.FitnessFunction;
                 OptMethod(method);
                 Optimizer.GenerationCreated += this.ShowRoutingAntibodies;
@@ -461,6 +462,9 @@ namespace OptimizationTester
 
                 double bestFitness = double.MaxValue;
                 int param = int.MaxValue;
+                ArrayList start = new ArrayList();
+                ArrayList end = new ArrayList();
+                ArrayList best = new ArrayList();
                 for (int i = 0; i < Routing.lines.Count; i++)
                 {
                     double value = Routing.FitnessFunction(new ArrayList() { double.Parse(i.ToString()) });
@@ -471,13 +475,22 @@ namespace OptimizationTester
                     }
                 }
 
+                for (int i = 0; i < Routing.pCount; i++)
+                {
+                    start.Add(Routing.lines[int.Parse(((double)InitialParameters[0]).ToString())] >> (Routing.bitLength * i) & Routing.stepMask);
+                    end.Add(int.Parse(((double)Results.OptimizedParameters[0]).ToString()) >> (Routing.bitLength * i) & Routing.stepMask);
+                    best.Add(param >> (Routing.bitLength * i) & Routing.stepMask);
+                }
+
                 tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                         "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                        "Initial encrypt parameters: " +/* List(start) +*/ "\r\n" +
+                        "Initial encrypt parameters: " + List(start) + "\r\n" +
                         "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
+                        "Final encrypt parameters: " + List(end) + "\r\n" +
+                        "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
                         "Best Fitness: " + bestFitness + "\r\n" +
                         "Best parameters: " + param + "\r\n" +
-                        "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
+                        "Best encrypt parameters: " + List(best) + "\r\n" +
                         "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
                         "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n";
             } else if (method != 9) {
@@ -1128,8 +1141,9 @@ namespace OptimizationTester
         }
         void ShowRoutingAntibodies(object sender, ArrayList Antibodies, double[] affinities)
         {
-            //int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
 
+            int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
+            //Routing.Points
             Application.Current.Dispatcher.Invoke((Action)(() =>
             {
                 //clear the canvas
@@ -1141,7 +1155,7 @@ namespace OptimizationTester
                     Height = 15,
                     Fill = new SolidColorBrush(Colors.Blue)
                 };
-                /*start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
+                start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
                 start.SetValue(Canvas.LeftProperty, Routing.Points[0].X);
                 var startLine = new Line
                 {
@@ -1205,7 +1219,7 @@ namespace OptimizationTester
                     StrokeThickness = 1,
                     Stroke = new SolidColorBrush(Colors.Red)
                 };
-                cvPage.Children.Add(end);*/
+                cvPage.Children.Add(end);
 
             }), DispatcherPriority.Send, null);
         }

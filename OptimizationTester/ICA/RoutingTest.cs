@@ -12,7 +12,9 @@ namespace OptimizationTester.ICA
     public class RoutingTest
     {
 
-        private Dictionary<int, Dictionary<int, User>> rout;
+        public Dictionary<int, Dictionary<int, User>> RouteTable;
+
+        public List<Point> Points = new List<Point>();
 
         public List<byte> lines = new List<byte>();//Max 15 points
 
@@ -23,47 +25,60 @@ namespace OptimizationTester.ICA
         public int pCount;
 
         private Random RNG = new Random();
+
         public RoutingTest(int pointsCount)
         {
             pCount = pointsCount;
             Dictionary<int, User> list;
-            rout = new Dictionary<int, Dictionary<int, User>>();
+            RouteTable = new Dictionary<int, Dictionary<int, User>>();
             int dem = 0;
+            for (int i = 0; i < pointsCount; i++)
+            {
+                Point pos = new Point(RNG.NextDouble() * 300, RNG.NextDouble() * 300);
+                Points.Add(pos);
+            }
             for (int i = 0; i < pointsCount; i++)
             {
                 list = new Dictionary<int, User>();
                 for (int j = 0; j < pointsCount; j++)
                 {
                     dem = RNG.Next(1, 5);
+                    
                     if (j == 0) dem = 1;
-                    if (rout.ContainsKey(j))
+                    if (RouteTable.ContainsKey(j))
                     {
-                        list.Add(j, new User { pos = i, posTo = j, km = rout[j][i].km, dem = dem });
+                        list.Add(j, new User { pos = i, posTo = j, km = RouteTable[j][i].km, dem = dem, position = Points[i] });
                     }
                     else if (j != i)
                     {
                         if (i != 0)
-                            dem = rout[0][j].dem;
-                        list.Add(j, new User { pos = i, posTo = j, km = RNG.NextDouble() * 300, dem = dem });
+                            dem = RouteTable[0][j].dem;
+                        list.Add(j, new User { pos = i, posTo = j, km = getKm(Points[i], Points[j]), dem = dem, position = Points[i] });
                     }
+                    
                 }
-                rout.Add(i, list);
+                RouteTable.Add(i, list);
             }
             lines = getCombinations((byte)(pointsCount - 1));
+        }
+
+        public double getKm(Point from, Point to)
+        {
+            return Math.Sqrt(Math.Pow(from.X - to.X, 2) + Math.Pow(from.Y - to.Y, 2));
         }
         public double FitnessFunction(ArrayList ActualParameters)
         {
             int[] pointTmp = Encrypt(ActualParameters);
-            double result = rout[0][pointTmp[0]].km / rout[0][pointTmp[0]].dem;
+            double result = RouteTable[0][pointTmp[0]].km / RouteTable[0][pointTmp[0]].dem;
             for (int i = 1; i < pointTmp.Length; i++)
             {
-                result += rout[pointTmp[i - 1]][pointTmp[i]].km / rout[pointTmp[i - 1]][pointTmp[i]].dem;
+                result += RouteTable[pointTmp[i - 1]][pointTmp[i]].km / RouteTable[pointTmp[i - 1]][pointTmp[i]].dem;
             }
-            result += rout[pointTmp[pointTmp.Length - 1]][0].km;
+            result += RouteTable[pointTmp[pointTmp.Length - 1]][0].km;
             return result;
         }
 
-        private int[] Encrypt(ArrayList ActualParameters)
+        public int[] Encrypt(ArrayList ActualParameters)
         {
             int index = (int)Math.Round((double)ActualParameters[0]);
             byte line = lines[index];
