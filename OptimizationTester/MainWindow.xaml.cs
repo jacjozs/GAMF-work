@@ -90,19 +90,15 @@ namespace OptimizationTester
         // Storing the opened parameter list
         private int openParams;
 
-        private int Factorial(int n)
-        {
-            if (n >= 2) return n * Factorial(n - 1);
-            return 1;
-        }
+        private byte pointCount = 15;
 
         public MainWindow()
         {
             InitializeComponent();
             this.SizeChanged += Window_SizeChanged;
             openParams = 0;
-            Routing = new RoutingTest(4);
-            double max = Factorial(4 - 1) - 1;
+            Routing = new RoutingTest(pointCount);
+            double max = Routing.lines.Count - 1;
             // Lower and upper bounds for the parameters.
             lbp = new ArrayList { 0.0 };
             ubp = new ArrayList { max };
@@ -449,7 +445,7 @@ namespace OptimizationTester
             OptMethod(method);
             if(uniqueTest)
             {
-                Routing = new RoutingTest(4);
+                Routing = new RoutingTest(pointCount);
                 ffd = Routing.FitnessFunction;
                 OptMethod(method);
                 Optimizer.GenerationCreated += this.ShowRoutingAntibodies;
@@ -461,7 +457,7 @@ namespace OptimizationTester
                 var Results = await x;
 
                 double bestFitness = double.MaxValue;
-                int param = int.MaxValue;
+                ulong param = int.MaxValue;
                 ArrayList start = new ArrayList();
                 ArrayList end = new ArrayList();
                 ArrayList best = new ArrayList();
@@ -474,18 +470,19 @@ namespace OptimizationTester
                         param = Routing.lines[i];
                     }
                 }
-
+                
+                ulong startParam = Routing.lines[int.Parse(((double)InitialParameters[0]).ToString())];
+                ulong endParam = Routing.lines[(int)Math.Round((double)Results.OptimizedParameters[0])];
                 for (int i = 0; i < Routing.pCount; i++)
                 {
-                    start.Add(Routing.lines[int.Parse(((double)InitialParameters[0]).ToString())] >> (Routing.bitLength * i) & Routing.stepMask);
-                    end.Add(int.Parse(((double)Results.OptimizedParameters[0]).ToString()) >> (Routing.bitLength * i) & Routing.stepMask);
+                    start.Add(startParam >> (Routing.bitLength * i) & Routing.stepMask);
+                    end.Add(endParam >> (Routing.bitLength * i) & Routing.stepMask);
                     best.Add(param >> (Routing.bitLength * i) & Routing.stepMask);
                 }
 
                 tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                         "Initial parameters: " + List(InitialParameters) + "\r\n" +
                         "Initial encrypt parameters: " + List(start) + "\r\n" +
-                        "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
                         "Final encrypt parameters: " + List(end) + "\r\n" +
                         "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
                         "Best Fitness: " + bestFitness + "\r\n" +

@@ -16,11 +16,11 @@ namespace OptimizationTester.ICA
 
         public List<Point> Points = new List<Point>();
 
-        public List<byte> lines = new List<byte>();//Max 15 points
+        public List<ulong> lines = new List<ulong>();//Max 15 points
 
         public int bitLength = 0;
 
-        public byte stepMask = 0;
+        public ulong stepMask = 0;
 
         public int pCount;
 
@@ -81,19 +81,19 @@ namespace OptimizationTester.ICA
         public int[] Encrypt(ArrayList ActualParameters)
         {
             int index = (int)Math.Round((double)ActualParameters[0]);
-            byte line = lines[index];
+            ulong line = lines[index];
             int[] result = new int[pCount - 1];
             for (int i = 0; i < pCount - 1; i++)
             {
-                result[i] = line >> (bitLength * i) & stepMask;
+                result[i] = (int)(line >> (bitLength * i) & stepMask);
             }
             return result;
         }
 
-        private List<byte> getCombinations(byte pointsCount)
+        private List<ulong> getCombinations(byte pointsCount)
         {
-            List<byte> combinations = new List<byte>();
-            byte line = 0;
+            List<ulong> combinations = new List<ulong>();
+            ulong line = 0;
             for (int i = 8; i < 9 * 8; i = i * 2)
             {
                 int tmp = i / pointsCount;
@@ -102,11 +102,11 @@ namespace OptimizationTester.ICA
                 {
                     for (byte j = 0; j < bitLength; j++)
                     {
-                        stepMask |= (byte)(1 << j);
+                        stepMask |= (byte)(1 << j);//Léptetési Maszk
                     }
                     for (int j = 1; j < pointsCount + 1; j++)
                     {
-                        line |= (byte)(j << (bitLength * (j - 1)));
+                        line |= (ulong)j << (bitLength * (j - 1));//Start kombináció
                     }
                     break;
                 }
@@ -121,12 +121,15 @@ namespace OptimizationTester.ICA
             {
                 for (int j = 1; j < pointsCount; j++)
                 {
-                    byte right = (byte)(line & (stepMask << (bitLength * (j - 1))));
-                    byte left = (byte)(line & (stepMask << (bitLength * j)));
-                    line &= (byte)(~(stepMask << (bitLength * j)));
-                    line &= (byte)(~(stepMask << (bitLength * (j - 1))));
-                    line |= (byte)(right << bitLength);
-                    line |= (byte)(left >> bitLength);
+                    ulong right = (ulong)(line & (stepMask << (bitLength * (j - 1))));//Jobb oldali érték kivétele
+                    ulong left = (ulong)(line & (stepMask << (bitLength * j)));//Bal oldali érték kivétele
+
+                    line &= (ulong)(~(stepMask << (bitLength * (j - 1))));//Jobb oldali nullázás
+                    line &= (ulong)(~(stepMask << (bitLength * j)));//Bal oldal nullázás
+
+                    line |= (ulong)(right << bitLength);//Jobb érték beillesztés
+                    line |= (ulong)(left >> bitLength);//Bal érték beillesztés
+
                     combinations.Add(line);
                 }
             }
