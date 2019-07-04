@@ -80,8 +80,8 @@ namespace OptimizationTester.ICA
         /// <summary>
         /// Fitness function
         /// </summary>
-        /// <param name="ActualParameters"></param>
-        /// <returns></returns>
+        /// <param name="ActualParameters">Paraméterek</param>
+        /// <returns>Fitness értéke</returns>
         public double FitnessFunction(ArrayList ActualParameters)
         {
             ArrayList pointTmp = Encrypt(ActualParameters);
@@ -101,15 +101,15 @@ namespace OptimizationTester.ICA
         /// <returns>A dekodólt pontokból álló lista</returns>
         public ArrayList Encrypt(ArrayList ActualParameters)
         {
-            long line = 0;
+            ulong line = 0;
             foreach (double item in ActualParameters)
             {
-                line |= BitConverter.ToInt64(BitConverter.GetBytes(item), 0);
+                line |= BitConverter.ToUInt64(BitConverter.GetBytes(item), 0);
             }
             ArrayList result = new ArrayList();
             for (int i = 0; i < 64; i++)
             {
-                if((line & (1 << i)) > 0 && !result.Contains(i % pCount + 1))
+                if((line & ((ulong)1 << i)) > 0 && !result.Contains(i % pCount + 1))
                 {
                     result.Add(i % pCount + 1);
                     if (result.Count == pCount) break;
