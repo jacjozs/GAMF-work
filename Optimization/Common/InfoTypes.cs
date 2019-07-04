@@ -7,10 +7,6 @@
         /// </summary>
         InitialFitness,
         /// <summary>
-        /// Végső paraméter lista
-        /// </summary>
-        FinalParameters,
-        /// <summary>
         /// Végső fitnesz
         /// </summary>
         FinalFitness,

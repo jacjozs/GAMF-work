@@ -2,6 +2,7 @@
 using OptimizationTester.ICA;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -89,33 +90,29 @@ namespace OptimizationTester
         private int ClonesCount;
         // Storing the opened parameter list
         private int openParams;
-
-        private byte pointCount = 15;
-
+        // 10 pontig 100 generáció alatt megtalálják
+        private byte pointCount = 10;
         public MainWindow()
         {
             InitializeComponent();
-            this.SizeChanged += Window_SizeChanged;
             openParams = 0;
-            Routing = new RoutingTest(pointCount);
-            double max = Routing.lines.Count - 1;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { 0.0, 0.0};
-            ubp = new ArrayList { max, max };
+            lbp = new ArrayList { double.MinValue, double.MinValue };
+            ubp = new ArrayList { double.MaxValue, double.MaxValue };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { max, max };
+            InitialParameters = new ArrayList { 15.0, 8.8 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
             Integer = new bool[] { true, true };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 50;
+            NA = 100;
             method = 0;
             Slow = false;
             Preview = false;
             uniqueTest = false;
             // Stopping
             stoppingType = StoppingType.GenerationNumber;
-            ng = 1000;
+            ng = 100;
             nev = 25000;
             Ftr = 0.00001;
             // Fitness function
@@ -455,39 +452,13 @@ namespace OptimizationTester
                 
                 var x = Task.Run(() => (Optimizer.Optimize()));
                 var Results = await x;
-
-                double bestFitness = double.MaxValue;
-                ulong param = int.MaxValue;
-                ArrayList start = new ArrayList();
-                ArrayList end = new ArrayList();
-                ArrayList best = new ArrayList();
-                for (int i = 0; i < Routing.lines.Count; i++)
-                {
-                    double value = Routing.FitnessFunction(new ArrayList() { double.Parse(i.ToString()) });
-                    if(value < bestFitness)
-                    {
-                        bestFitness = value;
-                        param = Routing.lines[i];
-                    }
-                }
                 
-                ulong startParam = Routing.lines[int.Parse(((double)InitialParameters[0]).ToString())];
-                ulong endParam = Routing.lines[(int)Math.Round((double)Results.OptimizedParameters[0])];
-                for (int i = 0; i < Routing.pCount; i++)
-                {
-                    start.Add(startParam >> (Routing.bitLength * i) & Routing.stepMask);
-                    end.Add(endParam >> (Routing.bitLength * i) & Routing.stepMask);
-                    best.Add(param >> (Routing.bitLength * i) & Routing.stepMask);
-                }
 
                 tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                         "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                        "Initial encrypt parameters: " + List(start) + "\r\n" +
-                        "Final encrypt parameters: " + List(end) + "\r\n" +
+                        "Initial encrypt parameters: " + List(Routing.Encrypt(InitialParameters)) + "\r\n" +
+                        "Final encrypt parameters: " + List(Routing.Encrypt(Results.OptimizedParameters)) + "\r\n" +
                         "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
-                        "Best Fitness: " + bestFitness + "\r\n" +
-                        "Best parameters: " + param + "\r\n" +
-                        "Best encrypt parameters: " + List(best) + "\r\n" +
                         "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
                         "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n";
             } else if (method != 9) {
@@ -500,7 +471,7 @@ namespace OptimizationTester
 
                 tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
                     "Final parameters: " + List(Results.OptimizedParameters) + "\r\n" +
-                    "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F60}" + "\r\n" +
+                    "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
                     "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
                     "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n" +
                     "Best affinities in each generation: " + List((ArrayList)Results.InfoList[InfoTypes.Affinities]);
@@ -1090,40 +1061,10 @@ namespace OptimizationTester
             this.uniqueTest = !this.uniqueTest;
             this.miRoutingTest.IsChecked = !this.miRoutingTest.IsChecked;
         }
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            switch (this.WindowState)
-            {
-                case WindowState.Normal:
-                    if(uniqueTest)
-                    {
-                        cvPage.Width = cvPage.Width / 2;
-                        cvPage.Height = cvPage.Height / 2;
-                        brPage.Width = brPage.Width / 2;
-                        brPage.Height = brPage.Height / 2;
-                        this.uniqueTest = false;
-                        this.miRoutingTest.IsChecked = false;
-                    }
-                    break;
-                case WindowState.Maximized:
-                    if (!uniqueTest)
-                    {
-                        cvPage.Width = cvPage.Width * 2;
-                        cvPage.Height = cvPage.Height * 2;
-                        brPage.Width = brPage.Width * 2;
-                        brPage.Height = brPage.Height * 2;
-                        this.uniqueTest = true;
-                        this.miRoutingTest.IsChecked = true;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
         void ShowRoutingAntibodies(object sender, ArrayList Antibodies, double[] affinities)
         {
 
-            int[] points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
+            ArrayList points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
             //Routing.Points
             Application.Current.Dispatcher.Invoke((Action)(() =>
             {
@@ -1142,8 +1083,8 @@ namespace OptimizationTester
                 {
                     X1 = Routing.Points[0].X + 5,
                     Y1 = Routing.Points[0].Y + 5,
-                    X2 = Routing.Points[points[0]].X + 5,
-                    Y2 = Routing.Points[points[0]].Y + 5,
+                    X2 = Routing.Points[(int)points[0]].X + 5,
+                    Y2 = Routing.Points[(int)points[0]].Y + 5,
                     StrokeThickness = 1,
                     Stroke = new SolidColorBrush(Colors.Red)
                 };
@@ -1157,7 +1098,7 @@ namespace OptimizationTester
                 cvPage.Children.Add(startLine);
                 cvPage.Children.Add(start);
                 cvPage.Children.Add(border);
-                for (int i = 1; i < points.Length + 1; i++)
+                for (int i = 1; i < points.Count + 1; i++)
                 {
                     var circle = new Ellipse
                     {
@@ -1177,14 +1118,14 @@ namespace OptimizationTester
                     border.SetValue(Canvas.LeftProperty, Routing.Points[i].X + 6);
                     cvPage.Children.Add(border);
                 }
-                for (int i = 1; i < points.Length; i++)
+                for (int i = 1; i < points.Count; i++)
                 {
                     var line = new Line
                     {
-                        X1 = Routing.Points[points[i - 1]].X + 5,
-                        Y1 = Routing.Points[points[i - 1]].Y + 5,
-                        X2 = Routing.Points[points[i]].X + 5,
-                        Y2 = Routing.Points[points[i]].Y + 5,
+                        X1 = Routing.Points[(int)points[i - 1]].X + 5,
+                        Y1 = Routing.Points[(int)points[i - 1]].Y + 5,
+                        X2 = Routing.Points[(int)points[i]].X + 5,
+                        Y2 = Routing.Points[(int)points[i]].Y + 5,
                         StrokeThickness = 1,
                         Stroke = new SolidColorBrush(Colors.Red)
                     };
@@ -1193,8 +1134,8 @@ namespace OptimizationTester
 
                 var end = new Line
                 {
-                    X1 = Routing.Points[points[points.Length - 1]].X + 5,
-                    Y1 = Routing.Points[points[points.Length - 1]].Y + 5,
+                    X1 = Routing.Points[(int)points[(int)points.Count - 1]].X + 5,
+                    Y1 = Routing.Points[(int)points[(int)points.Count - 1]].Y + 5,
                     X2 = Routing.Points[0].X + 5,
                     Y2 = Routing.Points[0].Y + 5,
                     StrokeThickness = 1,

@@ -11,36 +11,42 @@ namespace OptimizationTester.ICA
 {
     public class RoutingTest
     {
-
+        /// <summary>
+        /// Routing tábla
+        /// </summary>
         public Dictionary<int, Dictionary<int, User>> RouteTable;
-
+        /// <summary>
+        /// Poziciók
+        /// </summary>
         public List<Point> Points = new List<Point>();
-
-        public List<ulong> lines = new List<ulong>();//Max 15 points
-
-        public int bitLength = 0;
-
-        public ulong stepMask = 0;
-
-        public int pCount;
-
+        /// <summary>
+        /// Pontok száma
+        /// </summary>
+        private int pCount;
+        /// <summary>
+        /// Random szám generátor
+        /// </summary>
         private Random RNG = new Random();
-
+        /// <summary>
+        /// Konstruktor ami a pontok száma alapján legenerálja
+        /// A random útvonalú routing táblát a kereséshez
+        /// </summary>
+        /// <param name="pointsCount">pontok száma</param>
         public RoutingTest(int pointsCount)
         {
             pCount = pointsCount;
             Dictionary<int, User> list;
             RouteTable = new Dictionary<int, Dictionary<int, User>>();
             int dem = 0;
-            for (int i = 0; i < pointsCount; i++)
+            for (int i = 0; i < pointsCount + 1; i++)
             {
                 Point pos = new Point(RNG.NextDouble() * 150, RNG.NextDouble() * 150);
                 Points.Add(pos);
             }
-            for (int i = 0; i < pointsCount; i++)
+            for (int i = 0; i < pointsCount + 1; i++)
             {
                 list = new Dictionary<int, User>();
-                for (int j = 0; j < pointsCount; j++)
+                for (int j = 0; j < pointsCount + 1; j++)
                 {
                     dem = RNG.Next(1, 5);
                     
@@ -59,81 +65,75 @@ namespace OptimizationTester.ICA
                 }
                 RouteTable.Add(i, list);
             }
-            lines = getCombinations((byte)(pointsCount - 1));
         }
-
+        /// <summary>
+        /// Két pont közti távolságót számolja ki
+        /// (Mivel nem a pontok sima kordináták ezért azok vektori távolságát számoljuk)
+        /// </summary>
+        /// <param name="from">kiindulási pont</param>
+        /// <param name="to">érkezési pont</param>
+        /// <returns>két pont közti vektori távolság</returns>
         public double getKm(Point from, Point to)
         {
             return Math.Sqrt(Math.Pow(from.X - to.X, 2) + Math.Pow(from.Y - to.Y, 2));
         }
+        /// <summary>
+        /// Fitness function
+        /// </summary>
+        /// <param name="ActualParameters"></param>
+        /// <returns></returns>
         public double FitnessFunction(ArrayList ActualParameters)
         {
-            int[] pointTmp = Encrypt(ActualParameters);
-            double result = RouteTable[0][pointTmp[0]].km / RouteTable[0][pointTmp[0]].dem;
-            for (int i = 1; i < pointTmp.Length; i++)
+            ArrayList pointTmp = Encrypt(ActualParameters);
+            double result = RouteTable[0][(int)pointTmp[0]].km / RouteTable[0][(int)pointTmp[0]].dem;
+            for (int i = 1; i < pCount; i++)
             {
-                result += RouteTable[pointTmp[i - 1]][pointTmp[i]].km / RouteTable[pointTmp[i - 1]][pointTmp[i]].dem;
+                result += RouteTable[(int)pointTmp[i - 1]][(int)pointTmp[i]].km / RouteTable[(int)pointTmp[i - 1]][(int)pointTmp[i]].dem;
             }
-            result += RouteTable[pointTmp[pointTmp.Length - 1]][0].km;
+            result += RouteTable[(int)pointTmp[(int)pointTmp.Count - 1]][0].km;
             return result;
         }
-
-        public int[] Encrypt(ArrayList ActualParameters)
+        /// <summary>
+        /// Az algoritmusok által generált paraméterek dekódolása és azok átalakítása
+        /// a pozíciók sorenbe helyezése
+        /// </summary>
+        /// <param name="ActualParameters">A generált paraméterek</param>
+        /// <returns>A dekodólt pontokból álló lista</returns>
+        public ArrayList Encrypt(ArrayList ActualParameters)
         {
-            int index = (int)Math.Round((double)ActualParameters[0]);
-            ulong line = lines[index];
-            int[] result = new int[pCount - 1];
-            for (int i = 0; i < pCount - 1; i++)
+            long line = 0;
+            foreach (double item in ActualParameters)
             {
-                result[i] = (int)(line >> (bitLength * i) & stepMask);
+                line |= BitConverter.ToInt64(BitConverter.GetBytes(item), 0);
+            }
+            ArrayList result = new ArrayList();
+            for (int i = 0; i < 64; i++)
+            {
+                if((line & (1 << i)) > 0 && !result.Contains(i % pCount + 1))
+                {
+                    result.Add(i % pCount + 1);
+                    if (result.Count == pCount) break;
+                }
+            }
+            if(pCount != result.Count)
+            {
+                checkNULL(result);
             }
             return result;
         }
-
-        private List<ulong> getCombinations(byte pointsCount)
+        /// <summary>
+        /// A megkapot listába beilleszteni a hiányzó pontokat
+        /// Növekvő sorrenben kerülnek bele
+        /// </summary>
+        /// <param name="result">A vizsgált lista</param>
+        private void checkNULL(ArrayList result)
         {
-            List<ulong> combinations = new List<ulong>();
-            ulong line = 0;
-            for (int i = 8; i < 9 * 8; i = i * 2)
+            for (int i = 1; i < pCount + 1; i++)
             {
-                int tmp = i / pointsCount;
-                bitLength = (int)(Math.Log(pointsCount, 2)) + 1;
-                if (tmp >= bitLength)
-                {
-                    for (byte j = 0; j < bitLength; j++)
-                    {
-                        stepMask |= (byte)(1 << j);//Léptetési Maszk
-                    }
-                    for (int j = 1; j < pointsCount + 1; j++)
-                    {
-                        line |= (ulong)j << (bitLength * (j - 1));//Start kombináció
-                    }
-                    break;
-                }
+                if(!result.Contains(i))
+                    result.Add(i);
+                if (result.Count == pCount) break;
             }
-
-            if(bitLength == 0 || combinations == null)
-            {
-                throw new ArgumentException("The \"pointsCount\" parameter too big or too small");
-            }
-            
-            for (int i = 0; i < pointsCount; i++)
-            {
-                for (int j = 1; j < pointsCount; j++)
-                {
-                    ulong right = (ulong)(line & (stepMask << (bitLength * (j - 1))));//Jobb oldali érték kivétele
-                    ulong left = (ulong)(line & (stepMask << (bitLength * j)));//Bal oldali érték kivétele
-
-                    line &= (ulong)(~(stepMask << (bitLength * (j - 1))));//Jobb oldali nullázás
-                    line &= (ulong)(~(stepMask << (bitLength * j)));//Bal oldal nullázás
-
-                    line |= (ulong)(right << bitLength);//Jobb érték beillesztés
-                    line |= (ulong)(left >> bitLength);//Bal érték beillesztés
-
-                    combinations.Add(line);
-                }
-            }
-            return combinations;
         }
     }
 }
