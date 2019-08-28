@@ -59,8 +59,11 @@
             <Border x:Name="brPage" Margin="0,35,0,35" BorderBrush="Black" BorderThickness="2" Width="205" Height="205">
                 <Canvas x:Name="cvPage" Width="201" Height="201" Margin="0" />
             </Border>
-            <Grid>
-                <Button Content="Start" x:Name="btStart" Click="btStart_Clicked" Width="80" Height="30" Grid.Column="0"/>
+            <Grid HorizontalAlignment="Center" >
+                <StackPanel x:Name="spStart" Orientation="Horizontal" >
+                    <Button Content="Start" x:Name="btStart" Click="btStart_Clicked" Width="80" Height="30" Margin="0 0 0 0"/>
+                    <Button Content="Recreate" x:Name="btRecreat" Click="btRecreate_Clicked" Width="80" Height="30" Visibility="Collapsed" Margin="10 0 0 0"/>
+                </StackPanel>
                 <Button Content="Stop" x:Name="btStop" Width="80" Height="30" Grid.Column="1" Click="btStop_Click" Visibility="Collapsed"/>
             </Grid>
         </StackPanel>

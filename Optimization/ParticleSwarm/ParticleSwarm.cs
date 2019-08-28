@@ -94,7 +94,10 @@ namespace Optimization
             }
             BestInCurrentGeneration = (Particle)FindBestElement();
             if (GlobalBest == null || BestInCurrentGeneration.Fitness < GlobalBest.Fitness)
+            {
                 GlobalBest = new Particle(BestInCurrentGeneration);
+            }
+               
             Elements.Sort();
             UpdateVelocities();
         }
@@ -113,6 +116,11 @@ namespace Optimization
                                                      cp * RNG.NextDouble() * ((double)pj.BestPosition[k] - (double)pj.Position[k]) +
                                                      cg * RNG.NextDouble() * ((double)GlobalBest.Position[k] - (double)pj.Position[k]);
             }
+        }
+
+        public void reset()
+        {
+            this.GlobalBest = null;
         }
     }
 }

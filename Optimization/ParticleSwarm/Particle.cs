@@ -46,19 +46,14 @@ namespace Optimization
 		public Particle(Particle particle) : base(particle.FitnessFunction, new ArrayList(particle.Position), (EventHandlerDelegate)particle.GetFitnessEvaluatedInvocationList()[0])
 		{
 			FitnessFunction = particle.FitnessFunction;
-			Position = new ArrayList();
-			foreach (var d in particle.Position)
-			{
-				Position.Add(d);
-			}
 			Fitness = particle.Fitness;
-			BestPosition=new ArrayList();
+            BestPosition = new ArrayList();
 			foreach (var d in particle.BestPosition)
 			{
 				BestPosition.Add(d);
 			}
 			BestFitness = particle.BestFitness;
-			Velocity=new ArrayList();
+            Velocity = new ArrayList();
 			foreach (var v in particle.Velocity)
 			{
 				Velocity.Add(v);

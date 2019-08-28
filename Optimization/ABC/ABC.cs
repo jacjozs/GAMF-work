@@ -126,5 +126,10 @@ namespace Optimization
                 Step++;
             }
         }
+
+        public void reset()
+        {
+            EliteBees = null;
+        }
     }
 }

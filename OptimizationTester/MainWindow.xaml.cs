@@ -25,7 +25,7 @@ namespace OptimizationTester
         private int method;
         private bool Preview;
         private bool Slow;
-        private RoutingTest Routing;
+        private RoutingTest routingTest;
         private bool uniqueTest;
         // Stopping
         private StoppingType stoppingType;
@@ -91,18 +91,18 @@ namespace OptimizationTester
         // Storing the opened parameter list
         private int openParams;
         // 10 pontig 100 generáció alatt megtalálják
-        private byte pointCount = 10;
+        private byte pointCount = 8;
         public MainWindow()
         {
             InitializeComponent();
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { double.MinValue, double.MinValue };
-            ubp = new ArrayList { double.MaxValue, double.MaxValue };
+            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            ubp = new ArrayList { 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 15.0, 8.8 };
+            InitialParameters = new ArrayList { 10.0, 8.8, 8.8, 1.2, 10.0, 8.8, 8.8, 1.2 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { true, true };
+            Integer = new bool[] { true, true, true, true, true, true, true, true };
             //Create optimizer object.
             // Number of antibodies.
             NA = 100;
@@ -432,7 +432,11 @@ namespace OptimizationTester
             SetFitnessFunction(FitnessFunctionRosenbrock);
             miRosenbrock.IsChecked = true;
         }
-
+        private void btRecreate_Clicked(object sender, RoutedEventArgs e)
+        {
+            routingTest = new RoutingTest(this.Optimizer, new RouteTable(pointCount), this.cvPage, this.tbResults);
+        }
+        
         // Optimization process
         private async void btStart_Clicked(object sender, RoutedEventArgs e)
         {
@@ -442,25 +446,13 @@ namespace OptimizationTester
             OptMethod(method);
             if(uniqueTest)
             {
-                Routing = new RoutingTest(pointCount);
-                ffd = Routing.FitnessFunction;
+                btRecreat.Visibility = Visibility.Collapsed;
+                tbResults.Text = "";
                 OptMethod(method);
-                Optimizer.GenerationCreated += this.ShowRoutingAntibodies;
-                tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                                                     "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
-                                                     "Upper bounds for the parameters: " + List(ubp) + "\r\n";
-                
-                var x = Task.Run(() => (Optimizer.Optimize()));
-                var Results = await x;
-                
-
-                tbResults.Text = tbResults.Text + "Initial fitness: " + Results.InfoList[InfoTypes.InitialFitness] + "\r\n" +
-                        "Initial parameters: " + List(InitialParameters) + "\r\n" +
-                        "Initial encrypt parameters: " + List(Routing.Encrypt(InitialParameters)) + "\r\n" +
-                        "Final encrypt parameters: " + List(Routing.Encrypt(Results.OptimizedParameters)) + "\r\n" +
-                        "Final fitness: " + $"{Results.InfoList[InfoTypes.FinalFitness],10:F6}" + "\r\n" +
-                        "Number of generations: " + Results.InfoList[InfoTypes.Generations] + "\r\n" +
-                        "Number of fitness evaluations: " + Results.InfoList[InfoTypes.Evaluations] + "\r\n";
+                if (routingTest == null)
+                    routingTest = new RoutingTest(this.Optimizer, new RouteTable(pointCount), this.cvPage, this.tbResults);
+                routingTest.optimizer = this.Optimizer;
+                await Task.Run(() => this.routingTest.Optimize());
             } else if (method != 9) {
                 tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
                                                  "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
@@ -490,6 +482,10 @@ namespace OptimizationTester
                 }
             }
             btStart.Visibility = Visibility.Visible;
+            if(btRecreat.Visibility == Visibility.Collapsed && this.uniqueTest)
+            {
+                btRecreat.Visibility = Visibility.Visible;
+            }
             btStop.Visibility = Visibility.Collapsed;
         }
         private void btStop_Click(object sender, RoutedEventArgs e)
@@ -1060,90 +1056,14 @@ namespace OptimizationTester
         {
             this.uniqueTest = !this.uniqueTest;
             this.miRoutingTest.IsChecked = !this.miRoutingTest.IsChecked;
-        }
-        void ShowRoutingAntibodies(object sender, ArrayList Antibodies, double[] affinities)
-        {
-
-            ArrayList points = Routing.Encrypt(((BaseElement)Antibodies[0]).Position);
-            //Routing.Points
-            Application.Current.Dispatcher.Invoke((Action)(() =>
+            if(this.uniqueTest)
             {
-                //clear the canvas
-                cvPage.Children.Clear();
-
-                var start = new Ellipse
-                {
-                    Width = 15,
-                    Height = 15,
-                    Fill = new SolidColorBrush(Colors.Blue)
-                };
-                start.SetValue(Canvas.TopProperty, Routing.Points[0].Y);
-                start.SetValue(Canvas.LeftProperty, Routing.Points[0].X);
-                var startLine = new Line
-                {
-                    X1 = Routing.Points[0].X + 5,
-                    Y1 = Routing.Points[0].Y + 5,
-                    X2 = Routing.Points[(int)points[0]].X + 5,
-                    Y2 = Routing.Points[(int)points[0]].Y + 5,
-                    StrokeThickness = 1,
-                    Stroke = new SolidColorBrush(Colors.Red)
-                };
-                var border = new Border()
-                {
-                    Child = new TextBlock() { Text = "0" },
-                };
-                border.SetValue(Canvas.TopProperty, Routing.Points[0].Y + 10);
-                border.SetValue(Canvas.LeftProperty, Routing.Points[0].X + 10);
-
-                cvPage.Children.Add(startLine);
-                cvPage.Children.Add(start);
-                cvPage.Children.Add(border);
-                for (int i = 1; i < points.Count + 1; i++)
-                {
-                    var circle = new Ellipse
-                    {
-                        Width = 10,
-                        Height = 10,
-                        Fill = new SolidColorBrush(Colors.Black)
-                    };
-                    circle.SetValue(Canvas.TopProperty, Routing.Points[i].Y);
-                    circle.SetValue(Canvas.LeftProperty, Routing.Points[i].X);
-                    cvPage.Children.Add(circle);
-
-                    border = new Border()
-                    {
-                        Child = new TextBlock() { Text = i.ToString() },
-                    };
-                    border.SetValue(Canvas.TopProperty, Routing.Points[i].Y + 6);
-                    border.SetValue(Canvas.LeftProperty, Routing.Points[i].X + 6);
-                    cvPage.Children.Add(border);
-                }
-                for (int i = 1; i < points.Count; i++)
-                {
-                    var line = new Line
-                    {
-                        X1 = Routing.Points[(int)points[i - 1]].X + 5,
-                        Y1 = Routing.Points[(int)points[i - 1]].Y + 5,
-                        X2 = Routing.Points[(int)points[i]].X + 5,
-                        Y2 = Routing.Points[(int)points[i]].Y + 5,
-                        StrokeThickness = 1,
-                        Stroke = new SolidColorBrush(Colors.Red)
-                    };
-                    cvPage.Children.Add(line);
-                }
-
-                var end = new Line
-                {
-                    X1 = Routing.Points[(int)points[(int)points.Count - 1]].X + 5,
-                    Y1 = Routing.Points[(int)points[(int)points.Count - 1]].Y + 5,
-                    X2 = Routing.Points[0].X + 5,
-                    Y2 = Routing.Points[0].Y + 5,
-                    StrokeThickness = 1,
-                    Stroke = new SolidColorBrush(Colors.Red)
-                };
-                cvPage.Children.Add(end);
-
-            }), DispatcherPriority.Send, null);
+                this.btRecreat.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.btRecreat.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
