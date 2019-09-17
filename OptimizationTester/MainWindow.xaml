@@ -25,8 +25,10 @@
                 <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm" Click="miNew_Click"/>
                 <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
                 <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm" Click="miBacterial_Click"/>
-                <MenuItem x:Name="miAnt" Header="Ant Algorithm" Click="miAnt_Click"/>
+                <MenuItem x:Name="miDifferentialEv" Header="Differential Evolution Algorithm" Click="miDifferentialEv_Click"/>
                 <MenuItem x:Name="miSoma" Header="Self-Organizing Migrating Algorithm" Click="miSoma_Click"/>
+                <MenuItem x:Name="miHarmonySearch" Header="Haromony Search Algorithm" Click="miHarmonySearch_Click"/>
+                <MenuItem x:Name="miNelderMead" Header="Nelder-Mead Algorithm" Click="miNelderMead_Click"/>
                 <MenuItem x:Name="miBest_Alg_Select" Header="Best algorithm select" Click="miBest_Alg_Select_Click"/>
             </MenuItem>
             <MenuItem Header="Stopping condition">

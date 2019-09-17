@@ -61,115 +61,160 @@
   <Class Name="Optimization.ParticleSwarm">
     <Position X="6.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACAgAAAAAAAAAhEAAAAAAACAAAgAAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>ACAgAAAEAAAAAhEAAAAAAACAAAgAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>ParticleSwarm\ParticleSwarm.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Optimization.ABC">
+  <Class Name="Optimization.ArtificialBeeColony">
     <Position X="10.25" Y="1.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5" Y="1.25" />
         <Point X="5" Y="0.938" />
+        <Point X="10.044" Y="0.938" Type="JumpStart" />
+        <Point X="10.21" Y="0.938" Type="JumpEnd" />
         <Point X="11" Y="0.938" />
         <Point X="11" Y="1.25" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAQAAAAAIAAACAAAAAAAAAAAAQAAAQAAAACA=</HashCode>
-      <FileName>ABC\ABC.cs</FileName>
+      <HashCode>ACAAAAAEAAAAAAAIAAACAAAAAAAAAAAAQAAAQAAAAKA=</HashCode>
+      <FileName>ArtificialBeeColony\ArtificialBeeColony.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Optimization.BFOA">
-    <Position X="10.25" Y="4" Width="1.5" />
+  <Class Name="Optimization.BacterialForaging">
+    <Position X="10.25" Y="4.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5.312" Y="1.25" />
         <Point X="5.312" Y="1.07" />
         <Point X="10.127" Y="1.07" />
-        <Point X="10.127" Y="5.125" />
-        <Point X="10.25" Y="5.125" />
+        <Point X="10.127" Y="5.375" />
+        <Point X="10.25" Y="5.375" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAEAQAAAAQAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BFOA\BFOA.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Optimization.ACO">
-    <Position X="10.25" Y="6.5" Width="1.5" />
-    <NestedTypes>
-      <Class Name="Optimization.ACO.Feromon" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>ACO\ACO.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Optimization.ACO.Ant" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>ACO\ACO.cs</NewMemberFileName>
-        </TypeIdentifier>
-        <Lollipop Position="0.2" />
-      </Class>
-    </NestedTypes>
-    <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="4.562" Y="1.25" />
-        <Point X="4.562" Y="0.636" />
-        <Point X="12.125" Y="0.636" />
-        <Point X="12.125" Y="8.46" />
-        <Point X="11.75" Y="8.46" />
-      </Path>
-    </InheritanceLine>
-    <TypeIdentifier>
-      <HashCode>CCAAAAABAAAAAAAAAAAABAIAAABAAAAACAIUAABAAQA=</HashCode>
-      <FileName>ACO\ACO.cs</FileName>
+      <FileName>BacterialForaging\BacterialForaging.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Optimization.AlgoSelecter">
-    <Position X="12.5" Y="1.25" Width="1.5" />
+    <Position X="14" Y="3.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.438" Y="1.25" />
-        <Point X="4.438" Y="0.531" />
-        <Point X="13.25" Y="0.531" />
-        <Point X="13.25" Y="1.25" />
+        <Point X="4.438" Y="0.814" />
+        <Point X="15.875" Y="0.814" />
+        <Point X="15.875" Y="6.25" />
+        <Point X="15.5" Y="6.25" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AiAAAAAEAQAIAQEIAAREBACCAAAAAEAkA4AAAAAAABA=</HashCode>
+      <HashCode>AiAAAAAEAQAIAQEIAAREBACCAAAAAMAkA4AAAAAAABA=</HashCode>
       <FileName>AlgoSelecter\AlgoSelecter.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Optimization.CoordinateDescent">
-    <Position X="6.25" Y="8" Width="1.5" />
+    <Position X="14" Y="1.25" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5.75" Y="8.131" />
-        <Point X="5.75" Y="8.688" />
-        <Point X="6.25" Y="8.688" />
+        <Point X="5.75" Y="8.225" />
+        <Point X="6.094" Y="8.225" />
+        <Point X="6.094" Y="1.07" />
+        <Point X="10.044" Y="1.07" Type="JumpStart" />
+        <Point X="10.21" Y="1.07" Type="JumpEnd" />
+        <Point X="10.917" Y="1.07" Type="JumpStart" />
+        <Point X="11.083" Y="1.07" Type="JumpEnd" />
+        <Point X="14.688" Y="1.07" />
+        <Point X="14.688" Y="1.25" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AKAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ACAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CoordinateDescent\CoordinateDescent.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Optimization.SOMA">
-    <Position X="12.5" Y="7" Width="1.5" />
+  <Class Name="Optimization.SelfOrgMigrating">
+    <Position X="10.25" Y="6.75" Width="1.5" />
     <InheritanceLine Type="Optimization.BaseOptimizationMethod" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="4.75" Y="1.25" />
-        <Point X="4.75" Y="0.938" />
-        <Point X="12.042" Y="0.938" Type="JumpStart" />
-        <Point X="12.208" Y="0.938" Type="JumpEnd" />
-        <Point X="12.24" Y="0.938" />
-        <Point X="12.24" Y="8.934" />
-        <Point X="12.5" Y="8.934" />
+        <Point X="4.75" Y="0.814" />
+        <Point X="10.127" Y="0.814" />
+        <Point X="10.127" Y="8.684" />
+        <Point X="10.25" Y="8.684" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AmAAAAAAAAgAAAAAAAAAAAAAEEEAAAAAIRAAAAAAAAA=</HashCode>
-      <FileName>SOMA\SOMA.cs</FileName>
+      <FileName>SelfOrgMigrating\SelfOrgMigrating.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.NelderMead">
+    <Position X="12" Y="1.25" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.25" />
+        <Point X="4.75" Y="1.07" />
+        <Point X="4.917" Y="1.07" Type="JumpStart" />
+        <Point X="5.083" Y="1.07" Type="JumpEnd" />
+        <Point X="10.044" Y="1.07" Type="JumpStart" />
+        <Point X="10.21" Y="1.07" Type="JumpEnd" />
+        <Point X="10.917" Y="1.07" Type="JumpStart" />
+        <Point X="11.083" Y="1.07" Type="JumpEnd" />
+        <Point X="13.74" Y="1.07" />
+        <Point X="13.74" Y="3.062" />
+        <Point X="13.5" Y="3.062" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AKMAAAAAAAAAAIAAAAAABAAAAAAAAAIAAACQACAABAA=</HashCode>
+      <FileName>NelderMead\NelderMead.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.HaromonySearch">
+    <Position X="12" Y="5" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.25" />
+        <Point X="4.75" Y="1.07" />
+        <Point X="4.917" Y="1.07" Type="JumpStart" />
+        <Point X="5.083" Y="1.07" Type="JumpEnd" />
+        <Point X="10.044" Y="1.07" Type="JumpStart" />
+        <Point X="10.21" Y="1.07" Type="JumpEnd" />
+        <Point X="10.917" Y="1.07" Type="JumpStart" />
+        <Point X="11.083" Y="1.07" Type="JumpEnd" />
+        <Point X="13.74" Y="1.07" />
+        <Point X="13.74" Y="6.062" />
+        <Point X="13.5" Y="6.062" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAIAAAAAAAAAAAIAAQAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HaromonySearch\HaromonySearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Optimization.DifferentialEvolution">
+    <Position X="12" Y="7.5" Width="1.5" />
+    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="1.25" />
+        <Point X="4.75" Y="1.07" />
+        <Point X="4.917" Y="1.07" Type="JumpStart" />
+        <Point X="5.083" Y="1.07" Type="JumpEnd" />
+        <Point X="10.044" Y="1.07" Type="JumpStart" />
+        <Point X="10.21" Y="1.07" Type="JumpEnd" />
+        <Point X="10.917" Y="1.07" Type="JumpStart" />
+        <Point X="11.083" Y="1.07" Type="JumpEnd" />
+        <Point X="13.74" Y="1.07" />
+        <Point X="13.74" Y="8.562" />
+        <Point X="13.5" Y="8.562" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAIAgAAAAAAAAAAA=</HashCode>
+      <FileName>DifferentialEvolution\DifferentialEvolution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Optimization.IElement">
@@ -196,7 +241,7 @@
   <Enum Name="Optimization.InfoTypes">
     <Position X="10.25" Y="14.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAACQAAQAAAAAAAAAAACAAAMAAAAAAFAAAAQDACgA=</HashCode>
+      <HashCode>AAAAACQAAQAAAAAAAAAAACAAAMAAAAAABAAAAQDACgA=</HashCode>
       <FileName>Common\InfoTypes.cs</FileName>
     </TypeIdentifier>
   </Enum>

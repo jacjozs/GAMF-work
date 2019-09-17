@@ -5,9 +5,9 @@ using System.Linq;
 namespace Optimization
 {
     /// <summary>
-    /// ABC = Artificial Bee Colony
+    /// Artificial Bee Colony
     /// </summary>
-    public class ABC : BaseOptimizationMethod
+    public class ArtificialBeeColony : BaseOptimizationMethod
     {
         /// <summary>
         /// A felderítő méhek száma

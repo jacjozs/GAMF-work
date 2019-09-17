@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Optimization
 {
-    public enum SOMA_Type
+    public enum SelfOrgMigratingType
     {
         AllToAll,
         AllToAllAdaptive,

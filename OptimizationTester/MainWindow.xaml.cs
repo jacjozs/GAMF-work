@@ -88,6 +88,13 @@ namespace OptimizationTester
         // Bacterial algorithm parameters
         private int Infections;
         private int ClonesCount;
+        // Differential Evolution parameters
+        private double weighf;
+        private double crossf;
+        // Haromony Search parameters
+        private double consid_rate;
+        private double adjust_rate;
+        private double range;
         // Storing the opened parameter list
         private int openParams;
         // 10 pontig 100 generáció alatt megtalálják
@@ -97,15 +104,15 @@ namespace OptimizationTester
             InitializeComponent();
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            ubp = new ArrayList { 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 };
+            lbp = new ArrayList { -100.0, -100.0, -100.0, -100.0, -100.0, -100.0, -100.0, -100.0 };
+            ubp = new ArrayList { 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 10.0, 8.8, 8.8, 1.2, 10.0, 8.8, 8.8, 1.2 };
+            InitialParameters = new ArrayList { 10.0, 8.8 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { true, true, true, true, true, true, true, true };
+            Integer = new bool[] { false, false, false, true, true, true, true, true };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 100;
+            NA = 150;
             method = 0;
             Slow = false;
             Preview = false;
@@ -144,6 +151,13 @@ namespace OptimizationTester
             // Bacterial algorithm params
             Infections = 10;
             ClonesCount = 25;
+            // Differential Evolution params
+            weighf = 0.8;
+            crossf = 0.9;
+            // Haromony Search params
+            consid_rate = 0.95;
+            adjust_rate = 0.7;
+            range = 0.05;
         }
 
         /// <summary>
@@ -181,8 +195,10 @@ namespace OptimizationTester
             miNew.IsChecked = false;
             miBee.IsChecked = false;
             miBacterial.IsChecked = false;
-            miAnt.IsChecked = false;
+            miDifferentialEv.IsChecked = false;
+            miHarmonySearch.IsChecked = false;
             miSoma.IsChecked = false;
+            miNelderMead.IsChecked = false;
             miBest_Alg_Select.IsChecked = false;
         }
         private void miFirework_Click(object sender, RoutedEventArgs e)
@@ -249,26 +265,42 @@ namespace OptimizationTester
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
-        private void miAnt_Click(object sender, RoutedEventArgs e)
+        private void miDifferentialEv_Click(object sender, RoutedEventArgs e)
         {
             uncheckMethods();
             method = 8;
-            miAnt.IsChecked = true;
+            miDifferentialEv.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
         private void miSoma_Click(object sender, RoutedEventArgs e)
         {
             uncheckMethods();
-            method = 10;
+            method = 9;
             miSoma.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miHarmonySearch_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 10;
+            miHarmonySearch.IsChecked = true;
+            if (openParams == 3)
+                miParamAlg_Click(sender, e);
+        }
+        private void miNelderMead_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckMethods();
+            method = 11;
+            miNelderMead.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
         }
         private void miBest_Alg_Select_Click(object sender, RoutedEventArgs e)
         {
             uncheckMethods();
-            method = 9;
+            method = 20;
             miBest_Alg_Select.IsChecked = true;
             if (openParams == 3)
                 miParamAlg_Click(sender, e);
@@ -659,7 +691,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 6:
-                    Optimizer = new ABC
+                    Optimizer = new ArtificialBeeColony
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -683,7 +715,7 @@ namespace OptimizationTester
                     };
                     break;
                 case 7:
-                    Optimizer = new BFOA
+                    Optimizer = new BacterialForaging
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -706,11 +738,13 @@ namespace OptimizationTester
                     };
                     break;
                 case 8:
-                    Optimizer = new ACO
+                    Optimizer = new DifferentialEvolution()
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
+                        weighf = weighf,
+                        crossf = crossf,
                         Integer = Integer,
                         NumberOfElements = NA,
                         FitnessFunction = ffd,
@@ -726,7 +760,55 @@ namespace OptimizationTester
                     };
                     break;
                 case 9:
-                    Optimizer = new AlgoSelecter()
+                    Optimizer = new SelfOrgMigrating
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        NumberOfElements = NA,
+                        PRT = 0.1,
+                        ParthLength = 3,
+                        PopSize = 7,
+                        Step = 0.11,
+                        Type = SelfOrgMigratingType.AllToRand,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 10:
+                    Optimizer = new HaromonySearch
+                    {
+                        InitialParameters = InitialParameters,
+                        LowerParamBounds = lbp,
+                        UpperParamBounds = ubp,
+                        Integer = Integer,
+                        NumberOfElements = NA,
+                        consid_rate = consid_rate,
+                        adjust_rate = adjust_rate,
+                        range = range,
+                        FitnessFunction = ffd,
+                        // Number of allowed fitness evaluations.
+                        StoppingNumberOfEvaluations = nev,
+                        // Fitness treshold.
+                        StoppingFitnessTreshold = Ftr,
+                        // Number of generations.
+                        StoppingNumberOfGenerations = ng,
+                        // Stopping criteria.
+                        StoppingType = stoppingType,
+                        Slow = Slow
+                    };
+                    break;
+                case 11:
+                    Optimizer = new NelderMead
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
@@ -745,19 +827,14 @@ namespace OptimizationTester
                         Slow = Slow
                     };
                     break;
-                case 10:
-                    Optimizer = new SOMA
+                case 20:
+                    Optimizer = new AlgoSelecter()
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = lbp,
                         UpperParamBounds = ubp,
                         Integer = Integer,
                         NumberOfElements = NA,
-                        PRT = 0.1,
-                        ParthLength = 3,
-                        PopSize = 7,
-                        Step = 0.11,
-                        Type = SOMA_Type.AllToRand,
                         FitnessFunction = ffd,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,

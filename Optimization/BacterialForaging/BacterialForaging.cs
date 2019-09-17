@@ -4,10 +4,10 @@ using System.Collections;
 namespace Optimization
 {
     /// <summary>
-    /// BFOA = Bacterial Foraging Optimization Algorithm
+    /// Bacterial Foraging Optimization Algorithm
     /// TODO fenn áll a túlszámolás, ezért nem javasólt a fitnesz értékes megállási feltétel
     /// </summary>
-    public class BFOA : BaseOptimizationMethod
+    public class BacterialForaging : BaseOptimizationMethod
     {
         /// <summary>
         /// Génátadások száma

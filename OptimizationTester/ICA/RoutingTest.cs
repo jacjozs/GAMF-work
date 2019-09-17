@@ -126,9 +126,9 @@ namespace OptimizationTester.ICA
                         {
                             ((ParticleSwarm)this.optimizer).reset();
                         }
-                        if(optimizer is ABC)
+                        if(optimizer is ArtificialBeeColony)
                         {
-                            ((ABC)this.optimizer).reset();
+                            ((ArtificialBeeColony)this.optimizer).reset();
                         }
 
                         fullTable.pathList = path.Cast<int>().ToList();

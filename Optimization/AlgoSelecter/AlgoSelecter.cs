@@ -48,6 +48,9 @@ namespace Optimization
         // Bacterial algorithm parameters
         private int Infections;
         private int ClonesCount;
+        // Differential Evolution parameters
+        private double weighf;
+        private double crossf;
 
         public AlgoSelecter()
         {
@@ -74,6 +77,9 @@ namespace Optimization
             // Bacterial algorithm params
             Infections = 10;
             ClonesCount = 25;
+            // Differential Evolution params
+            weighf = 0.8;
+            crossf = 0.9;
         }
         protected override void CreateNextGeneration()
         {
@@ -315,7 +321,7 @@ namespace Optimization
                     };
                     break;
                 case 6:
-                    Optimizer = new ABC
+                    Optimizer = new ArtificialBeeColony
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds  = LowerParamBounds,
@@ -340,7 +346,7 @@ namespace Optimization
                     };
                     break;
                 case 7:
-                    Optimizer = new BFOA
+                    Optimizer = new BacterialForaging
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds  = LowerParamBounds,
@@ -363,12 +369,14 @@ namespace Optimization
                     };
                     break;
                 case 8:
-                    Optimizer = new AntAlg
+                    Optimizer = new DifferentialEvolution
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = LowerParamBounds,
                         UpperParamBounds = UpperParamBounds,
                         Integer = Integer,
+                        weighf = weighf,
+                        crossf = crossf,
                         // Size of the antibody pool.
                         NumberOfElements = NumberOfElements,
                         FitnessFunction = FitnessFunction,
@@ -384,7 +392,7 @@ namespace Optimization
                     };
                     break;
                 case 9:
-                    Optimizer = new SOMA
+                    Optimizer = new SelfOrgMigrating
                     {
                         InitialParameters = InitialParameters,
                         LowerParamBounds = LowerParamBounds,
@@ -395,7 +403,7 @@ namespace Optimization
                         ParthLength = 3,
                         PopSize = 7,
                         Step = 0.11,
-                        Type = SOMA_Type.AllToRand,
+                        Type = SelfOrgMigratingType.AllToRand,
                         FitnessFunction = FitnessFunction,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = StoppingNumberOfEvaluations,

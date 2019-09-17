@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace Optimization
 {
-    public class SOMA : BaseOptimizationMethod
+    /// <summary>
+    /// Self Organizing Migrating Algorithm
+    /// </summary>
+    public class SelfOrgMigrating : BaseOptimizationMethod
     {
         /// <summary>
         /// Az az érték hogy mennyinél kell kisebbnek lennie a randomnak, hogy 
@@ -29,24 +32,24 @@ namespace Optimization
         /// <summary>
         /// Típus meghatározó
         /// </summary>
-        public SOMA_Type Type { get; set; }
+        public SelfOrgMigratingType Type { get; set; }
 
         protected override void CreateNextGeneration()
         {
             switch (Type)
             {
-                case SOMA_Type.AllToOne:
+                case SelfOrgMigratingType.AllToOne:
                     this.All_To_One();
                     break;
-                case SOMA_Type.AllToAll:
+                case SelfOrgMigratingType.AllToAll:
                     this.PRT = 1;
                     this.All_To_All();
                     break;
-                case SOMA_Type.AllToAllAdaptive:
+                case SelfOrgMigratingType.AllToAllAdaptive:
                     this.PRT = 1;
                     this.All_To_All_Adaptive();
                     break;
-                case SOMA_Type.AllToRand:
+                case SelfOrgMigratingType.AllToRand:
                     this.All_To_Rand();
                     break;
                 default:
