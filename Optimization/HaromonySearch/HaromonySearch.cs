@@ -38,7 +38,7 @@ namespace Optimization
                 {
                     if(RNG.NextDouble() < consid_rate)
                     {
-                        parameter.Add(((BaseElement)Elements[RNG.Next(0, Elements.Count)]).Position[p]);
+                        parameter.Add(((BaseElement)Elements[RNG.Next(0, Elements.Count)])[p]);
                         if(RNG.NextDouble() < adjust_rate)
                         {
                             parameter[p] = (double)parameter[p] + range * RandomInBounds(-1.0, 1.0);
@@ -56,7 +56,7 @@ namespace Optimization
                     }
                 }
                 BaseElement newElem = (BaseElement)GetNewElement(FitnessFunction, parameter);
-                if(newElem.Fitness < ((BaseElement)Elements[i]).Fitness)
+                if(newElem.Fitness < ((BaseElement)Elements[0]).Fitness)
                 {
                     Elements.Add(newElem);
                     Elements.Sort();

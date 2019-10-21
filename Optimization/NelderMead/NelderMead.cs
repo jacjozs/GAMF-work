@@ -71,6 +71,8 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter[p] = (double)parameter[p] / (NumberOfElements - 1);
+                if (Integer[p])
+                    parameter[p] = Math.Round((double)parameter[p]);
             }
             return (BaseElement)GetNewElement(FitnessFunction, parameter);
         }
@@ -86,6 +88,8 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add(((1.0 + alpha) * (double)centroid[p]) - (alpha * (double)worstParam[p]));
+                if (Integer[p])
+                    parameter[p] = Math.Round((double)parameter[p]);
             }
             return (BaseElement)GetNewElement(FitnessFunction, parameter);
         }
@@ -101,6 +105,8 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add((gamma * (double)reflected[p]) + ((1 - gamma) * (double)centroid[p]));
+                if (Integer[p])
+                    parameter[p] = Math.Round((double)parameter[p]);
             }
             return (BaseElement)GetNewElement(FitnessFunction, parameter);
         }
@@ -116,6 +122,8 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add((beta * (double)worstParam[p]) + ((1 - beta) * (double)centroid[p]));
+                if (Integer[p])
+                    parameter[p] = Math.Round((double)parameter[p]);
             }
             return (BaseElement)GetNewElement(FitnessFunction, parameter);
         }
@@ -130,6 +138,8 @@ namespace Optimization
                 for (int p = 0; p < InitialParameters.Count; p++)
                 {
                     parameter.Add(((double)((BaseElement)Elements[i])[p] + (double)((BaseElement)Elements[0])[p]) / 2.0);
+                    if (Integer[p])
+                        parameter[p] = Math.Round((double)parameter[p]);
                 }
                 Elements[i] = GetNewElement(FitnessFunction, parameter);
             }

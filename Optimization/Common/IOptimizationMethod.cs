@@ -15,10 +15,14 @@ namespace Optimization
 		/// Fired after a new generation is created. 
 		/// </summary>
 		event EventHandlerDelegate GenerationCreated;
-		/// <summary>
-		/// Defines which stopping criteria should be applied.
-		/// </summary>
-		StoppingType StoppingType { get; set; }
+        /// <summary>
+        /// Stop handler
+        /// </summary>
+        event StopHandlerDelegate StopHandler;
+        /// <summary>
+        /// Defines which stopping criteria should be applied.
+        /// </summary>
+        StoppingType StoppingType { get; set; }
 		/// <summary>
 		/// The allowed number of generations/steps.
 		/// </summary>
@@ -32,6 +36,7 @@ namespace Optimization
 		/// </summary>
 		double StoppingFitnessTreshold { get; set; }
 		Result Optimize();
+        Result Optimize(ArrayList Elements);
         bool Stop { get; set; }
         /// <summary>
         /// Lower bound for the parameters.

@@ -26,6 +26,8 @@ namespace Optimization
         public StoppingType StoppingType { get; set; }
 
         public event EventHandlerDelegate GenerationCreated;
+
+        public event StopHandlerDelegate StopHandler;
         /// <summary>
         /// Lower bound for the parameters.
         /// </summary>

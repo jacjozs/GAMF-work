@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Optimization
 {
-    public class BaseElement : IElement, IComparable
+    public class BaseElement : IElement, IComparable, ICloneable
     {
         /// <summary>
 		/// Fired after the fitness of an antibody is evaluated.
@@ -101,6 +101,11 @@ namespace Optimization
                 dist += Math.Abs((double)Position[i] - (double)otherElement[i]);
             }
             return dist;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

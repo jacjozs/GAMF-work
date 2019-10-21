@@ -54,6 +54,7 @@
     <Compile Include="Common\InfoTypes.cs" />
     <Compile Include="Common\IOptimizationMethod.cs" />
     <Compile Include="Common\Result.cs" />
+    <Compile Include="Common\StopHandlerDelegate.cs" />
     <Compile Include="Common\StoppingTypes.cs" />
     <Compile Include="DifferentialEvolution\DifferentialEvolution.cs" />
     <Compile Include="Firework\Firework.cs" />

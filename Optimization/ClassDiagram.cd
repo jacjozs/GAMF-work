@@ -25,7 +25,7 @@
   <Class Name="Optimization.BaseOptimizationMethod">
     <Position X="3.5" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ACBAkBAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAEAABBA=</HashCode>
+      <HashCode>ACBAkRAEIAAEQBAAAAAUBAgBBMAAQgAAIQAAAEAABBA=</HashCode>
       <FileName>Common\BaseOptimizationMethod.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Bottom" Position="0.1" />
@@ -116,20 +116,6 @@
   </Class>
   <Class Name="Optimization.CoordinateDescent">
     <Position X="14" Y="1.25" Width="1.5" />
-    <InheritanceLine Type="Optimization.BaseOptimizationMethod" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="5.75" Y="8.131" />
-        <Point X="5.75" Y="8.225" />
-        <Point X="6.094" Y="8.225" />
-        <Point X="6.094" Y="1.07" />
-        <Point X="10.044" Y="1.07" Type="JumpStart" />
-        <Point X="10.21" Y="1.07" Type="JumpEnd" />
-        <Point X="10.917" Y="1.07" Type="JumpStart" />
-        <Point X="11.083" Y="1.07" Type="JumpEnd" />
-        <Point X="14.688" Y="1.07" />
-        <Point X="14.688" Y="1.25" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CoordinateDescent\CoordinateDescent.cs</FileName>
@@ -227,7 +213,7 @@
   <Interface Name="Optimization.IOptimizationMethod">
     <Position X="1.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAEBAEIAAAAAAAAAAAAAgBBIAAAgAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AABAERAEIAAAAAAAAAAAAAgBBIAAAgAAIAAAAAAAAAA=</HashCode>
       <FileName>Common\IOptimizationMethod.cs</FileName>
     </TypeIdentifier>
   </Interface>

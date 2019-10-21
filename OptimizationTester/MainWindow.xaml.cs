@@ -112,7 +112,7 @@ namespace OptimizationTester
             Integer = new bool[] { false, false, false, true, true, true, true, true };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 150;
+            NA = 25;
             method = 0;
             Slow = false;
             Preview = false;
@@ -152,7 +152,7 @@ namespace OptimizationTester
             Infections = 10;
             ClonesCount = 25;
             // Differential Evolution params
-            weighf = 0.8;
+            weighf = 1.8;
             crossf = 0.9;
             // Haromony Search params
             consid_rate = 0.95;
@@ -485,7 +485,7 @@ namespace OptimizationTester
                     routingTest = new RoutingTest(this.Optimizer, new RouteTable(pointCount), this.cvPage, this.tbResults);
                 routingTest.optimizer = this.Optimizer;
                 await Task.Run(() => this.routingTest.Optimize());
-            } else if (method != 9) {
+            } else if (method != 20) {
                 tbResults.Text = "Initial parameters: " + List(InitialParameters) + "\r\n" +
                                                  "Lower bounds for the parameters: " + List(lbp) + "\r\n" +
                                                  "Upper bounds for the parameters: " + List(ubp) + "\r\n";
@@ -884,6 +884,15 @@ namespace OptimizationTester
                     cvPage.Children.Add((UIElement)circle);
                 }
             }), DispatcherPriority.Send, null);
+        }
+
+        bool StopMethod(object sender, ArrayList Antibodies)
+        {
+            if(Antibodies.Count > 20)
+            {
+                return false;
+            }
+            return true;
         }
 
         // Params menu

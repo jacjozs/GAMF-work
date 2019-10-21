@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimizationTester", "Optim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuzzyManager", "FuzzyManager\FuzzyManager.csproj", "{F49E7F41-C798-4DCF-87E5-5154B64E482E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiveNetwork", "FiveNetwork\FiveNetwork.csproj", "{5852A6A2-7521-492F-8590-5250776148FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F49E7F41-C798-4DCF-87E5-5154B64E482E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5852A6A2-7521-492F-8590-5250776148FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5852A6A2-7521-492F-8590-5250776148FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5852A6A2-7521-492F-8590-5250776148FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5852A6A2-7521-492F-8590-5250776148FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

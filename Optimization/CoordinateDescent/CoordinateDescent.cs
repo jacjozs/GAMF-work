@@ -23,11 +23,8 @@ namespace Optimization
                     M1Minus = new ArrayList();
                     M2Plus = new ArrayList();
                     //Jelenlegi paraméterek fevétele az aktuális egydtől
-                    foreach (var pos in ((BaseElement)Elements[i]).Position)
-                    {
-                        M1Minus.Add(pos);
-                        M2Plus.Add(pos);
-                    }
+                    M1Minus.AddRange(((BaseElement)Elements[i]).Position);
+                    M2Plus.AddRange(((BaseElement)Elements[i]).Position);
                     //Random szám generálása az ugrási méret módosításához
                     randomScale = RNG.NextDouble();
                     //Paraméterek módosítása

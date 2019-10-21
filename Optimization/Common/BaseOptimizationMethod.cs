@@ -26,6 +26,10 @@ namespace Optimization
         /// </summary>
         public event EventHandlerDelegate GenerationCreated;
         /// <summary>
+        /// Stop handler
+        /// </summary>
+        public event StopHandlerDelegate StopHandler;
+        /// <summary>
         /// Defines which stopping criteria should be applied.
         /// </summary>
         public StoppingType StoppingType { get; set; }
@@ -81,12 +85,31 @@ namespace Optimization
 
         /// <summary>
         /// Method responsible for the optimization.
+        /// Random generated elements
         /// </summary>
         /// <returns>An object containing the optimized values of the parameters as well as other characteristics of the optimization process.</returns>
         public Result Optimize()
         {
+            return this.Optimize(null);
+        }
+
+        /// <summary>
+        /// Method responsible for the optimization.
+        /// </summary>
+        /// <returns>An object containing the optimized values of the parameters as well as other characteristics of the optimization process.</returns>
+        public Result Optimize(ArrayList ElementsTrans)
+        {
+            bool genRand = ElementsTrans == null;
             // Create a list object for elementes. 
             Elements = new ArrayList();
+            if (!genRand)
+            {
+                // Transfer elements importing
+                foreach (BaseElement Element in ElementsTrans)
+                {
+                    Elements.Add(GetNewElement(FitnessFunction, Element.Position));
+                }
+            }
             // Create a random number generator object.
             RNG = new Random();
             // The ordinal number of the actual generation.
@@ -97,23 +120,31 @@ namespace Optimization
             var timer = new System.Diagnostics.Stopwatch();
             timer.Reset();
             timer.Start();
-            // Put the first element into the pool.
-            Elements.Add(GetNewElement(FitnessFunction, InitialParameters));
+            if (genRand)
+            {
+                // Put the first element into the pool.
+                Elements.Add(GetNewElement(FitnessFunction, InitialParameters));
+            }
             // Initializing the first element takes an evaluation, so we initialize to one
             Evaluation = 1;
             // Check if the stopping condition was met
-            CheckStop();
+            if (StopHandler != null) Stop = StopHandler.Invoke(this, Elements);
+            else CheckStop();
             // Create an object for the returned information.
             Info = new Dictionary<InfoTypes, object>();
             // Add the affinity (performance) corresponding to the initial parameter values.
             Info.Add(InfoTypes.InitialFitness, ((BaseElement)Elements[0]).Fitness);
-            // Create the rest of the initial pool (first generation) of elementes creating elementes at random positions.
-            CreateRandomElements(NumberOfElements - 1);
+            if(genRand)
+            {
+                // Create the rest of the initial pool (first generation) of elementes creating elementes at random positions.
+                CreateRandomElements(NumberOfElements - 1);
+            }
             // Raise GenerationCreated event if there are any subscribers.
             GenerationCreated?.Invoke(this, Elements, GetFitnesses());
             ArrayList BestAffinities = new ArrayList();
             BestAffinities.Add(((BaseElement)Elements[0]).Fitness);
-            CheckStop();
+            if (StopHandler != null) Stop = StopHandler.Invoke(this, Elements);
+            else CheckStop();
 
             //Begin the optimization process
             while (!Stop)
@@ -127,7 +158,8 @@ namespace Optimization
                 // Raise GenerationCreated event if there are any subscribers.
                 GenerationCreated?.Invoke(this, Elements, GetFitnesses());
                 // Stop if the stopping criteria is the number of generations and the number of allowed generations is reached
-                CheckStop();
+                if(StopHandler != null) Stop = StopHandler.Invoke(this, Elements);
+                else CheckStop();
             }
             // Stop timer
             timer.Stop();
@@ -222,7 +254,7 @@ namespace Optimization
         /// Sets the stop flag to true if the stopping criteria was the number of evaluations and the allowed number was reached or if the stopping criteria was the the performance treshold and the it was reached.
         /// </summary>
         /// <returns></returns>
-        protected void CheckStop()
+        protected virtual void CheckStop()
         {
             if (
                 (StoppingType == StoppingType.EvaluationNumber && Evaluation >= StoppingNumberOfEvaluations) ||

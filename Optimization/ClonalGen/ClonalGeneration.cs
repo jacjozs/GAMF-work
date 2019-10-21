@@ -63,14 +63,14 @@ namespace Optimization
 				{
 					// Create a temporary position vector.
 					var TempPosition = new ArrayList();
-					for(var i=0;i<InitialParameters.Count;i++)
+                    for (var i = 0; i < InitialParameters.Count; i++) 
 						TempPosition.Add(((BaseElement)Elements[antibody])[i]);
 					for (int dim = 0; dim < dimno;dim++)
 					{
 						// Do hypermutation if condition is fulfilled.
 						if (RNG.NextDouble() < p[antibody])
 						{
-							TempPosition[dim] = (double)LowerParamBounds[dim]+RNG.NextDouble()*((double)UpperParamBounds[dim]-(double)LowerParamBounds[dim]);
+                            TempPosition[dim] = (double)LowerParamBounds[dim] + RNG.NextDouble() * ((double)UpperParamBounds[dim] - (double)LowerParamBounds[dim]);
 							// Round if necessary
 							if (Integer[dim])
 							{
