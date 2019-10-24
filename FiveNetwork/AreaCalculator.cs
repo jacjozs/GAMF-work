@@ -12,6 +12,23 @@ namespace FiveNetwork
         public static double CalcrangeAea(Point circleA, double rangeA, Point circleB, double rangeB)
         {
             double D = Math.Sqrt(((circleB.X - circleA.X) * (circleB.X - circleA.X)) + ((circleB.Y - circleA.Y) * (circleB.Y - circleA.Y)));
+
+            if (D < rangeA || D < rangeB)
+            {
+                if (rangeA < rangeB) return rangeA * rangeA * Math.PI;
+                else return rangeB * rangeB * Math.PI;
+            }
+
+            if (rangeA < rangeB && D < rangeB)
+            {
+                return rangeA * rangeA * Math.PI;
+            }
+
+            if (rangeB < rangeA && D < rangeA)
+            {
+                return rangeB * rangeB * Math.PI;
+            }
+
             double radians = Math.Atan((Math.Sqrt(rangeA + rangeB + D) * Math.Sqrt(rangeA + rangeB - D) * Math.Sqrt(rangeA - rangeB + D) * Math.Sqrt(-rangeA + rangeB + D)) / (-(rangeA * rangeA) + (rangeB * rangeB) - (D * D)));
             if (double.IsNaN(radians)) return 0;
             double alpha = Math.Abs(radians * 180 / Math.PI);

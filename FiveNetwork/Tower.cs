@@ -11,10 +11,12 @@ namespace FiveNetwork
     {
         public int radius { get; set; }
         public Point position { get; set; }
-        public Tower(Point pos, int radius)
+        public int users { get; set; }
+        public Tower(Point pos, int radius, int users)
         {
             this.position = pos;
             this.radius = radius;
+            this.users = users;
         }
     }
 }

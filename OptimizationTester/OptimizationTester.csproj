@@ -55,6 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="5G\5G.cs" />
+    <Compile Include="5G\AreaCalculator.cs" />
+    <Compile Include="5G\Region.cs" />
+    <Compile Include="5G\Tower.cs" />
+    <Compile Include="5G\User.cs" />
     <Compile Include="ICA\Car.cs" />
     <Compile Include="ICA\RouteTable.cs" />
     <Compile Include="ICA\RoutingTest.cs" />

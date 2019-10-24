@@ -23,7 +23,7 @@ namespace FiveNetwork
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int[] R = new int[] { 10, 20, 30, 40, 50 };
+        private int[] R = new int[] { 10, 20, 30, 40, 50, 60 };
         private int W = 300;
         private int H = 300;
         private ArrayList Users;
@@ -43,12 +43,32 @@ namespace FiveNetwork
 
         private async void start()
         {
-            NA = 20;
-            Optimizer = new ArtificialBeeColony()
+            NA = 50;
+            //Optimizer = new ArtificialBeeColony()
+            //{
+            //    ExBeeCount = 10,
+            //    MaxStep = 5,
+            //    NumberOfElements = NA,
+            //    // Number of allowed fitness evaluations.
+            //    StoppingNumberOfEvaluations = 0,
+            //    // Fitness treshold.
+            //    StoppingFitnessTreshold = 0,
+            //    // Number of generations.
+            //    StoppingNumberOfGenerations = 10,
+            //    // Stopping criteria.
+            //    StoppingType = StoppingType.GenerationNumber,
+            //    Slow = true
+            //};
+            Optimizer = new ParticleSwarm
             {
-                ExBeeCount = 10,
-                MaxStep = 5,
                 NumberOfElements = NA,
+
+                c0 = 0.6,
+                // Multiplication factor for the distance to the personal best position.
+                cp = 0.2,
+                // Multiplication factor for the distance to the global best position.
+                cg = 0.2,
+
                 // Number of allowed fitness evaluations.
                 StoppingNumberOfEvaluations = 0,
                 // Fitness treshold.
@@ -58,8 +78,28 @@ namespace FiveNetwork
                 // Stopping criteria.
                 StoppingType = StoppingType.GenerationNumber,
                 Slow = true
+
             };
-            Optimizer.GenerationCreated += ShowAntibodies;
+            //Optimizer = new GeneticAlgorithm
+            //{
+            //    // Size of the individual pool.
+            //    NumberOfElements = NA,
+            //    // Number of parents in each generation.
+            //    ParentsInEachGeneration = NA / 2,
+            //    // The probability of mutation.
+            //    MutationProbability = 0.6,
+            //    // The number of crossovers in each generation.
+            //    CrossoverPerGeneration = NA,
+            //    // Number of allowed fitness evaluations.
+            //    StoppingNumberOfEvaluations = 0,
+            //    // Fitness treshold.
+            //    StoppingFitnessTreshold = 0,
+            //    // Number of generations.
+            //    StoppingNumberOfGenerations = 10,
+            //    // Stopping criteria.
+            //    StoppingType = StoppingType.GenerationNumber,
+            //    Slow = true
+            //};
             Users = new ArrayList();
             for (int i = 0; i < 66; i++)
             {
@@ -79,16 +119,15 @@ namespace FiveNetwork
                 circle.SetValue((DependencyProperty)Canvas.LeftProperty, point.X);
                 canvas.Children.Add((UIElement)circle);
             }
-            Network network = new Network(W, H, Users, Optimizer);
-            label.Content = "";
+            Network network = new Network(W, H, Users, Optimizer, canvas);
+            textBlock.Text = "";
             var x = Task.Run(() => (network.Optimalization()));
-            ArrayList[] Results = await x;
+            List<Region> Results = await x;
 
             Application.Current.Dispatcher.Invoke((Action)(() =>
             {
                 //clear the canvas
                 canvas.Children.Clear();
-
                 foreach (Point user in Users)
                 {
                     var circle = new Ellipse
@@ -97,26 +136,28 @@ namespace FiveNetwork
                         Height = 4,
                         Fill = Brushes.Red
                     };
-                    circle.SetValue((DependencyProperty)Canvas.TopProperty, user.Y);
-                    circle.SetValue((DependencyProperty)Canvas.LeftProperty, user.X);
+                    circle.SetValue((DependencyProperty)Canvas.TopProperty, user.Y - 2);
+                    circle.SetValue((DependencyProperty)Canvas.LeftProperty, user.X - 2);
                     canvas.Children.Add((UIElement)circle);
                 }
-                ArrayList[] region = Results;
-                for (int i = 0; i < region.Length; i++)
+                foreach (Region region in Results)
                 {
-                    for (int j = 0; j < region[i].Count / 3; j += 3)
+                    if(region != null && region.Towers != null)
                     {
-                        int type = int.Parse(region[i][j + 2].ToString());
-                        var circle = new Ellipse
+                        foreach (Tower tower in region.Towers)
                         {
-                            Width = R[type] * 2,
-                            Height = R[type] * 2,
-                            Opacity = 0.4,
-                            Fill = Brushes.Blue
-                        };
-                        circle.SetValue((DependencyProperty)Canvas.TopProperty, ((double)region[i][j + 1]) - R[type]);
-                        circle.SetValue((DependencyProperty)Canvas.LeftProperty, ((double)region[i][j]) - R[type]);
-                        canvas.Children.Add((UIElement)circle);
+                            var circle = new Ellipse
+                            {
+                                Width = tower.radius * 2 + 8,
+                                Height = tower.radius * 2 + 8,
+                                Opacity = 0.4,
+                                Fill = Brushes.Blue
+                            };
+                            circle.SetValue((DependencyProperty)Canvas.TopProperty, tower.position.Y - tower.radius - 4);
+                            circle.SetValue((DependencyProperty)Canvas.LeftProperty, tower.position.X - tower.radius - 4);
+                            canvas.Children.Add((UIElement)circle);
+                        }
+                        textBlock.Text += $"Region: {region.id} alluser: {region.AllUser} cveruser: {region.CoverUser} \n";
                     }
                 }
 
@@ -132,43 +173,6 @@ namespace FiveNetwork
                     s = s + "; ";
             }
             return s;
-        }
-        void ShowAntibodies(object sender, ArrayList Antibodies, double[] affinities)
-        {
-            Application.Current.Dispatcher.Invoke((Action)(() =>
-            {
-                //clear the canvas
-                canvas.Children.Clear();
-
-                foreach (Point user in Users)
-                {
-                    var circle = new Ellipse
-                    {
-                        Width = 4,
-                        Height = 4,
-                        Fill = Brushes.Red
-                    };
-                    circle.SetValue((DependencyProperty)Canvas.TopProperty, user.Y);
-                    circle.SetValue((DependencyProperty)Canvas.LeftProperty, user.X);
-                    canvas.Children.Add((UIElement)circle);
-                }
-                BaseElement region = (BaseElement)Antibodies[0];
-                for (int i = 0; i < region.Position.Count; i += 3)
-                {
-                    int type = int.Parse(region[i + 2].ToString());
-                    var circle = new Ellipse
-                    {
-                        Width = R[type] * 2,
-                        Height = R[type] * 2,
-                        Opacity = 0.4,
-                        Fill = Brushes.Blue
-                    };
-                    circle.SetValue((DependencyProperty)Canvas.TopProperty, ((double)region[i + 1]) - R[type]);
-                    circle.SetValue((DependencyProperty)Canvas.LeftProperty, ((double)region[i]) - R[type]);
-                    canvas.Children.Add((UIElement)circle);
-                }
-
-            }), DispatcherPriority.Send, null);
         }
     }
 }

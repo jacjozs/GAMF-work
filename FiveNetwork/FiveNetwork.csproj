@@ -56,6 +56,7 @@
     <Compile Include="AreaCalculator.cs" />
     <Compile Include="Region.cs" />
     <Compile Include="Tower.cs" />
+    <Compile Include="User.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

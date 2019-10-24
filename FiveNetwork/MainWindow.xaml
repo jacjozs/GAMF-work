@@ -5,11 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FiveNetwork"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="545" Width="525">
     <Grid>
-        <Canvas Name="canvas" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="300" Grid.IsSharedSizeScope="True" Background="Black" Margin="10,10,0,0"/>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="399,117,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
-        <Label x:Name="label" Content="Label" HorizontalAlignment="Left" Margin="413,190,0,0" VerticalAlignment="Top"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="492"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="25">
+            <MenuItem Header="Algorithm">
+                <MenuItem x:Name="miFirework" Header="Firework"/>
+                <MenuItem x:Name="miPSO" Header="Particle Swarm"/>
+                <MenuItem x:Name="miCGO" Header="Clonal Generation"/>
+                <MenuItem x:Name="miCGOL" Header="Clonal Generation Local"/>
+                <MenuItem x:Name="miGa" Header="Genetic Algorithm"/>
+                <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm"/>
+                <MenuItem x:Name="miBee" Header="Bee Algorithm"/>
+                <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm"/>
+                <MenuItem x:Name="miDifferentialEv" Header="Differential Evolution Algorithm"/>
+                <MenuItem x:Name="miSoma" Header="Self-Organizing Migrating Algorithm"/>
+                <MenuItem x:Name="miHarmonySearch" Header="Haromony Search Algorithm"/>
+                <MenuItem x:Name="miNelderMead" Header="Nelder-Mead Algorithm"/>
+            </MenuItem>
+        </Menu>
+        <Canvas Grid.Column="0" Grid.Row="1" Name="canvas" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="300" Grid.IsSharedSizeScope="True" Margin="10,10,0,0">
+            <Canvas.Background>
+                <DrawingBrush TileMode="Tile" Viewport="0,0,60,60"  ViewportUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <GeometryDrawing>
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,50,50"/>
+                            </GeometryDrawing.Geometry>
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="Gray" Thickness="1"/>
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Button Grid.Column="0" Grid.Row="1" x:Name="button" Content="Start" HorizontalAlignment="Left" Margin="399,94,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <TextBlock Grid.Column="0" Grid.Row="1" x:Name="textBlock" HorizontalAlignment="Left" Margin="323,130,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="350" Width="184"/>
 
     </Grid>
 </Window>

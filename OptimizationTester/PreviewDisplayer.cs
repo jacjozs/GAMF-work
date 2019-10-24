@@ -50,12 +50,17 @@ namespace Optimization
 
         public Result Optimize()
         {
+            return Optimize(null);
+        }
+
+        public Result Optimize(ArrayList Elements)
+        {
             var Individuals = new ArrayList();
             var Fitnesses = new List<Double>();
 
-            for (int i = (int) LowerParamBounds[0]; i < (int) UpperParamBounds[0]; i++)
+            for (int i = (int)LowerParamBounds[0]; i < (int)UpperParamBounds[0]; i++)
             {
-                for (int j = (int) LowerParamBounds[1]; j < (int) UpperParamBounds[1]; j++)
+                for (int j = (int)LowerParamBounds[1]; j < (int)UpperParamBounds[1]; j++)
                 {
                     Individuals.Add(new BaseElement(FitnessFunction, new ArrayList { (double)i, (double)j }, FitnessEvaluated));
                     Fitnesses.Add(FitnessFunction(new ArrayList { (double)i, (double)j }));
