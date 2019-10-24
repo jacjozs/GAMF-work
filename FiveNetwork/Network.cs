@@ -19,15 +19,16 @@ namespace FiveNetwork
         private int actualRegionindex = 0;
         private ArrayList users;
         private BaseOptimizationMethod mehod;
-        private int width, height;
+        private double width, height;
         private ArrayList InitialParameters, lbp, ubp;
         private bool[] Integer;
         private Random RNG = new Random();
         private List<Region> regions;
         private Region actualRegion;
         private Canvas canvas;
+        private int X, Y;
 
-        public Network(int width, int height, ArrayList users, BaseOptimizationMethod mehod, Canvas canvas)
+        public Network(double width, double height, ArrayList users, BaseOptimizationMethod mehod, Canvas canvas)
         {
             this.users = users;
             this.mehod = mehod;
@@ -40,8 +41,8 @@ namespace FiveNetwork
             this.mehod.FitnessFunction = FitnessFunction;
             this.mehod.GenerationCreated += ShowAntibodies;
             this.regions = new List<Region>();
-            int X = this.width / (R[R.Length - 1] * 2);
-            int Y = this.height / (R[R.Length - 1] * 2);
+            X = (int)this.width / (R[R.Length - 1] * 2);
+            Y = (int)this.height / (R[R.Length - 1] * 2);
             this.actualRegionindex = 0;
             for (int i = 0; i < Y; i++)
             {
@@ -99,16 +100,18 @@ namespace FiveNetwork
         {
             for (int count = 1; count < 4; count++)
             {
-                ArrayList[] actualElements = new ArrayList[this.width / (R[R.Length - 1] * 2) * this.width / (R[R.Length - 1] * 2)];
                 this.actualRegionindex = 0;
-                for (int i = 0; i < this.height / (R[R.Length - 1] * 2); i++)
+                for (int i = 0; i < this.Y; i++)
                 {
-                    for (int j = 0; j < this.width / (R[R.Length - 1] * 2); j++)
+                    for (int j = 0; j < this.X; j++)
                     {
                         this.actualRegion = (Region)this.regions[this.actualRegionindex].Clone();
                         if (this.actualRegion.AllUser != 0)
                         {
                             ParameterSet(count);
+                            this.mehod.LowerParamBounds = this.lbp;
+                            this.mehod.UpperParamBounds = this.ubp;
+                            this.mehod.Integer = this.Integer;
                             if (this.mehod is ArtificialBeeColony)
                             {
                                 ((ArtificialBeeColony)this.mehod).reset();
@@ -117,12 +120,29 @@ namespace FiveNetwork
                             {
                                 ((ParticleSwarm)this.mehod).reset();
                             }
-                            this.mehod.InitialParameters = this.InitialParameters;
-                            this.mehod.LowerParamBounds = this.lbp;
-                            this.mehod.UpperParamBounds = this.ubp;
-                            this.mehod.Integer = this.Integer;
+                            if(this.mehod is ClonalGenerationLocal)
+                            {
+                                ((ClonalGenerationLocal)this.mehod).StepSizeRelative = ((ClonalGenerationLocal)this.mehod).StepSizeRelative;
+                            }
+                            if(this.actualRegion.parameters != null)
+                            {
+                                this.mehod.InitialParameters = this.actualRegion.parameters;
+                                int l = this.mehod.InitialParameters.Count / 3;
+                                for (int k = 0; k < count - l; k++)
+                                {
+                                    this.mehod.InitialParameters.Add((double)(((this.actualRegion.widhtUp - this.actualRegion.widhtDown) / 2) + this.actualRegion.widhtDown));//x
+                                    this.mehod.InitialParameters.Add((double)(((this.actualRegion.heightUp - this.actualRegion.heightDown) / 2) + this.actualRegion.heightDown));//y
+                                    this.mehod.InitialParameters.Add((double)R.Length - 1);//size
+                                }
+                            }
+                            else
+                            {
+                                this.mehod.InitialParameters = this.InitialParameters;
+                            }
                             Result result = this.mehod.Optimize();
                             this.mehod.FitnessFunction(result.OptimizedParameters);
+                            this.actualRegion.parameters = new ArrayList();
+                            this.actualRegion.parameters.AddRange(result.OptimizedParameters);
                             this.actualRegion.fitness = (double)result.InfoList[InfoTypes.FinalFitness];
                             Differencie();
                             this.actualRegionindex++;
@@ -258,11 +278,11 @@ namespace FiveNetwork
                         interferenc += rangeAeaCalculator.CalcrangeAea(tower.position, tower.radius, ownerTower.position, ownerTower.radius);
                     }
                 }
-                towerCost += tower.radius * tower.users == 0 ? 5 : 1;
+                towerCost += tower.radius / (tower.users == 0 ? 1 : tower.users);
             }
             double userValue = 1.1 - ((double)this.actualRegion.CoverUser / (double)this.actualRegion.AllUser);
             double T = (this.actualRegion.widhtUp - this.actualRegion.widhtDown) * (this.actualRegion.heightUp - this.actualRegion.heightDown);
-            double value = ((userValue * userValue) * interferenc) + ((userValue * userValue) * towerCost);
+            double value = userValue + (userValue * interferenc) + (userValue * userValue * towerCost);
             //double value = ((this.actualRegion.AllUser - (this.actualRegion.CoverUser)) / 1.5) + ((1.2 - userValue) * interferenc) + ((1.1 - userValue) * towerCost);
             foreach (User user in this.actualRegion.Users)
             {

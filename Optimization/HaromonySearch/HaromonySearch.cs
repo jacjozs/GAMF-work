@@ -53,6 +53,8 @@ namespace Optimization
                     else
                     {
                         parameter.Add(RandomInBounds((double)LowerParamBounds[p], (double)UpperParamBounds[p]));
+                        if (Integer[p])
+                            parameter[p] = Math.Round((double)parameter[p]);
                     }
                 }
                 BaseElement newElem = (BaseElement)GetNewElement(FitnessFunction, parameter);

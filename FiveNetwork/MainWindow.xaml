@@ -5,31 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FiveNetwork"
         mc:Ignorable="d"
-        Title="MainWindow" Height="545" Width="525">
+        Title="5G" Height="430" Width="566">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="314"/>
+            <ColumnDefinition Width="244"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="492"/>
+            <RowDefinition Height="310"/>
+            <RowDefinition Height="95"/>
         </Grid.RowDefinitions>
-        <Menu Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="25">
+        <Menu Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Grid.RowSpan="2">
             <MenuItem Header="Algorithm">
-                <MenuItem x:Name="miFirework" Header="Firework"/>
-                <MenuItem x:Name="miPSO" Header="Particle Swarm"/>
-                <MenuItem x:Name="miCGO" Header="Clonal Generation"/>
-                <MenuItem x:Name="miCGOL" Header="Clonal Generation Local"/>
-                <MenuItem x:Name="miGa" Header="Genetic Algorithm"/>
-                <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm"/>
-                <MenuItem x:Name="miBee" Header="Bee Algorithm"/>
-                <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm"/>
-                <MenuItem x:Name="miDifferentialEv" Header="Differential Evolution Algorithm"/>
-                <MenuItem x:Name="miSoma" Header="Self-Organizing Migrating Algorithm"/>
-                <MenuItem x:Name="miHarmonySearch" Header="Haromony Search Algorithm"/>
-                <MenuItem x:Name="miNelderMead" Header="Nelder-Mead Algorithm"/>
+                <MenuItem x:Name="miFirework" Header="Firework" Click="miFirework_Click" IsChecked="True"/>
+                <MenuItem x:Name="miPSO" Header="Particle Swarm" Click="miPSO_Click"/>
+                <MenuItem x:Name="miCGO" Header="Clonal Generation" Click="miCGO_Click"/>
+                <MenuItem x:Name="miCGOL" Header="Clonal Generation Local" Click="miCGOL_Click"/>
+                <MenuItem x:Name="miGa" Header="Genetic Algorithm" Click="miGa_Click"/>
+                <MenuItem x:Name="miNew" Header="Coordinate Descent Algorithm" Click="miNew_Click"/>
+                <MenuItem x:Name="miBee" Header="Bee Algorithm" Click="miBee_Click"/>
+                <MenuItem x:Name="miBacterial" Header="Bacterial Algorithm" Click="miBacterial_Click"/>
+                <MenuItem x:Name="miDifferentialEv" Header="Differential Evolution Algorithm" Click="miDifferentialEv_Click"/>
+                <MenuItem x:Name="miSoma" Header="Self-Organizing Migrating Algorithm" Click="miSoma_Click"/>
+                <MenuItem x:Name="miHarmonySearch" Header="Haromony Search Algorithm" Click="miHarmonySearch_Click"/>
+                <MenuItem x:Name="miNelderMead" Header="Nelder-Mead Algorithm" Click="miNelderMead_Click"/>
             </MenuItem>
         </Menu>
-        <Canvas Grid.Column="0" Grid.Row="1" Name="canvas" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="300" Grid.IsSharedSizeScope="True" Margin="10,10,0,0">
+        <Canvas Name="canvas" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="300" Margin="10,10,0,0">
             <Canvas.Background>
-                <DrawingBrush TileMode="Tile" Viewport="0,0,60,60"  ViewportUnits="Absolute">
+                <DrawingBrush Viewport="0,0,60,60"  ViewportUnits="Absolute" TileMode="Tile">
                     <DrawingBrush.Drawing>
                         <GeometryDrawing>
                             <GeometryDrawing.Geometry>
@@ -43,8 +48,10 @@
                 </DrawingBrush>
             </Canvas.Background>
         </Canvas>
-        <Button Grid.Column="0" Grid.Row="1" x:Name="button" Content="Start" HorizontalAlignment="Left" Margin="399,94,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
-        <TextBlock Grid.Column="0" Grid.Row="1" x:Name="textBlock" HorizontalAlignment="Left" Margin="323,130,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="350" Width="184"/>
+        <Button Grid.Row="2" Content="Start" x:Name="btStart" Click="btStart_Clicked" Height="30" Width="80" Margin="114,10,120,55" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="1" x:Name="tbResults" DockPanel.Dock="Right"  AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" Width="auto" Margin="10" TextWrapping="Wrap" Visibility="Visible"/>
+        <TextBox x:Name="tbUserC" Grid.Column="1" HorizontalAlignment="Right" Height="23" Margin="0,10,10,0" Grid.Row="2" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label" Content="User Count" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Width="99"/>
 
     </Grid>
 </Window>

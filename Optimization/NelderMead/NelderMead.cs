@@ -71,6 +71,10 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter[p] = (double)parameter[p] / (NumberOfElements - 1);
+                if ((double)parameter[p] > (double)UpperParamBounds[p])
+                    parameter[p] = UpperParamBounds[p];
+                else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                    parameter[p] = LowerParamBounds[p];
                 if (Integer[p])
                     parameter[p] = Math.Round((double)parameter[p]);
             }
@@ -88,6 +92,10 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add(((1.0 + alpha) * (double)centroid[p]) - (alpha * (double)worstParam[p]));
+                if ((double)parameter[p] > (double)UpperParamBounds[p])
+                    parameter[p] = UpperParamBounds[p];
+                else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                    parameter[p] = LowerParamBounds[p];
                 if (Integer[p])
                     parameter[p] = Math.Round((double)parameter[p]);
             }
@@ -105,6 +113,10 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add((gamma * (double)reflected[p]) + ((1 - gamma) * (double)centroid[p]));
+                if ((double)parameter[p] > (double)UpperParamBounds[p])
+                    parameter[p] = UpperParamBounds[p];
+                else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                    parameter[p] = LowerParamBounds[p];
                 if (Integer[p])
                     parameter[p] = Math.Round((double)parameter[p]);
             }
@@ -122,6 +134,10 @@ namespace Optimization
             for (int p = 0; p < InitialParameters.Count; p++)
             {
                 parameter.Add((beta * (double)worstParam[p]) + ((1 - beta) * (double)centroid[p]));
+                if ((double)parameter[p] > (double)UpperParamBounds[p])
+                    parameter[p] = UpperParamBounds[p];
+                else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                    parameter[p] = LowerParamBounds[p];
                 if (Integer[p])
                     parameter[p] = Math.Round((double)parameter[p]);
             }
@@ -138,6 +154,10 @@ namespace Optimization
                 for (int p = 0; p < InitialParameters.Count; p++)
                 {
                     parameter.Add(((double)((BaseElement)Elements[i])[p] + (double)((BaseElement)Elements[0])[p]) / 2.0);
+                    if ((double)parameter[p] > (double)UpperParamBounds[p])
+                        parameter[p] = UpperParamBounds[p];
+                    else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                        parameter[p] = LowerParamBounds[p];
                     if (Integer[p])
                         parameter[p] = Math.Round((double)parameter[p]);
                 }

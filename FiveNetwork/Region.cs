@@ -29,6 +29,7 @@ namespace FiveNetwork
         public int widhtDown { get; set; }
         public int widhtUp { get; set; }
         public double fitness { get; set; }
+        public ArrayList parameters { get; set; }
 
         public Region(int id, Point pos, User[] Users, int CoverUser, int heightDown, int heightUp, int widhtDown, int widhtUp)
         {
