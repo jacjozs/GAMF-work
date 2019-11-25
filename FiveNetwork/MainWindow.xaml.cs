@@ -40,8 +40,6 @@ namespace FiveNetwork
         /// Affinity (fitness) treshold.
         /// </summary>
         public double Ftr { get; set; }
-        // Fitness function
-        private FitnessFunctionDelegate ffd;
         // Clonal generation parameters
         /// <summary>
 		/// Clone number coefficient. ( ]0,1] )
@@ -98,6 +96,12 @@ namespace FiveNetwork
         private ArrayList Users = new ArrayList();
         private Random RNG = new Random();
 
+        private Network network;
+
+        private double wrostInterferenci = 0;
+        private double wrostCost = 0;
+        private double wrostUser = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -106,7 +110,7 @@ namespace FiveNetwork
             method = 0;
             // Stopping
             stoppingType = StoppingType.GenerationNumber;
-            ng = 100;
+            ng = 25;
             nev = 25000;
             Ftr = 0.00001;
             //clonal generation params
@@ -134,16 +138,84 @@ namespace FiveNetwork
             ExBeeCount = 10;
             MaxStep = 5;
             // Bacterial algorithm params
-            Infections = 10;
-            ClonesCount = 25;
+            Infections = 5;
+            ClonesCount = 15;
             // Differential Evolution params
             weighf = 1.8;
             crossf = 0.9;
             // Haromony Search params
             consid_rate = 0.95;
             adjust_rate = 0.7;
-            range = 0.05;
+            range = 0.5;
             tbUserC.Text = this.userC.ToString();
+        }
+
+        private void calcWrost()
+        {
+
+            Application.Current.Dispatcher.Invoke((Action)(() =>
+            {
+                //clear the canvas
+                canvas.Children.Clear();
+                foreach (Point user in Users)
+                {
+                    var circle = new Ellipse
+                    {
+                        Width = 4,
+                        Height = 4,
+                        Fill = Brushes.Red
+                    };
+                    circle.SetValue((DependencyProperty)Canvas.TopProperty, user.Y - 2);
+                    circle.SetValue((DependencyProperty)Canvas.LeftProperty, user.X - 2);
+                    canvas.Children.Add((UIElement)circle);
+                }
+                foreach (Region region in this.network.regions)
+                {
+                    if (region != null && region.Towers != null)
+                    {
+                        double interferenc = 0.0;
+                        foreach (Tower tower in region.Towers)
+                        {
+                            var circle = new Ellipse
+                            {
+                                Width = tower.radius * 2 + 8,
+                                Height = tower.radius * 2 + 8,
+                                Opacity = 0.4,
+                                Fill = Brushes.Blue
+                            };
+                            circle.SetValue((DependencyProperty)Canvas.TopProperty, tower.position.Y - tower.radius - 4);
+                            circle.SetValue((DependencyProperty)Canvas.LeftProperty, tower.position.X - tower.radius - 4);
+                            canvas.Children.Add((UIElement)circle);
+                        }
+                        foreach (int index in region.Neighbor)
+                        {
+                            Region neighbor = network.regions[index];
+                            if (neighbor.Towers != null)
+                            {
+                                foreach (Tower tower in region.Towers)
+                                {
+                                    foreach (Tower neighborTower in neighbor.Towers)
+                                    {
+                                        interferenc += rangeAeaCalculator.CalcrangeAea(tower.position, tower.radius, neighborTower.position, neighborTower.radius);
+                                    }
+                                }
+                            }
+                        }
+                        int towerCost = 0;
+                        foreach (Tower tower in region.Towers)
+                        {
+                            towerCost += tower.radius;
+                        }
+                        wrostInterferenci += interferenc;
+                        wrostCost += towerCost;
+                        region.Towers = null;
+                    }
+                }
+
+                tbResults.Text += $"Legorsszabb interference: {wrostInterferenci}  cost: {wrostCost}\n";
+                wrostInterferenci = 0;
+                wrostCost = 0;
+            }), DispatcherPriority.Send, null);
         }
 
         private async void btStart_Clicked(object sender, RoutedEventArgs e)
@@ -178,8 +250,13 @@ namespace FiveNetwork
                 circle.SetValue((DependencyProperty)Canvas.LeftProperty, point.X);
                 canvas.Children.Add((UIElement)circle);
             }
-            Network network = new Network(canvas.ActualWidth, canvas.ActualHeight, Users, (BaseOptimizationMethod)Optimizer, canvas);
+
+            
+
+
+            network = new Network(canvas.ActualWidth, canvas.ActualHeight, Users, (BaseOptimizationMethod)Optimizer, canvas);
             tbResults.Text = "";
+            calcWrost();
             var x = Task.Run(() => (network.Optimalization()));
             List<Region> Results = await x;
 
@@ -199,10 +276,13 @@ namespace FiveNetwork
                     circle.SetValue((DependencyProperty)Canvas.LeftProperty, user.X - 2);
                     canvas.Children.Add((UIElement)circle);
                 }
+                int alluser = 0, allcover = 0, allCost = 0;
+                double allIntererferenci = 0.0;
                 foreach (Region region in Results)
                 {
                     if (region != null && region.Towers != null)
                     {
+                        double interferenc = 0.0;
                         foreach (Tower tower in region.Towers)
                         {
                             var circle = new Ellipse
@@ -216,10 +296,40 @@ namespace FiveNetwork
                             circle.SetValue((DependencyProperty)Canvas.LeftProperty, tower.position.X - tower.radius - 4);
                             canvas.Children.Add((UIElement)circle);
                         }
-                        tbResults.Text += $"Region: {region.id} alluser: {region.AllUser} cveruser: {region.CoverUser} \n";
+                        foreach (int index in region.Neighbor)
+                        {
+                            Region neighbor = network.regions[index];
+                            if (neighbor.Towers != null)
+                            {
+                                foreach (Tower tower in region.Towers)
+                                {
+                                    foreach (Tower neighborTower in neighbor.Towers)
+                                    {
+                                        interferenc += rangeAeaCalculator.CalcrangeAea(tower.position, tower.radius, neighborTower.position, neighborTower.radius);
+                                    }
+                                }
+                            }
+                        }
+                        int towerCost = 0;
+                        foreach (Tower tower in region.Towers)
+                        {
+                            foreach (Tower ownerTower in region.Towers)
+                            {
+                                if (tower.position != ownerTower.position)
+                                {
+                                    interferenc += rangeAeaCalculator.CalcrangeAea(tower.position, tower.radius, ownerTower.position, ownerTower.radius);
+                                }
+                            }
+                            towerCost += tower.radius;
+                        }
+                        tbResults.Text += $"Region: {region.id} alluser: {region.AllUser} coveruser: {region.CoverUser}  interference: {interferenc}  cost: {towerCost}\n";
+                        alluser += region.AllUser;
+                        allcover += region.CoverUser;
+                        allIntererferenci += interferenc;
+                        allCost += towerCost;
                     }
                 }
-
+                tbResults.Text += $"\nAll User: {alluser}  Cover User: {allcover} Interference: {allIntererferenci}  Cost: {allCost}\n";
             }), DispatcherPriority.Send, null);
         }
 
@@ -349,7 +459,7 @@ namespace FiveNetwork
                     Optimizer = new CoordinateDescent
                     {
                         NumberOfElements = NA,
-                        StepSizeRelative = 5,
+                        StepSizeRelative = 0.6,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.
@@ -419,12 +529,11 @@ namespace FiveNetwork
                     Optimizer = new SelfOrgMigrating
                     {
                         NumberOfElements = NA,
-                        PRT = 0.1,
-                        ParthLength = 3,
+                        PRT = 0.6,
+                        PathLength = 10,
                         PopSize = 7,
-                        Step = 0.11,
-                        Type = SelfOrgMigratingType.AllToRand,
-                        FitnessFunction = ffd,
+                        Step = 0.6,
+                        Type = SelfOrgMigratingType.AllToAll,
                         // Number of allowed fitness evaluations.
                         StoppingNumberOfEvaluations = nev,
                         // Fitness treshold.

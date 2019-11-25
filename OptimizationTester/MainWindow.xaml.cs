@@ -104,23 +104,23 @@ namespace OptimizationTester
             InitializeComponent();
             openParams = 0;
             // Lower and upper bounds for the parameters.
-            lbp = new ArrayList { -100.0, -100.0, -100.0, -100.0, -100.0, -100.0, -100.0, -100.0 };
-            ubp = new ArrayList { 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0 };
+            lbp = new ArrayList { -100.0, -100.0 };
+            ubp = new ArrayList { 100.0, 100.0 };
             // Initial values of the parameters to be optimized.
-            InitialParameters = new ArrayList { 10.0, 8.8 };
+            InitialParameters = new ArrayList { 90.0, 90.0 };
             // Define whether the seeked values should be restricted to integers (true) or not (false).
-            Integer = new bool[] { false, false, false, true, true, true, true, true };
+            Integer = new bool[] { false, false };
             //Create optimizer object.
             // Number of antibodies.
-            NA = 25;
+            NA = 50;
             method = 0;
             Slow = false;
             Preview = false;
             uniqueTest = false;
             // Stopping
-            stoppingType = StoppingType.GenerationNumber;
+            stoppingType = StoppingType.EvaluationNumber;
             ng = 100;
-            nev = 25000;
+            nev = 50000;
             Ftr = 0.00001;
             // Fitness function
             ffd = FitnessFunctionParabola;
@@ -768,7 +768,7 @@ namespace OptimizationTester
                         Integer = Integer,
                         NumberOfElements = NA,
                         PRT = 0.1,
-                        ParthLength = 3,
+                        PathLength = 3,
                         PopSize = 7,
                         Step = 0.11,
                         Type = SelfOrgMigratingType.AllToRand,

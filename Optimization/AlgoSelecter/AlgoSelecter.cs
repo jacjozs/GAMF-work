@@ -400,7 +400,7 @@ namespace Optimization
                         Integer = Integer,
                         NumberOfElements = NumberOfElements,
                         PRT = 0.1,
-                        ParthLength = 3,
+                        PathLength = 3,
                         PopSize = 7,
                         Step = 0.11,
                         Type = SelfOrgMigratingType.AllToRand,

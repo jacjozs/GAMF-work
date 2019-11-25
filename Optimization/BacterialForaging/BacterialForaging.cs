@@ -61,14 +61,29 @@ namespace Optimization
         {
             int GoodIndex;//A jó populácioból kiválasztot egyed indexe
             int BadIndex;//A rossz populácioból kiválasztot egyed indexe
-            int Chromosome;//Az átadandó kromoszoma indexe (x, y .. koordináták)
+            int Chromosome_1, Chromosome_2;//Az átadandó kromoszoma indexe (x, y .. koordináták)
             for (int i = 0; i < Infections; i++)
             {
                 GoodIndex = RNG.Next(0, NumberOfElements / 2);//Jó elem indexének kiválasztása
                 BadIndex = RNG.Next(NumberOfElements / 2, NumberOfElements);// Rossze elem indexének kiválasztása
-                Chromosome = RNG.Next(0, InitialParameters.Count);// Random kromoszoma kiválasztása
-                ((BaseElement)Elements[BadIndex])[Chromosome] = ((BaseElement)Elements[GoodIndex])[Chromosome];// Génátadás
-                Elements[BadIndex] = GetNewElement(FitnessFunction, ((BaseElement)Elements[GoodIndex]).Position);// Így kapott paraméter lista számítás
+                Chromosome_1 = RNG.Next(0, InitialParameters.Count);// Random kromoszoma kiválasztása
+                Chromosome_2 = RNG.Next(0, InitialParameters.Count);// Random kromoszoma kiválasztása
+                double goodValue = (double)((BaseElement)Elements[GoodIndex])[Chromosome_1];
+                var parameter = new ArrayList();
+                for (int p = 0; p < InitialParameters.Count; p++)
+                {
+                    if (p == Chromosome_2)
+                        parameter.Add(goodValue);
+                    else
+                        parameter.Add(((BaseElement)Elements[BadIndex])[p]);
+                    if ((double)parameter[p] > (double)UpperParamBounds[p])
+                        parameter[p] = UpperParamBounds[p];
+                    else if ((double)parameter[p] < (double)LowerParamBounds[p])
+                        parameter[p] = LowerParamBounds[p];
+                    if (Integer[p])
+                        parameter[p] = Math.Round((double)parameter[p]);
+                }
+                Elements[BadIndex] = GetNewElement(FitnessFunction, parameter);// Így kapott paraméter lista számítás
             }
         }
     }

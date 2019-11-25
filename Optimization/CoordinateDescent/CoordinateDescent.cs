@@ -30,6 +30,14 @@ namespace Optimization
                     //Paraméterek módosítása
                     M1Minus[p] = (double)M1Minus[p] - ((double)M1Minus[p] - (double)LowerParamBounds[p]) / StepSizeRelative * randomScale;
                     M2Plus[p] = (double)M2Plus[p] + ((double)UpperParamBounds[p] - (double)M2Plus[p]) / StepSizeRelative * randomScale;
+                    if ((double)M1Minus[p] > (double)UpperParamBounds[p])
+                        M1Minus[p] = UpperParamBounds[p];
+                    else if ((double)M1Minus[p] < (double)LowerParamBounds[p])
+                        M1Minus[p] = LowerParamBounds[p];
+                    if ((double)M2Plus[p] > (double)UpperParamBounds[p])
+                        M2Plus[p] = UpperParamBounds[p];
+                    else if ((double)M2Plus[p] < (double)LowerParamBounds[p])
+                        M2Plus[p] = LowerParamBounds[p];
                     if (Integer[p]) {
                         M1Minus[p] = Math.Round((double)M1Minus[p]);
                         M2Plus[p] = Math.Round((double)M2Plus[p]);

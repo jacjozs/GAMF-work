@@ -20,7 +20,7 @@ namespace Optimization
         /// <summary>
         /// Maximális ugrási méret [0.11, 5]
         /// </summary>
-        public double ParthLength { get; set; }
+        public double PathLength { get; set; }
         /// <summary>
         /// Ugrási méret [0.11, ParthLength]
         /// </summary>
@@ -65,7 +65,7 @@ namespace Optimization
             {
                 double t = 0.0;
                 Elements.Sort();
-                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
+                for (int j = 0; j <= PopSize && t <= PathLength; j++)
                 {
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
@@ -93,6 +93,7 @@ namespace Optimization
                     t += Step;
                 }
             }
+            Elements.Sort();
         }
 
         private void All_To_All()
@@ -103,7 +104,7 @@ namespace Optimization
                 double t = 0.0;
                 int rnd = 0;
                 do rnd = RNG.Next(NumberOfElements); while (rnd == i);
-                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
+                for (int j = 0; j <= PopSize && t <= PathLength; j++)
                 {
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
@@ -133,12 +134,12 @@ namespace Optimization
         private void All_To_All_Adaptive()
         {
             int PRTVector = 0;
-            for (int i = 0; i < NumberOfElements; i++)
+            for (int i = NumberOfElements - 1; i >= 0; i--)
             {
                 double t = 0.0;
                 int rnd = 0;
                 do rnd = RNG.Next(NumberOfElements); while (rnd == i);
-                for (int j = 0; j <= PopSize && t <= ParthLength; j++)
+                for (int j = 0; j <= PopSize && t <= PathLength; j++)
                 {
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)
@@ -178,7 +179,7 @@ namespace Optimization
                 int size = RNG.Next(1, PopSize);
                 int rnd = 0;
                 do rnd = RNG.Next(NumberOfElements); while (rnd == i);
-                for (int j = 0; j <= size && t <= ParthLength; j++)
+                for (int j = 0; j <= size && t <= PathLength; j++)
                 {
                     var parameter = new ArrayList();
                     for (int p = 0; p < InitialParameters.Count; p++)

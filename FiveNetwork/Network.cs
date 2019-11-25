@@ -23,7 +23,7 @@ namespace FiveNetwork
         private ArrayList InitialParameters, lbp, ubp;
         private bool[] Integer;
         private Random RNG = new Random();
-        private List<Region> regions;
+        public List<Region> regions = new List<Region>();
         private Region actualRegion;
         private Canvas canvas;
         private int X, Y;
@@ -40,7 +40,6 @@ namespace FiveNetwork
             this.InitialParameters = new ArrayList();
             this.mehod.FitnessFunction = FitnessFunction;
             this.mehod.GenerationCreated += ShowAntibodies;
-            this.regions = new List<Region>();
             X = (int)this.width / (R[R.Length - 1] * 2);
             Y = (int)this.height / (R[R.Length - 1] * 2);
             this.actualRegionindex = 0;
@@ -60,7 +59,11 @@ namespace FiveNetwork
                             regionUser.Add(new User() { position = user, isCover = false});
                         }
                     }
-                    regions.Add(new Region(actualRegionindex++, new Point(j, i), regionUser.ToArray(), 0, heightDown, heightUp, widhtDown, widhtUp));
+                    Region region = new Region(actualRegionindex++, new Point(j, i), regionUser.ToArray(), 0, heightDown, heightUp, widhtDown, widhtUp);
+                    region.Towers = new Tower[1];
+                    int r = (int)(Math.Sqrt((R[R.Length - 1] * R[R.Length - 1]) + (R[R.Length - 1] * R[R.Length - 1])) / 2);
+                    region.Towers[0] = new Tower(new Point(widhtDown + R[R.Length - 1], heightDown + R[R.Length - 1]), r * 2, regionUser.Count);
+                    regions.Add(region);
                 }
             }
             this.actualRegionindex = 0;
@@ -281,8 +284,8 @@ namespace FiveNetwork
                 towerCost += tower.radius / (tower.users == 0 ? 1 : tower.users);
             }
             double userValue = 1.1 - ((double)this.actualRegion.CoverUser / (double)this.actualRegion.AllUser);
-            double T = (this.actualRegion.widhtUp - this.actualRegion.widhtDown) * (this.actualRegion.heightUp - this.actualRegion.heightDown);
-            double value = userValue + (userValue * interferenc) + (userValue * userValue * towerCost);
+            //double T = (this.actualRegion.widhtUp - this.actualRegion.widhtDown) * (this.actualRegion.heightUp - this.actualRegion.heightDown);
+            double value = (userValue + userValue * interferenc) + (userValue * userValue * towerCost);
             //double value = ((this.actualRegion.AllUser - (this.actualRegion.CoverUser)) / 1.5) + ((1.2 - userValue) * interferenc) + ((1.1 - userValue) * towerCost);
             foreach (User user in this.actualRegion.Users)
             {

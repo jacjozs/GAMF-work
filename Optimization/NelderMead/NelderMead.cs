@@ -61,7 +61,7 @@ namespace Optimization
             {
                 parameter.Add(0.0);
             }
-            for (int i = 0; i < NumberOfElements - 1; i++)
+            for (int i = 0; i < NumberOfElements; i++)
             {
                 for (int p = 0; p < InitialParameters.Count; p++)
                 {
@@ -70,7 +70,7 @@ namespace Optimization
             }
             for (int p = 0; p < InitialParameters.Count; p++)
             {
-                parameter[p] = (double)parameter[p] / (NumberOfElements - 1);
+                parameter[p] = (double)parameter[p] / NumberOfElements;
                 if ((double)parameter[p] > (double)UpperParamBounds[p])
                     parameter[p] = UpperParamBounds[p];
                 else if ((double)parameter[p] < (double)LowerParamBounds[p])
@@ -181,9 +181,9 @@ namespace Optimization
         /// <returns></returns>
         private bool IsWorseThanAllButWorst(BaseElement reflected)
         {
-            for (int i = 0; i < NumberOfElements - 1; ++i)
+            for (int i = 0; i < NumberOfElements; ++i)
             {
-                if (reflected.Fitness <= ((BaseElement)Elements[i]).Fitness)
+                if (reflected.Fitness < ((BaseElement)Elements[i]).Fitness)
                     return false;
             }
             return true;
